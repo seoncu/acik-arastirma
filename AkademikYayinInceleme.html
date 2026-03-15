@@ -3798,9 +3798,13 @@ function recommendJournals() {
       }
     }
 
+    // Normalize to 0-100 scale (max raw = 40+25+20+10+5+2+15 = 117)
+    var normalizedScore = Math.round(Math.min(100, (score / 117) * 100));
+
     return {
       journal: j,
-      score: score,
+      score: normalizedScore,
+      rawScore: score,
       reasons: reasons.length > 0 ? reasons : ['Genel alan uyumu']
     };
   });
@@ -3816,7 +3820,7 @@ function recommendJournals() {
 
   scored.forEach(function(item) {
     if (results.length >= maxResults) return;
-    if (item.score < 5) return; // too low
+    if (item.score < 4) return; // too low (normalized)
     results.push(item);
     if (item.journal.q === 'Q1') hasQ1 = true;
     if (item.journal.q === 'Q2') hasQ2 = true;
@@ -3829,7 +3833,7 @@ function recommendJournals() {
     if (q1) results.push(q1);
   }
   if (!hasNational && results.length < maxResults) {
-    var nat = scored.find(function(s) { return s.journal.index.indexOf('TR Dizin') !== -1 && results.indexOf(s) === -1 && s.score >= 3; });
+    var nat = scored.find(function(s) { return s.journal.index.indexOf('TR Dizin') !== -1 && results.indexOf(s) === -1 && s.score >= 2; });
     if (nat) results.push(nat);
   }
 
@@ -3849,6 +3853,30 @@ function buildJournalRecommendationHTML() {
   }
 
   var html = '<div style="margin-bottom:14px">';
+
+  // Scoring formula explanation (collapsible)
+  html += '<details style="margin-bottom:14px;background:#f5f0ff;border:1.5px solid #d1c4e9;border-radius:10px;padding:0">' +
+    '<summary style="cursor:pointer;padding:10px 14px;font-size:0.82em;font-weight:600;color:#4a148c;list-style:none;display:flex;align-items:center;gap:6px">' +
+      '<span>📐</span> Puanlama nasıl hesaplanıyor? <span style="margin-left:auto;font-size:0.9em;opacity:0.6">▼</span>' +
+    '</summary>' +
+    '<div style="padding:0 14px 14px;font-size:0.78em;color:#4a148c;line-height:1.7">' +
+      '<table style="width:100%;border-collapse:collapse;margin-top:4px">' +
+        '<tr style="border-bottom:1px solid #e0e0e0"><td style="padding:4px 8px;font-weight:700">Kriter</td><td style="padding:4px 8px;font-weight:700;text-align:right">Maks.</td><td style="padding:4px 8px;font-weight:700;text-align:right">Ağırlık</td></tr>' +
+        '<tr style="border-bottom:1px solid #f0f0f0"><td style="padding:4px 8px">🎯 Konu Uyumu</td><td style="padding:4px 8px;text-align:right">40 puan</td><td style="padding:4px 8px;text-align:right;color:#1565c0;font-weight:600">%34</td></tr>' +
+        '<tr style="border-bottom:1px solid #f0f0f0"><td style="padding:4px 8px">🏷️ Tema Eşleşmesi</td><td style="padding:4px 8px;text-align:right">25 puan</td><td style="padding:4px 8px;text-align:right;color:#1565c0;font-weight:600">%21</td></tr>' +
+        '<tr style="border-bottom:1px solid #f0f0f0"><td style="padding:4px 8px">📚 Kaynak Dergi Örtüşmesi</td><td style="padding:4px 8px;text-align:right">20 puan</td><td style="padding:4px 8px;text-align:right;color:#1565c0;font-weight:600">%17</td></tr>' +
+        '<tr style="border-bottom:1px solid #f0f0f0"><td style="padding:4px 8px">🔬 Yöntem Uyumu</td><td style="padding:4px 8px;text-align:right">15 puan</td><td style="padding:4px 8px;text-align:right;color:#1565c0;font-weight:600">%13</td></tr>' +
+        '<tr style="border-bottom:1px solid #f0f0f0"><td style="padding:4px 8px">⭐ İndeks Kalitesi (Q1–Q4)</td><td style="padding:4px 8px;text-align:right">10 puan</td><td style="padding:4px 8px;text-align:right;color:#1565c0;font-weight:600">%9</td></tr>' +
+        '<tr style="border-bottom:1px solid #f0f0f0"><td style="padding:4px 8px">🇹🇷 Türkçe Çalışma Bonusu</td><td style="padding:4px 8px;text-align:right">5 puan</td><td style="padding:4px 8px;text-align:right;color:#1565c0;font-weight:600">%4</td></tr>' +
+        '<tr><td style="padding:4px 8px">🆓 Açık Erişim / Ücretsiz APC</td><td style="padding:4px 8px;text-align:right">2 puan</td><td style="padding:4px 8px;text-align:right;color:#1565c0;font-weight:600">%2</td></tr>' +
+      '</table>' +
+      '<div style="margin-top:8px;padding:8px 10px;background:#ede7f6;border-radius:6px;font-size:0.95em">' +
+        '<strong>Toplam:</strong> 117 ham puan → <strong>100\'e normalize edilir</strong><br>' +
+        '<span style="color:#666">Puan = (ham puan / 117) × 100 · Renk kodu: <span style="color:#2e7d32;font-weight:700">■ 70+</span> yüksek · <span style="color:#e65100;font-weight:700">■ 40–69</span> orta · <span style="color:#9e9e9e;font-weight:700">■ &lt;40</span> düşük</span>' +
+      '</div>' +
+    '</div>' +
+  '</details>';
+
   // Q category color coding
   function qColor(q) {
     if (q === 'Q1') return '#2e7d32';
@@ -3892,9 +3920,10 @@ function buildJournalRecommendationHTML() {
         '</div>' +
         '<div style="font-size:0.75em;color:#4a148c;margin-top:3px;font-style:italic">' + r.reasons.join(' · ') + '</div>' +
       '</div>' +
-      '<div style="text-align:center;flex-shrink:0">' +
-        '<div style="font-size:0.65em;color:var(--text2);margin-bottom:2px">Uyum</div>' +
-        '<div style="font-size:1em;font-weight:800;color:' + qColor(j.q) + '">' + Math.min(99, r.score) + '</div>' +
+      '<div style="text-align:center;flex-shrink:0;min-width:48px">' +
+        '<div style="font-size:0.6em;color:var(--text2);margin-bottom:2px">Uyum</div>' +
+        '<div style="font-size:1.15em;font-weight:800;color:' + (r.score >= 70 ? '#2e7d32' : r.score >= 40 ? '#e65100' : '#9e9e9e') + '">' + r.score + '</div>' +
+        '<div style="font-size:0.55em;color:#bbb">/100</div>' +
       '</div>' +
     '</div>';
   });
@@ -3924,7 +3953,7 @@ function copyJournalRecommendationPrompt() {
   // Get algorithmic recommendations as reference
   var algoRecs = recommendJournals();
   var algoRecsTxt = algoRecs.slice(0, 5).map(function(r) {
-    return r.journal.name + ' (' + r.journal.index + ', ' + r.journal.q + ', Uyum:' + r.score + ')';
+    return r.journal.name + ' (' + r.journal.index + ', ' + r.journal.q + ', Uyum:' + r.score + '/100)';
   }).join('\n');
 
   var prompt = 'Sen bir akademik yayın danışmanısın. Aşağıdaki sistematik literatür taraması çalışması için en uygun dergileri internet üzerinden araştırarak öner.\n\n' +
