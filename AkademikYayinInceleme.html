@@ -7627,8 +7627,10 @@ function updateWebLLMBar(status, msg) {
     miniStatus.textContent = shortMsg;
   }
   if (miniBtn) {
-    miniBtn.disabled = (status === 'loading' || status === 'unsupported');
+    miniBtn.disabled = (status === 'loading' || status === 'unsupported' || status === 'ready');
     miniBtn.textContent = status === 'ready' ? '✅ Hazır' : status === 'loading' ? '⏳ Yükleniyor…' : '🚀 Modeli Yükle';
+    miniBtn.style.opacity = status === 'ready' ? '0.6' : '';
+    miniBtn.style.cursor = status === 'ready' ? 'default' : '';
   }
   // Sync expanded panel
   var expandDot = document.getElementById('wllmExpandDot');
