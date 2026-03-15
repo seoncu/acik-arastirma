@@ -785,14 +785,14 @@ window.waitForElement = waitForElement;
 window.recommendJournals = typeof recommendJournals !== 'undefined' ? recommendJournals : function() { return []; };
 
 const STEPS = [
-  {id:'mode', label:'Kullanım Modu', icon:'1'},
-  {id:'topic', label:'Araştırma Konusu', icon:'2'},
-  {id:'query', label:'Sorgu / BibTeX', icon:'3'},
-  {id:'analysis', label:'Analiz', icon:'4'},
-  {id:'verify', label:'Kaynak Doğrulama', icon:'5'},
-  {id:'report', label:'Akademik Rapor', icon:'6'},
-  {id:'design', label:'Araştırma Tasarımı', icon:'7'},
-  {id:'summary', label:'Özet', icon:'8'}
+  {id:'mode', label:'Kullanım Modu', icon:'0'},
+  {id:'topic', label:'Araştırma Konusu', icon:'1'},
+  {id:'query', label:'Sorgu / BibTeX', icon:'2'},
+  {id:'analysis', label:'Analiz', icon:'3'},
+  {id:'verify', label:'Kaynak Doğrulama', icon:'4'},
+  {id:'report', label:'Akademik Rapor', icon:'5'},
+  {id:'design', label:'Araştırma Tasarımı', icon:'6'},
+  {id:'summary', label:'Özet', icon:'7'}
 ];
 
 // ========== STEPPER ==========
@@ -857,9 +857,9 @@ function warnIfResetsLaterSteps(action, callback) {
   const hasDesign = state.researchDesign?.method;
 
   const affected = [];
-  if (hasVerification) affected.push('Kaynak Doğrulama (Adım 5)');
-  if (hasReport) affected.push('Akademik Rapor (Adım 6)');
-  if (hasDesign) affected.push('Araştırma Tasarımı (Adım 7)');
+  if (hasVerification) affected.push('Kaynak Doğrulama (Adım 4)');
+  if (hasReport) affected.push('Akademik Rapor (Adım 5)');
+  if (hasDesign) affected.push('Araştırma Tasarımı (Adım 6)');
 
   if (affected.length === 0) {
     callback();
@@ -1586,7 +1586,7 @@ function verifyAgent(code) {
         '<span style="background:#fff;padding:4px 12px;border-radius:10px;color:#2e7d32;border:1px solid #a5d6a7">📝 Rapor Yazımı</span>' +
         '<span style="background:#fff;padding:4px 12px;border-radius:10px;color:#2e7d32;border:1px solid #a5d6a7">🎯 Dergi Önerisi</span>' +
       '</div>' +
-      '<div style="font-size:0.78em;color:#9e9e9e">Adım 2\'ye yönlendiriliyorsunuz…</div>' +
+      '<div style="font-size:0.78em;color:#9e9e9e">Adım 1\'e yönlendiriliyorsunuz…</div>' +
       '<div style="margin-top:10px;width:100%;height:4px;background:#e0e0e0;border-radius:2px;overflow:hidden">' +
         '<div style="width:0%;height:100%;background:linear-gradient(90deg,#2e7d32,#4caf50);border-radius:2px;animation:progressFill 1.5s ease forwards"></div>' +
       '</div></div>';
@@ -1652,7 +1652,7 @@ function renderStepTopic(el) {
     </div>
 
     <div class="card">
-      <h2>🎯 Adım 2: Araştırma Konunuzu Tanımlayın</h2>
+      <h2>🎯 Adım 1: Araştırma Konunuzu Tanımlayın</h2>
       <p style="font-size:0.88em;color:var(--text2);margin-bottom:12px">Araştırma konunuzu detaylı şekilde açıklayın. Bu metin, sonraki adımlarda <strong>sorgu oluşturma</strong> ve <strong>LLM destekli filtreleme</strong> için temel oluşturacaktır.</p>
 
       <div class="form-group">
@@ -1715,7 +1715,7 @@ function renderStepTopic(el) {
 // STEP 3: Sorgu / BibTeX
 function renderStep1(el) {
   if (!state.researchTopic || state.researchTopic.trim().split(/\s+/).length < 50) {
-    el.innerHTML = '<div class="card"><h2>⚠️ Önce araştırma konunuzu tanımlayın</h2><p>Sorgu oluşturabilmek ve LLM desteğiyle filtreleme yapabilmek için en az <strong>50 kelimelik</strong> bir konu tanımı gereklidir.</p><button class="btn btn-primary" onclick="goToStep(1)">← Adım 2: Araştırma Konusu</button></div>';
+    el.innerHTML = '<div class="card"><h2>⚠️ Önce araştırma konunuzu tanımlayın</h2><p>Sorgu oluşturabilmek ve LLM desteğiyle filtreleme yapabilmek için en az <strong>50 kelimelik</strong> bir konu tanımı gereklidir.</p><button class="btn btn-primary" onclick="goToStep(1)">← Adım 1: Araştırma Konusu</button></div>';
     return;
   }
   el.innerHTML = `
@@ -1731,7 +1731,7 @@ function renderStep1(el) {
 
     <!-- BibTeX var mı? -->
     <div class="card">
-      <h2>📄 Adım 3: Sorgu Oluştur veya BibTeX Yükle</h2>
+      <h2>📄 Adım 2: Sorgu Oluştur veya BibTeX Yükle</h2>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
         <div class="checkbox-row" style="flex:1;min-width:240px;${state.hasBibtex?'border:2px solid var(--primary);background:#e8eaf6':''}" onclick="state.hasBibtex=true;renderStep()">
           <span style="font-size:1.3em">✅</span>
@@ -2050,7 +2050,7 @@ function renderBibtexUpload() {
 // STEP 2: Analysis & Visualization
 function renderStep2(el) {
   if (state.studies.length === 0) {
-    el.innerHTML = '<div class="card"><h2>⚠️ Önce BibTeX yükleyin</h2><p>Adım 3\'e dönüp BibTeX dosyanızı yükleyin.</p><button class="btn btn-primary" onclick="goToStep(2)">← Adım 3: Sorgu / BibTeX</button></div>';
+    el.innerHTML = '<div class="card"><h2>⚠️ Önce BibTeX yükleyin</h2><p>Adım 2\'ye dönüp BibTeX dosyanızı yükleyin.</p><button class="btn btn-primary" onclick="goToStep(2)">← Adım 2: Sorgu / BibTeX</button></div>';
     return;
   }
 
@@ -2615,7 +2615,7 @@ function renderStudyList() {
 // STEP 3: Report
 function renderStep3(el) {
   if (state.studies.length === 0) {
-    el.innerHTML = '<div class="card"><h2>⚠️ Önce BibTeX yükleyin</h2><button class="btn btn-primary" onclick="goToStep(2)">← Adım 3: Sorgu / BibTeX</button></div>';
+    el.innerHTML = '<div class="card"><h2>⚠️ Önce BibTeX yükleyin</h2><button class="btn btn-primary" onclick="goToStep(2)">← Adım 2: Sorgu / BibTeX</button></div>';
     return;
   }
   const hasVerification = state.studies.some(s => s._verified);
@@ -2676,7 +2676,7 @@ function renderStep3(el) {
     ${state._ethicsAccepted ? `
     <!-- Rapor Ayarları — Etik onaylandıktan sonra görünür -->
     <div class="card">
-      <h2>📝 Adım 6: Akademik Rapor Oluştur</h2>
+      <h2>📝 Adım 5: Akademik Rapor Oluştur</h2>
 
       ${hasVerification ? `
       <div style="background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:1px solid #a5d6a7;border-radius:10px;padding:14px;margin-bottom:14px">
@@ -2700,7 +2700,7 @@ function renderStep3(el) {
           <span style="font-size:1.2em">⚠️</span>
           <div>
             <strong style="color:#e65100;font-size:0.88em">Kaynak doğrulaması yapılmadı</strong>
-            <p style="font-size:0.78em;color:#bf360c;margin-top:2px">Tüm kaynaklar rapora dahil edilecek. Daha tutarlı bir rapor için <a href="#" onclick="goToStep(4);return false" style="color:#5b21b6;font-weight:600">Adım 5: Kaynak Doğrulama</a>'ya dönebilirsiniz.</p>
+            <p style="font-size:0.78em;color:#bf360c;margin-top:2px">Tüm kaynaklar rapora dahil edilecek. Daha tutarlı bir rapor için <a href="#" onclick="goToStep(4);return false" style="color:#5b21b6;font-weight:600">Adım 4: Kaynak Doğrulama</a>'ya dönebilirsiniz.</p>
           </div>
         </div>
       </div>`}
@@ -2793,7 +2793,7 @@ function renderStep3(el) {
 function renderStep4(el) {
   el.innerHTML = `
     <div class="card">
-      <h2>💬 Adım 7: Çalışmalar Hakkında Soru-Cevap</h2>
+      <h2>💬 Soru-Cevap (Chatbot)</h2>
       ${state.studies.length === 0 ? '<p style="color:var(--danger)">Önce BibTeX yükleyin.</p>' : `
       <p style="font-size:0.88em;color:var(--text2);margin-bottom:16px">${state.studies.length} çalışma yüklü. Chatbot her sayfada sol alttaki 💬 butonuyla kullanılabilir.</p>
       <div class="chat-container">
@@ -2951,7 +2951,7 @@ function renderStepDesign(el) {
     </div>
 
     <div class="card">
-      <h2>🔬 Adım 7: Araştırma Tasarımı</h2>
+      <h2>🔬 Adım 6: Araştırma Tasarımı</h2>
       <p style="font-size:0.88em;color:var(--text2);margin-bottom:16px">Literatür taramanıza dayalı olarak araştırma yönteminizi belirleyin. Sistem size en uygun deseni, veri toplama araçlarını ve analiz yöntemlerini önerecektir.</p>
 
       <!-- Yöntem Seçimi -->
@@ -3610,7 +3610,7 @@ function buildJournalRecommendationHTML() {
   var recs = recommendJournals();
   if (recs.length === 0) {
     return '<div style="background:#fff3e0;border:1px solid #ffcc80;border-radius:10px;padding:14px;text-align:center">' +
-      '<p style="font-size:0.82em;color:#e65100">Araştırma konusu yeterince tanımlanmadığı için otomatik dergi önerisi oluşturulamadı. Lütfen Adım 2\'ye dönüp araştırma konunuzu detaylandırın veya Claude Agent promptunu kullanın.</p>' +
+      '<p style="font-size:0.82em;color:#e65100">Araştırma konusu yeterince tanımlanmadığı için otomatik dergi önerisi oluşturulamadı. Lütfen Adım 1\'e dönüp araştırma konunuzu detaylandırın veya Claude Agent promptunu kullanın.</p>' +
     '</div>';
   }
 
@@ -3786,7 +3786,7 @@ function renderStep5(el) {
 
   el.innerHTML = `
     <div class="card">
-      <h2>🔍 Adım 5: Kaynak Doğrulama <span style="font-size:0.65em;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;padding:3px 10px;border-radius:10px;margin-left:8px;vertical-align:middle">ÖNERİLEN</span></h2>
+      <h2>🔍 Adım 4: Kaynak Doğrulama <span style="font-size:0.65em;background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;padding:3px 10px;border-radius:10px;margin-left:8px;vertical-align:middle">ÖNERİLEN</span></h2>
       <p style="font-size:0.85em;color:var(--text2);margin-bottom:12px">Doğrulanamayan kaynaklar bir sonraki adımdaki <strong>Akademik Rapor</strong>'a dahil edilmeyecektir.</p>
 
       ${useMode === 'manual' ? '<div style="background:linear-gradient(135deg,#fff3e0,#fbe9e7);border:2px solid #ff6d00;border-radius:12px;padding:16px;margin-bottom:16px">' +
@@ -4576,7 +4576,7 @@ function applyAISuggestion() {
   if (query.includes('TITLE-ABS-KEY')) state.queryConfig.database = 'scopus';
   else if (query.includes('TS=')) state.queryConfig.database = 'wos';
 
-  // Adım 3'e (Sorgu/BibTeX) geç — sorgu unified textarea'ya otomatik aktarılacak
+  // Adım 2'ye (Sorgu/BibTeX) geç — sorgu unified textarea'ya otomatik aktarılacak
   showToast('Sorgu uygulandı! Sorgu/BibTeX adımına yönlendiriliyorsunuz...');
   goToStep(2);
 
@@ -6637,7 +6637,7 @@ Gereksinimler:
 - Eş anlamlıları ve kısaltmaları dahil et
 
 Lütfen: 1) Türkçe→İngilizce terim tablosu 2) Hazır sorgu 3) Kısa açıklama ver.`;
-    resultInstructions = 'Claude\'un oluşturduğu İngilizce sorguyu <strong>kopyalayıp Adım 1\'deki sorgu alanlarına yapıştırın</strong>.';
+    resultInstructions = 'Claude\'un oluşturduğu İngilizce sorguyu <strong>kopyalayıp Adım 2\'deki sorgu alanlarına yapıştırın</strong>.';
 
   } else if (type === 'relevance') {
     expectsJSON = true;
@@ -6808,7 +6808,7 @@ function copyClaudePromptAndNext() {
 
       ${isJSON ? `
         <button class="btn btn-success" onclick="applyClaudeResultFromPanel()" style="width:100%;margin-bottom:8px">✅ JSON'u Uygula — Çalışmaları Puanla ve Filtrele</button>
-        <p style="font-size:0.75em;color:#999;text-align:center">Bu işlem çalışmaları puanlayacak ve Adım 2'deki filtreleme ekranında önizleme gösterecektir.</p>
+        <p style="font-size:0.75em;color:#999;text-align:center">Bu işlem çalışmaları puanlayacak ve Adım 3'teki filtreleme ekranında önizleme gösterecektir.</p>
       ` : `
         <div style="display:flex;gap:8px">
           <button class="btn btn-primary" onclick="saveClaudeResultAsNote()" style="flex:1;background:#7c3aed">📝 Not Olarak Kaydet</button>
@@ -7690,7 +7690,7 @@ function buildGuideHTML() {
           '<li>Claude masaüstü uygulamasını açın (Dock / Görev Çubuğu / Spotlight) → <strong>Cowork moduna</strong> geçin → kopyalanan metni yapıştırıp gönderin</li>' +
           '<li>Sayfadaki <strong>mavi onay butonuna</strong> basın: "Cowork\'e yapıştırdım, çalıştırdım, onaylıyorum"</li>' +
           '<li>Agent <strong>"Ben İNSAN değilim!"</strong> checkbox\'ını tıklar → doğrulama kodu ekranda belirir</li>' +
-          '<li>Agent kodu okuyup girer → <strong>"Agent Kodu Doğrulandı — Agent Devrede!"</strong> → Adım 2\'ye geçiş</li>' +
+          '<li>Agent kodu okuyup girer → <strong>"Agent Kodu Doğrulandı — Agent Devrede!"</strong> → Adım 1\'e geçiş</li>' +
         '</ol>' +
         '<div class="important">⚠️ <strong>Güvenlik:</strong> Agent modu, 3 aşamalı doğrulama gerektirir (insan onayı + checkbox + kod). Doğrulama tamamlanmadan hiçbir adıma ilerlenemez. Bu mekanizma, yalnızca yetkili agent\'ın sistemi yönetmesini garanti eder.</div>' +
         '<div class="warn">⚠️ <strong>Ajan modu</strong> kullanıyorsanız verileriniz harici bir servise gönderilir. Gizli verileri paylaşmamaya dikkat edin.</div>' +
@@ -7971,8 +7971,11 @@ initWebLLMBar();
       <button onclick="toggleClaudeHelpBanner()" style="position:absolute;top:12px;right:16px;background:rgba(255,255,255,0.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1.1em">&times;</button>
       <div style="font-size:2.5em;margin-bottom:8px">🤖</div>
       <h2 style="font-size:1.4em;font-weight:900;margin-bottom:8px">Claude Agent ile Araştırmanızı Hızlandırın</h2>
-      <p style="font-size:0.9em;opacity:0.92;max-width:500px;margin:0 auto;line-height:1.6">
+      <p style="font-size:0.9em;opacity:0.92;max-width:560px;margin:0 auto;line-height:1.6">
         Chatbot deneyiminin çok ötesinde — <strong>Claude Pro/Team üyeliğiniz varsa</strong> Claude Agent tüm adımları sizin için otomatik gerçekleştirebilir!
+      </p>
+      <p style="font-size:0.78em;opacity:0.8;max-width:560px;margin:8px auto 0;line-height:1.5">
+        Agent, Chrome eklentisi aracılığıyla bu sayfadaki butonlara tıklar, formları doldurur, BibTeX analizi yapar, DOI linklerini açıp doğrular, APA 7 rapor yazar ve dergi önerir — siz sadece onaylarsınız.
       </p>
     </div>
 
