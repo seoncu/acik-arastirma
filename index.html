@@ -830,10 +830,27 @@ function goToStep(n) {
   if (typeof updateModeBanner === 'function') updateModeBanner();
 }
 
+function stripLargeFields(stateObj) {
+  var copy = JSON.parse(JSON.stringify(stateObj));
+  if (copy.studies) {
+    copy.studies = copy.studies.map(function(s) {
+      var c = Object.assign({}, s);
+      delete c.abstract;
+      delete c._noteOpen;
+      delete c._tagPickerOpen;
+      return c;
+    });
+  }
+  delete copy.bibtexRaw;
+  delete copy._enhancedReport; // can be very large
+  return copy;
+}
+
 function autoSaveState() {
   try {
+    var stripped = stripLargeFields(state);
     localStorage.setItem('acik_arastirma_autosave', JSON.stringify({
-      state: state,
+      state: stripped,
       useMode: useMode,
       savedAt: new Date().toISOString()
     }));
@@ -841,13 +858,15 @@ function autoSaveState() {
     if (currentSessionId) {
       const sessions = getAllSessions();
       if (sessions[currentSessionId]) {
-        sessions[currentSessionId].state = JSON.parse(JSON.stringify(state));
+        sessions[currentSessionId].state = stripLargeFields(state);
         sessions[currentSessionId].savedAt = new Date().toISOString();
         localStorage.setItem(getSessionKey(), JSON.stringify(sessions));
         flashSavedIndicator();
       }
     }
-  } catch(e) { /* localStorage full or unavailable */ }
+  } catch(e) {
+    console.warn('autoSave: localStorage quota exceeded, skipping save');
+  }
 }
 
 function warnIfResetsLaterSteps(action, callback) {
@@ -1179,7 +1198,7 @@ AŞAMA B — BibTeX Yükleme:
 ═══════════════════════════════════════
 ADIM 3 — ANALİZ + ÇALIŞMA SEÇİMİ (safeGoToStep(3))
 ═══════════════════════════════════════
-GÖREV: BibTeX verilerini analiz et, çalışmaları sınıfla ve en ilgili olanları seç.
+GÖREV: BibTeX verilerini analiz et, çalışmaları sınıfla, temaları doğrula ve en ilgili olanları seç.
 
 AŞAMA A — Otomatik Analiz (Subagent Delegasyonu):
 • "Agent BibTeX Analiz Promptu Oluştur" butonuna tıkla → oluşan promptu kopyala
@@ -1187,33 +1206,62 @@ AŞAMA A — Otomatik Analiz (Subagent Delegasyonu):
   ◦ Tematik sınıflandırma: Başlık + abstract'tan tema ata
   ◦ İlgililik puanlaması: 0.0–1.0 arası, araştırma konusuna göre
   ◦ Metodoloji çıkarımı: Nicel / Nitel / Karma, desen, analiz yöntemi
+
+⚠️ JSON FORMATI VE KEY UYARISI (KRİTİK!):
+• getStudySummary() fonksiyonu BibTeX key döndürmez!
+• Gerçek key'ler YALNIZCA localStorage'dan alınır:
+  JSON.parse(localStorage.getItem('acik_arastirma_autosave')).state.studies[i].key
+• Örnek key formatı: "WOS:001442966400001" veya "10.1234/abc" (DOI tabanlı)
+• JSON sonuç formatı: [{"key":"WOS:001442966400001","relevance":0.85,"theme":"Öz-Düzenlemeli Öğrenme","methodology":"nicel",...}]
+• key alanı MUTLAKA BibTeX key ile birebir eşleşmeli — aksi halde "Uygula" çalışmaz!
+
 • Sonuçları JSON formatında "Agent Analiz Sonucunu Yapıştırın" alanına yapıştır ve "Uygula" butonuna bas
 • "OA Tara (Unpaywall)" butonuna tıkla → Açık erişim durumlarını kontrol et
 
-AŞAMA B — Akıllı Çalışma Seçimi:
-• Analiz sonuçlarını incele — her çalışmanın teması, ilgililik puanı ve metodolojisini değerlendir
-• Araştırma konusuyla EN İLGİLİ çalışmaları belirle (ilgililik ≥ 0.7 olanlar öncelikli)
-• Her çalışma kartında "Çalışmamda kullan" checkbox'ını tıklayarak işaretle (veya window.selectStudies([0,1,3,5]))
+AŞAMA B — Tema Kontrolü ve Düzenleme:
+• Oluşan temaları gözden geçir — çok genel temalar (ör: "Genel", "Diğer") varsa düzenle
+• Araştırma konusuna uygun spesifik temalar olmalı (ör: "Akademik Başarı", "Motivasyon ve Öz-Yeterlik", "Teknoloji Kabulü (TAM/UTAUT)", "Öz-Düzenlemeli Öğrenme", "Üretken YZ Uygulamaları")
+• Gerekirse temaları localStorage üzerinden güncelle veya çalışmaları yeniden ata
+• Kullanıcıya tema dağılımını göster ve onay al
+
+AŞAMA C — Akıllı Çalışma Seçimi:
+• HEDEF: Toplam çalışmanın %10-20'si seçilmeli (ör: 427 kaynaktan 40-85 arası)
+• İlgililik ≥ 0.7 olanlardan bu aralığa düşecek kadar seç
+• Seçim kriterleri (tümü dikkate alınmalı):
+  ◦ Konu uyumu (ilgililik puanı)
+  ◦ Metodolojik çeşitlilik (nicel/nitel/karma dağılımı)
+  ◦ Yıl dağılımı (son 5 yıla ağırlık, ama önemli eski çalışmalar dahil)
+  ◦ Coğrafi/kültürel çeşitlilik
+  ◦ Açık erişim durumu (OA olanlara bonus)
+• window.selectStudies([index_listesi]) ile seçim yap
 • İşaretlerken kullanıcıya bilgi ver: "X çalışmayı yüksek ilgililik nedeniyle seçtim, Y çalışmayı düşük ilgililik/konu dışı olduğu için dışarıda bıraktım"
 • Kullanıcıya seçimi onayla veya düzenlemesini iste
-• İsteğe bağlı: Çalışma notları eklemek için "Not" butonuna tıkla ve kısa açıklama yaz
-💡 Seçim kriterleri: Konu uyumu, metodolojik çeşitlilik, yıl dağılımı, açık erişim durumu
 
 ═══════════════════════════════════════
 ADIM 4 — KAYNAK DOĞRULAMA (safeGoToStep(4))
 ═══════════════════════════════════════
-GÖREV: Seçilen her çalışmanın DOI'sini tarayıcıda açarak erişilebilirliğini ve meta veri doğruluğunu kontrol et.
+GÖREV: Seçilen her çalışmanın DOI'sini Crossref API ile doğrula. Subagent stratejisi kullan.
 
-⚠️ Bu adım MUTLAKA tarayıcı üzerinden yapılmalıdır (WebLLM ile yapılamaz).
+⚠️ KRİTİK KISITLAMA: VM'den internete erişim YOKTUR!
+• curl, wget, requests ÇALIŞMAZ — yalnızca TARAYICI JavaScript kullan
+• DOI doğrulama YALNIZCA Chrome extension javascript_tool ile yapılmalı
 
-• SEÇİLMİŞ her çalışma için DOI linkini tarayıcıda aç:
-  ◦ Sayfanın erişilebilir olup olmadığını kontrol et
-  ◦ Başlık, yazar(lar), yıl bilgilerini BibTeX verileriyle karşılaştır
-  ◦ Abstract mevcut mu? Araştırma konusuyla gerçekten ilgili mi?
-• Her kaynak için doğrulama durumunu uygulama içinde işaretle:
-  ◦ ✅ Doğrulandı — erişilebilir ve meta veriler eşleşiyor
-  ◦ ⚠️ Kısmi — erişilebilir ama küçük farklılıklar var
-  ◦ ❌ Erişilemedi — DOI kırık veya sayfa yüklenmiyor
+SUBAGENT STRATEJİSİ:
+• Her 25 çalışma için bir subagent ata (paralel çalıştır)
+• Her subagent şu adımları uygular:
+
+1. Crossref API ile metadata çek (en güvenilir yöntem):
+   fetch('https://api.crossref.org/works/' + doi)
+   → CORS destekler, JSON döner, başlık/yazar/yıl bilgisi içerir
+2. Dönen başlığı BibTeX başlığıyla fuzzy match kontrol et
+3. Yazar/yıl tutarlılık kontrolü yap
+4. Sonuçları bu formatta döndür:
+   {"key":"BibTeX_key","verified":true,"status":"accessible","title_match":true,"crossref_title":"...","confidence_score":0.95}
+
+KULLANILMAYACAK YÖNTEMLER:
+✗ VM bash'ten curl/wget (internet yok)
+✗ fetch('https://doi.org/...') ile sayfa açma (CORS sorunlu, opaque response)
+
 • Doğrulama tamamlandığında kullanıcıya özet sun:
   "25 kaynaktan 22'si doğrulandı, 2'si kısmi eşleşme, 1'i erişilemedi"
 • Erişilemeyen kaynaklar için alternatif öner (Google Scholar, ResearchGate)
@@ -1223,21 +1271,30 @@ ADIM 5 — AKADEMİK RAPOR (safeGoToStep(5))
 ═══════════════════════════════════════
 GÖREV: APA 7 formatında sistematik literatür taraması raporu oluştur.
 
-⚠️ RAPOR FORMATI: APA 7 Sistematik Literatür Taraması
-Bölüm yapısı: Giriş → Yöntem (Araştırma Deseni, Veri Toplama / PRISMA) → Bulgular (Tematik Dağılım, Literatür Sentezi) → Tartışma ve Sonuç → Kaynakça (APA7)
+⚠️ KULLANICIYA SEÇENEK SUN (ÖNEMLİ!):
+"Rapor oluşturma yöntemi:
+  (A) Sistemin dahili rapor motoru — hızlı ama şablon bazlı
+  (B) Claude'un kendisi yazacak — daha uzun sürer ama akademik dil, eleştirel sentez ve derinlik açısından çok daha üstün"
 
-• Rapor dilini seç (Türkçe veya İngilizce — kullanıcıya sor)
-• Etik onay checkbox'ını işaretle (rapor araçları bundan sonra görünür olur)
-• Tüm bölüm checkbox'larını işaretli bırak (Giriş, Yöntem, Bulgular, Tartışma, Kaynakça)
-• SAYFA SAYISI KURALI: Kaynak sayısının %20'si kadar sayfa oluşturulmalı (Agent modu). Minimum 10, maksimum 100 sayfa.
-• "Önizleme" butonuna bas veya window.autoGenerateReport("preview") çağır → APA7 formatında rapor oluşturulur:
-  ◦ Giriş: Araştırmanın amacı, kapsamı ve temalar
-  ◦ Yöntem: Araştırma deseni, PRISMA süreci, dahil etme/hariç tutma kriterleri
-  ◦ Bulgular: Tematik dağılım tablosu + tema bazlı literatür sentezi (karşılaştırmalı, APA7 atıflarıyla)
-  ◦ Tartışma ve Sonuç: Bulguların yorumu, sınırlılıklar, gelecek araştırma önerileri
-  ◦ Kaynakça: APA7 formatında (asılı girinti, yazar-tarih)
-• Metin içi atıflar APA 7: Tek yazar (Yılmaz, 2023), iki yazar (Smith ve Jones, 2024), üç+ (Smith vd., 2023)
-• Rapor yetersizse düzenle/zenginleştir — hedef sayfa sayısına ulaşana kadar derinleştir
+SEÇENEK A — Sistem Raporu:
+• Etik onay checkbox'ını işaretle → "Önizleme" veya window.autoGenerateReport("preview")
+• Hızlı ama şablon bazlı, derinlikten yoksun
+
+SEÇENEK B — Claude Raporu (ÖNERİLEN):
+• Agent, seçili çalışmaların metadata'sını (başlık, yazar, yıl, DOI, tema, abstract özeti) JSON olarak çıkarır
+• Veriyi parçalara bölerek subagent'lara gönderir — her subagent bir bölüm yazar:
+  ◦ Giriş: Araştırmanın amacı, kapsamı, güncelliği
+  ◦ Yöntem: PRISMA süreci, dahil etme/hariç tutma kriterleri, araştırma deseni
+  ◦ Bulgular: Tema bazlı literatür sentezi (her tema ayrı subagent)
+  ◦ Tartışma ve Sonuç: Eleştirel değerlendirme, sınırlılıklar, gelecek araştırma
+  ◦ Kaynakça: APA 7 formatı
+• Ana agent bölümleri birleştirir, tutarlılık kontrol eder
+• SAYFA SAYISI: Kaynak sayısının %20'si (min 10, max 100 sayfa)
+• Metin içi atıflar APA 7: (Yılmaz, 2023), (Smith ve Jones, 2024), (Smith vd., 2023)
+
+RAPOR FORMATI: APA 7 Sistematik Literatür Taraması
+Bölüm yapısı: Giriş → Yöntem → Bulgular (Tematik Dağılım + Sentez) → Tartışma ve Sonuç → Kaynakça
+• Rapor dilini kullanıcıya sor (Türkçe veya İngilizce)
 • "Kopyala" veya "İndir" butonlarıyla çıktıyı kullanıcıya sun
 
 ═══════════════════════════════════════
@@ -1263,7 +1320,7 @@ ADIM 7 — ÖZET + DERGİ ÖNERİSİ (safeGoToStep(7))
 ═══════════════════════════════════════
 GÖREV: Tüm süreci özetle, çıktıları doğrula ve hedef dergi önerileri sun.
 
-• Son adıma geçmek için safeGoToStep(7) veya navigasyondaki "8. Özet" butonuna tıkla
+• Son adıma geçmek için safeGoToStep(7) veya navigasyondaki "7. Özet" butonuna tıkla
 • Tüm adımların özeti kullanıcıya otomatik sunulur
 • Çıktıları kontrol et: Akademik Rapor, Araştırma Tasarımı, BibTeX, Oturum Yedeği butonlarının çalıştığını doğrula
 • Oturum otomatik olarak kaydedilir
@@ -1280,16 +1337,26 @@ DERGİ ÖNERİSİ:
 • Sonunda kullanıcıya de: "Çalışmanız hazır! Tüm özeti ve çıktıları bu sayfadan görebilirsiniz."
 
 ═══════════════════════════════════════
+KRİTİK KISITLAMALAR
+═══════════════════════════════════════
+🚫 VM'den internete erişim YOKTUR! curl, wget, python requests ÇALIŞMAZ.
+🌐 Tüm web istekleri YALNIZCA tarayıcı JavaScript'i (Chrome extension javascript_tool) üzerinden yapılmalıdır.
+📂 Dosya yükleme file_upload ile yapılabilir ancak HTTPS sayfalarda mixed content engeli olabilir — başarısız olursa kullanıcıya sürükle-bırak yaptır.
+⚡ BİR YÖNTEM 2 KEZ BAŞARISIZ OLURSA → Deneme-yanılma yapma, DOĞRUDAN alternatif yönteme geç!
+🔑 BibTeX key'leri getStudySummary()'den GELMEZ → localStorage'dan al (yukarıda detaylı açıklandı).
+
+═══════════════════════════════════════
 GENEL İLKELER
 ═══════════════════════════════════════
 🔄 ETKİLEŞİM: Her adımda kullanıcıyla iletişim kur. Tek taraflı karar verme — onay al, seçenek sun, gerekçe göster.
 🖱️ UYGULAMA İÇİ İŞLEM: Tüm işlemleri sayfadaki butonlara tıklayarak, formları doldurarak, checkbox'ları işaretleyerek yap. Uygulama dışında işlem yapma.
-📂 DOSYA YÖNETİMİ: BibTeX dosyasını kullanıcıdan al ve uygulamanın upload alanı üzerinden yükle.
-🌐 TARAYICI KULLANIMI: Kaynak doğrulama adımında DOI linklerini Chrome'da aç, sayfayı oku, meta verileri karşılaştır.
-📊 SUBAGENT: Analiz adımında gerekirse paralel subagent'lar kullan (tematik, ilgililik, metodoloji).
+📂 DOSYA YÖNETİMİ: BibTeX dosyasını kullanıcıdan al. file_upload başarısız olursa kullanıcıya sürükle-bırak yaptır.
+🌐 TARAYICI KULLANIMI: Tüm internet işlemleri Chrome extension javascript_tool ile tarayıcıda yapılır. VM bash'ten web istek YAPMA.
+📊 SUBAGENT: Analiz, DOI doğrulama ve rapor yazımında paralel subagent'lar kullan. DOI doğrulama: her 25 çalışma = 1 subagent. Rapor yazımı: her bölüm = 1 subagent.
 🗣️ DİL: Kullanıcıyla Türkçe iletişim kur. Sorgular İngilizce olmalı. Rapor dili kullanıcı tercihine bırakılmalı.
-⚡ HATA YÖNETİMİ: Bir adım başarısız olursa kullanıcıyı bilgilendir, alternatif yol öner, asla sessizce geçme.
-💾 KAYDETME: Her önemli adımdan sonra "Kaydet" butonuna bas (üst menüde). Veri kaybını önle.
+⚡ HATA YÖNETİMİ: 2 başarısız deneme → alternatif yönteme geç. Asla sessizce geçme, kullanıcıyı bilgilendir.
+💾 KAYDETME: HER ADIM TAMAMLANDIĞINDA "Kaydet" butonuna bas! Tarayıcı çökmesinde veri kaybını önle.
+🎯 TEMA KONTROLÜ: Rapor oluşturmadan ÖNCE temaları gözden geçir. Genel/anlamsız temaları kaldır, spesifik temalar oluştur.
 
 ═══════════════════════════════════════
 AGENT DOM HELPER API — ÖNEMLİ!
@@ -3539,14 +3606,31 @@ function recommendJournals() {
 
     // 3. Source journal matching — if this journal appears in sources, big boost (max 20 points)
     var sourceMatch = false;
+    var bestSourceMatch = null;
+    var bestSourceCount = 0;
     Object.keys(sourceJournals).forEach(function(sj) {
-      if (jNameNorm.indexOf(sj) !== -1 || sj.indexOf(jNameNorm) !== -1 ||
-          (sj.length > 8 && jNameNorm.length > 8 && (sj.indexOf(jNameNorm.substring(0, 15)) !== -1 || jNameNorm.indexOf(sj.substring(0, 15)) !== -1))) {
-        sourceMatch = true;
-        score += Math.min(20, sourceJournals[sj] * 5);
-        reasons.push('Kaynaklarınızda ' + sourceJournals[sj] + ' çalışma yayınlanmış');
+      // Stricter matching: at least 20 chars overlap or exact substring
+      var minLen = Math.min(jNameNorm.length, sj.length);
+      var matchLen = Math.min(20, minLen);
+      if (minLen < 6) return; // skip very short names
+      if (jNameNorm === sj ||
+          (matchLen >= 15 && (jNameNorm.indexOf(sj.substring(0, matchLen)) !== -1 || sj.indexOf(jNameNorm.substring(0, matchLen)) !== -1))) {
+        if (sourceJournals[sj] > bestSourceCount) {
+          bestSourceMatch = sj;
+          bestSourceCount = sourceJournals[sj];
+        }
       }
     });
+    if (bestSourceMatch) {
+      sourceMatch = true;
+      score += Math.min(20, bestSourceCount * 5);
+      // Find original (non-normalized) journal name for display
+      var origName = bestSourceMatch;
+      state.studies.forEach(function(s) {
+        if (s.journal && normalizeForMatch(s.journal) === bestSourceMatch) origName = s.journal;
+      });
+      reasons.push(origName + ' dergisinde ' + bestSourceCount + ' kaynak');
+    }
 
     // 4. Index quality bonus (max 10 points)
     if (j.q === 'Q1') score += 10;
@@ -7171,16 +7255,7 @@ function saveSessionAs() {
   state.projectName = name;
   currentSessionId = 'session_' + Date.now();
   const sessions = getAllSessions();
-  // Strip large fields to prevent localStorage quota issues
-  const stateToSave = JSON.parse(JSON.stringify(state));
-  stateToSave.studies = stateToSave.studies.map(s => {
-    const copy = {...s};
-    delete copy.abstract; // abstracts take too much space
-    delete copy._noteOpen;
-    delete copy._tagPickerOpen;
-    return copy;
-  });
-  delete stateToSave.bibtexRaw; // raw bibtex is huge
+  const stateToSave = stripLargeFields(state);
   sessions[currentSessionId] = {
     name,
     savedAt: new Date().toISOString(),
