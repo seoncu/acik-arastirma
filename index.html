@@ -1015,8 +1015,8 @@ function renderStep0(el) {
               <div style="font-size:1em;font-weight:900;color:#2e7d32;margin-bottom:8px">METİN OTOMATİK KOPYALANDI!</div>
               <div style="font-size:0.85em;color:#388e3c;font-weight:600;margin-bottom:12px">Şimdi bunu Claude Cowork'e yapıştırın.</div>
               <div style="background:rgba(0,0,0,0.06);border-radius:10px;padding:10px 14px;font-size:0.75em;color:#555;line-height:1.6;margin-bottom:14px;text-align:left;font-family:'Cascadia Code',Consolas,monospace;max-height:80px;overflow-y:auto;border:1px dashed #a5d6a7" id="agentCopiedPreview"></div>
-              <a href="claude://" onclick="window.open('claude://','_self')" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;padding:10px 24px;border-radius:12px;text-decoration:none;font-size:0.88em;font-weight:700;box-shadow:0 4px 16px rgba(124,58,237,0.3);transition:all 0.2s;cursor:pointer" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">🚀 Claude Masaüstü Uygulamasını Aç</a>
-              <div style="font-size:0.68em;color:#9e9e9e;margin-top:8px">Cowork modunda açın ve kopyalanan metni yapıştırın</div>
+              <div id="openClaudeAppBtn"></div>
+              <div style="font-size:0.68em;color:#9e9e9e;margin-top:8px" id="openClaudeAppHint">Cowork modunda açın ve kopyalanan metni yapıştırın</div>
             </div>
           </div>
 
@@ -1384,10 +1384,29 @@ function startAgentMode() {
   var copiedBox = document.getElementById('agentCopiedBox');
   if (copiedBox) {
     copiedBox.style.display = 'block';
-    // Show first 120 chars of prompt as preview
+    // Show first 150 chars of prompt as preview
     var preview = document.getElementById('agentCopiedPreview');
     if (preview && copiedText) {
       preview.textContent = copiedText.substring(0, 150) + '…';
+    }
+    // OS-aware "Aç" button
+    var openBtn = document.getElementById('openClaudeAppBtn');
+    var openHint = document.getElementById('openClaudeAppHint');
+    if (openBtn) {
+      var ua = navigator.userAgent || '';
+      var isMac = /Mac/i.test(navigator.platform) || /Macintosh/i.test(ua);
+      var isWin = /Win/i.test(navigator.platform) || /Windows/i.test(ua);
+      var btnStyle = 'display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;padding:10px 24px;border-radius:12px;text-decoration:none;font-size:0.88em;font-weight:700;box-shadow:0 4px 16px rgba(124,58,237,0.3);transition:all 0.2s;cursor:pointer';
+      if (isMac) {
+        openBtn.innerHTML = '<a href="claude://" onclick="window.location=\'claude://\'" style="' + btnStyle + '" onmouseover="this.style.transform=\'scale(1.03)\'" onmouseout="this.style.transform=\'scale(1)\'"> Claude\'u Aç</a>';
+        if (openHint) openHint.textContent = 'macOS — Cowork modunda açılacak, kopyalanan metni yapıştırın';
+      } else if (isWin) {
+        openBtn.innerHTML = '<a href="claude://" onclick="window.location=\'claude://\'" style="' + btnStyle + '" onmouseover="this.style.transform=\'scale(1.03)\'" onmouseout="this.style.transform=\'scale(1)\'"> Claude\'u Aç</a>';
+        if (openHint) openHint.textContent = 'Windows — Cowork modunda açılacak, kopyalanan metni yapıştırın';
+      } else {
+        openBtn.innerHTML = '<a href="claude://" style="' + btnStyle + '">🚀 Claude Uygulamasını Aç</a>';
+        if (openHint) openHint.textContent = 'Cowork modunda açın ve kopyalanan metni yapıştırın';
+      }
     }
   }
 
