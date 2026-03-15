@@ -992,13 +992,29 @@ function renderStep0(el) {
           </label>
 
           <!-- Checkbox 3 -->
-          <label style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;margin-bottom:14px;background:#fff;border:2px solid #ede9fe;border-radius:12px;cursor:pointer;transition:all 0.2s;text-align:left" onclick="event.stopPropagation();var cb=this.querySelector('input');cb.checked=!cb.checked;updateInlineChecklist()">
+          <label style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;margin-bottom:8px;background:#fff;border:2px solid #ede9fe;border-radius:12px;cursor:pointer;transition:all 0.2s;text-align:left" onclick="event.stopPropagation();var cb=this.querySelector('input');cb.checked=!cb.checked;updateInlineChecklist()">
             <input type="checkbox" id="inlineCheck3" style="width:20px;height:20px;accent-color:#7c3aed;flex-shrink:0;margin-top:2px;cursor:pointer" onclick="event.stopPropagation();updateInlineChecklist()">
             <div>
               <strong style="font-size:0.85em;color:#4a148c">Claude in Chrome extension'ını kurdum</strong>
               <p style="font-size:0.73em;color:#7c3aed;margin-top:2px"><a href="https://chromewebstore.google.com/detail/claude-in-chrome/mhcmjhbbkpkjgecafhbopllcbmgbefao" target="_blank" style="color:#5b21b6;font-weight:600;text-decoration:underline" onclick="event.stopPropagation()">Chrome Web Store ↗</a></p>
             </div>
           </label>
+
+          <!-- Chrome Extension İzin Uyarısı -->
+          <div style="background:linear-gradient(135deg,#ffebee,#ffcdd2);border:2px solid #e53935;border-radius:12px;padding:12px 16px;margin-bottom:14px;text-align:left">
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              <span style="font-size:1.2em;flex-shrink:0;margin-top:1px">⚠️</span>
+              <div>
+                <strong style="font-size:0.82em;color:#b71c1c">Chrome eklentiyi engelliyor olabilir!</strong>
+                <p style="font-size:0.72em;color:#c62828;margin-top:4px;line-height:1.6">
+                  Eklentiyi kurduktan sonra <strong>bu siteye izin vermeniz</strong> gerekir:
+                  Chrome adres çubuğunun sağındaki <strong>🧩 uzantılar simgesine</strong> tıklayın →
+                  <strong>Claude in Chrome</strong> yanındaki <strong>📌 sabitle</strong> butonuna basın →
+                  Eklenti simgesine tıklayıp <strong>"Bu sitede izin ver"</strong> seçeneğini aktifleştirin.
+                </p>
+              </div>
+            </div>
+          </div>
 
           <!-- AŞAMA 1: "Agent'ı Başlat" button — hidden until all 3 checked -->
           <div id="notRobotBtnArea" style="display:none;animation:slideDown 0.3s ease">
