@@ -1295,9 +1295,8 @@ Bu uygulama agent'lar için özel JavaScript API'leri sunar. Chrome extension ja
 • Element bulunamazsa: waitForElement() kullan, timeout olarsa sayfayı yenile
 • Beklenmeyen durumda: getAppStatus() sonucunu kullanıcıya göster, yardım iste</div>
         <div style="display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap">
-          <a href="https://claude.ai/download" target="_blank" style="background:#a855f7;color:#fff;padding:8px 20px;border-radius:8px;text-decoration:none;font-size:0.85em;font-weight:600">⬇️ Claude Masaüstü İndir</a>
-          <a href="https://chromewebstore.google.com/detail/claude-in-chrome/mhcmjhbbkpkjgecafhbopllcbmgbefao" target="_blank" style="background:rgba(168,85,247,0.2);color:#c084fc;padding:8px 20px;border-radius:8px;text-decoration:none;font-size:0.85em;font-weight:600;border:1px solid rgba(168,85,247,0.4)">🧩 Chrome Extension Kur</a>
-          <a href="https://claude.ai/new" target="_blank" style="background:rgba(255,255,255,0.08);color:#a78bfa;padding:8px 20px;border-radius:8px;text-decoration:none;font-size:0.85em;font-weight:600;border:1px solid rgba(255,255,255,0.15)">🌐 claude.ai</a>
+          <a href="https://claude.ai/new" target="_blank" style="background:#a855f7;color:#fff;padding:8px 20px;border-radius:8px;text-decoration:none;font-size:0.85em;font-weight:600">🚀 Claude'u Aç</a>
+          <a href="https://chromewebstore.google.com/detail/claude-in-chrome/mhcmjhbbkpkjgecafhbopllcbmgbefao" target="_blank" style="background:rgba(168,85,247,0.2);color:#c084fc;padding:8px 20px;border-radius:8px;text-decoration:none;font-size:0.85em;font-weight:600;border:1px solid rgba(168,85,247,0.4)">🧩 Chrome Extension</a>
         </div>
       </div>
 
@@ -7663,13 +7662,18 @@ function buildGuideHTML() {
         '<p>Tüm adımları kendiniz yönetirsiniz. WebLLM (tarayıcıda çalışan yerel model) ile destek alabilirsiniz. <strong>İnternet bağlantısı gerektirmez</strong>, verileriniz tamamen yerel kalır.</p>' +
         '<p>Manuel modda WebLLM modellerinden birini (Phi-3.5, Llama 3.2, Gemma 2, Qwen 2.5) yükleyerek sorgu oluşturma, filtreleme ve soru-cevap özelliklerinden yararlanabilirsiniz.</p>' +
         '<h4>Ajan (Agent) Modu</h4>' +
-        '<p><strong>Claude Pro/Team/Enterprise üyeliğiniz varsa</strong> Claude Agent ile etkileşim kurarak tüm adımları otomatikleştirebilirsiniz. Agent modu için:</p>' +
-        '<ul>' +
-          '<li><a href="https://claude.ai/download" target="_blank" style="color:#7c3aed;font-weight:600">Claude Desktop</a> uygulamasını indirip kurun</li>' +
-          '<li><a href="https://chromewebstore.google.com/detail/claude-in-chrome/mhcmjhbbkpkjgecafhbopllcbmgbefao" target="_blank" style="color:#7c3aed;font-weight:600">Claude in Chrome</a> extension\'ını kurun</li>' +
-          '<li>Bu sayfayı Chrome\'da açık tutun, Cowork promptunu kopyalayıp Claude\'a yapıştırın</li>' +
-        '</ul>' +
-        '<p>Claude Agent, BibTeX yükleme, tematik analiz, kaynak doğrulama, APA7 rapor oluşturma ve dergi önerisine kadar tüm süreci sizin için otomatik gerçekleştirir.</p>' +
+        '<p><strong>Claude Pro/Team/Enterprise üyeliğiniz varsa</strong> Claude Agent ile tüm adımları otomatikleştirebilirsiniz.</p>' +
+        '<h4>Agent Modu Nasıl Başlatılır?</h4>' +
+        '<ol style="line-height:2">' +
+          '<li>"Agent Benim İçin Yapsın" kartına tıklayın → 3 gereksinim checkbox\'ı görünür</li>' +
+          '<li>Üç gereksinimi onaylayın (Pro üyelik, Desktop uygulama, Chrome eklentisi)</li>' +
+          '<li><strong>"Agent\'ı Başlat"</strong> butonuna basın → Agent talimatları otomatik kopyalanır</li>' +
+          '<li><strong>"🚀 Claude\'u Aç"</strong> butonuyla masaüstü uygulamasını açın, Cowork modunda kopyalanan metni yapıştırın</li>' +
+          '<li>Sayfadaki <strong>mavi onay butonuna</strong> basın: "Cowork\'e yapıştırdım, çalıştırdım, onaylıyorum"</li>' +
+          '<li>Agent <strong>"Ben İNSAN değilim!"</strong> checkbox\'ını tıklar → doğrulama kodu ekranda belirir</li>' +
+          '<li>Agent kodu okuyup girer → <strong>"Agent Kodu Doğrulandı — Agent Devrede!"</strong> → Adım 2\'ye geçiş</li>' +
+        '</ol>' +
+        '<div class="important">⚠️ <strong>Güvenlik:</strong> Agent modu, 3 aşamalı doğrulama gerektirir (insan onayı + checkbox + kod). Doğrulama tamamlanmadan hiçbir adıma ilerlenemez. Bu mekanizma, yalnızca yetkili agent\'ın sistemi yönetmesini garanti eder.</div>' +
         '<div class="warn">⚠️ <strong>Ajan modu</strong> kullanıyorsanız verileriniz harici bir servise gönderilir. Gizli verileri paylaşmamaya dikkat edin.</div>' +
         '</div>' +
 
@@ -7999,14 +8003,13 @@ initWebLLMBar();
       <div style="text-align:center;padding:16px;background:linear-gradient(135deg,#fdf4ff,#f5f3ff);border-radius:12px;border:2px solid #c4b5fd">
         <p style="font-size:0.88em;color:#4c1d95;margin-bottom:12px;line-height:1.6">
           <strong>Nasıl başlarsınız?</strong><br>
-          1. <a href="https://claude.ai/download" target="_blank" style="color:#7c3aed;font-weight:700">Claude Desktop</a> uygulamasını indirin<br>
-          2. <a href="https://chromewebstore.google.com/detail/claude-in-chrome/mhcmjhbbkpkjgecafhbopllcbmgbefao" target="_blank" style="color:#7c3aed;font-weight:700">Claude in Chrome</a> extension'ını kurun<br>
-          3. Bu sayfayı Chrome'da açın → Agent modunu seçin → Promptu kopyalayıp Claude'a yapıştırın!
+          1. Adım 1'de "Agent Benim İçin Yapsın" kartına tıklayın<br>
+          2. 3 gereksinimi onaylayın → <strong>"Agent'ı Başlat"</strong> butonuna basın<br>
+          3. Kopyalanan metni Claude Cowork'e yapıştırın → 3 aşamalı doğrulama → Agent devrede!
         </p>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
           <button onclick="goToStep(0)" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;padding:10px 24px;border-radius:10px;font-size:0.92em;font-weight:700;cursor:pointer;font-family:inherit">🤖 Agent Moduna Geç</button>
-          <a href="https://claude.ai/download" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#fff;color:#7c3aed;border:2px solid #7c3aed;padding:10px 24px;border-radius:10px;font-size:0.92em;font-weight:700;text-decoration:none">⬇️ Claude Desktop İndir</a>
-          <a href="https://chromewebstore.google.com/detail/claude-in-chrome/mhcmjhbbkpkjgecafhbopllcbmgbefao" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#fff;color:#7c3aed;border:2px solid #7c3aed;padding:10px 24px;border-radius:10px;font-size:0.92em;font-weight:700;text-decoration:none">🧩 Chrome Extension</a>
+          <a href="https://claude.ai/new" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#fff;color:#7c3aed;border:2px solid #7c3aed;padding:10px 24px;border-radius:10px;font-size:0.92em;font-weight:700;text-decoration:none">🚀 Claude'u Aç</a>
         </div>
         <p style="font-size:0.72em;color:#a78bfa;margin-top:8px">Claude Pro, Team veya Enterprise aboneliği gerektirir.</p>
       </div>
@@ -8015,7 +8018,9 @@ initWebLLMBar();
 </div>
 
 <footer style="text-align:center;padding:20px 20px 80px;font-size:0.75em;color:#999;border-top:1px solid #e0e0e0;margin-top:40px">
-  &copy; SEÖ, 2026
+  <div style="margin-bottom:6px">&copy; SEÖ, 2026</div>
+  <div style="font-size:0.92em;color:#bbb">Açık Araştırma <strong style="color:#7c3aed">v1.0</strong> — Ajan Destekli Akademik Yayın İnceleme Platformu</div>
+  <div style="font-size:0.85em;color:#ccc;margin-top:3px">Anadolu Üniversitesi Uzaktan Eğitim Araştırma Topluluğu</div>
 </footer>
 </body>
 </html>
