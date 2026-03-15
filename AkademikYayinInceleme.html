@@ -1026,13 +1026,28 @@ function renderStep0(el) {
 
           <!-- AŞAMA 2: Prompt kopyalandı bilgi kutusu — button click sonrası görünür -->
           <div id="agentCopiedBox" style="display:none;margin-top:18px;animation:slideDown 0.4s ease">
-            <div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border:3px solid #4caf50;border-radius:16px;padding:20px 24px;max-width:500px;margin:0 auto;text-align:center">
+            <div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border:3px solid #4caf50;border-radius:16px;padding:20px 24px;max-width:520px;margin:0 auto;text-align:center">
               <div style="font-size:1.5em;margin-bottom:6px">📋</div>
-              <div style="font-size:1em;font-weight:900;color:#2e7d32;margin-bottom:8px">METİN OTOMATİK KOPYALANDI!</div>
-              <div style="font-size:0.85em;color:#388e3c;font-weight:600;margin-bottom:12px">Şimdi bunu Claude Cowork'e yapıştırın.</div>
-              <div style="background:rgba(0,0,0,0.06);border-radius:10px;padding:10px 14px;font-size:0.75em;color:#555;line-height:1.6;margin-bottom:14px;text-align:left;font-family:'Cascadia Code',Consolas,monospace;max-height:80px;overflow-y:auto;border:1px dashed #a5d6a7" id="agentCopiedPreview"></div>
-              <div id="openClaudeAppBtn"></div>
-              <div style="font-size:0.68em;color:#9e9e9e;margin-top:8px" id="openClaudeAppHint">Cowork modunda açın ve kopyalanan metni yapıştırın</div>
+              <div style="font-size:1.05em;font-weight:900;color:#2e7d32;margin-bottom:4px">METİN OTOMATİK KOPYALANDI!</div>
+              <div style="font-size:0.88em;color:#388e3c;font-weight:700;margin-bottom:14px">Şimdi Claude masaüstü uygulamasını açıp yapıştırın.</div>
+              <div style="background:#fff;border-radius:12px;padding:14px 18px;text-align:left;margin-bottom:14px;border:1px solid #a5d6a7">
+                <div style="font-size:0.8em;color:#333;line-height:1.8">
+                  <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:6px">
+                    <span style="background:#2e7d32;color:#fff;min-width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.75em;font-weight:700;flex-shrink:0">1</span>
+                    <span><strong>Claude masaüstü uygulamasını</strong> açın (Dock / Görev Çubuğu / Spotlight)</span>
+                  </div>
+                  <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:6px">
+                    <span style="background:#2e7d32;color:#fff;min-width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.75em;font-weight:700;flex-shrink:0">2</span>
+                    <span>Sol alttaki <strong>"Cowork"</strong> moduna geçin</span>
+                  </div>
+                  <div style="display:flex;gap:10px;align-items:flex-start">
+                    <span style="background:#2e7d32;color:#fff;min-width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:0.75em;font-weight:700;flex-shrink:0">3</span>
+                    <span>Kopyalanan metni <strong>Ctrl+V / Cmd+V</strong> ile yapıştırıp gönderin</span>
+                  </div>
+                </div>
+              </div>
+              <div style="background:rgba(0,0,0,0.05);border-radius:8px;padding:8px 12px;font-size:0.7em;color:#666;line-height:1.5;text-align:left;font-family:'Cascadia Code',Consolas,monospace;max-height:60px;overflow-y:auto;border:1px dashed #a5d6a7" id="agentCopiedPreview"></div>
+              <div style="font-size:0.65em;color:#9e9e9e;margin-top:6px">Kopyalanan talimatların önizlemesi ↑</div>
             </div>
           </div>
 
@@ -1097,12 +1112,15 @@ function renderStep0(el) {
           <button onclick="copyCoworkPrompt()" style="background:#7c3aed;border:none;color:#fff;padding:6px 18px;border-radius:6px;font-size:0.8em;cursor:pointer;font-family:inherit;font-weight:600">📋 Tümünü Kopyala</button>
         </div>
         <p style="font-size:0.72em;color:#9e9e9e;margin-bottom:10px;line-height:1.5">Agent bu talimatları sayfadan okuyarak otomatik çalışır. Genellikle kopyalamanıza gerek yoktur.</p>
-        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:12px;max-height:300px;overflow-y:auto;font-size:0.75em;line-height:1.6;font-family:'Cascadia Code',Consolas,monospace;white-space:pre-wrap;color:#e2d9f3" id="coworkPromptBox">Bu sayfa "Açık Araştırma" adlı 7 adımlık sistematik literatür tarama uygulamasıdır. Sen bu uygulamanın ana agent'ısın. Chrome extension üzerinden bu sayfayla doğrudan etkileşime geçerek (buton tıklama, form doldurma, dosya yükleme) tüm süreci yöneteceksin. Kullanıcıyla her adımda iletişim kur, onay al ve kararları birlikte ver.
+        <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:12px;max-height:300px;overflow-y:auto;font-size:0.75em;line-height:1.6;font-family:'Cascadia Code',Consolas,monospace;white-space:pre-wrap;color:#e2d9f3" id="coworkPromptBox">Bu sayfa "Açık Araştırma" adlı 8 adımlık (Adım 0–7) sistematik literatür tarama uygulamasıdır. Sen bu uygulamanın ana agent'ısın. Chrome extension üzerinden bu sayfayla doğrudan etkileşime geçerek (buton tıklama, form doldurma, dosya yükleme) tüm süreci yöneteceksin. Kullanıcıyla her adımda iletişim kur, onay al ve kararları birlikte ver.
 
 ═══════════════════════════════════════
-ADIM 0 — BAĞLANTI DOĞRULAMA (İlk Adım!)
+ADIM 0 — KULLANIM MODU + BAĞLANTI DOĞRULAMA (safeGoToStep(0))
 ═══════════════════════════════════════
-⚠️ ÖNCELİKLİ GÖREV — 3 aşamalı doğrulama süreci:
+Bu adım iki bölümden oluşur: mod seçimi ve agent doğrulama.
+
+GÖREV 1 — Bağlantı Doğrulama (3 Aşama):
+⚠️ ÖNCELİKLİ GÖREV — Doğrulama tamamlanmadan hiçbir adıma ilerleyemezsin!
 
 AŞAMA A — İnsan Onayını Kontrol Et:
 • Sayfada mavi "✅ Onaylandı" butonu var mı kontrol et (#humanConfirmBtn)
@@ -1117,30 +1135,32 @@ AŞAMA C — Doğrulama Kodunu Gir (KRİTİK!):
 • Ekranda büyük fontla bir kod görünecek (ör: ARA-7X3K)
 • Bu kodu OKU ve Chrome extension javascript_tool ile şu komutu çalıştır:
   window.verifyAgent('BURAYA-KODU-YAZ')
-• Başarılı doğrulama mesajını bekle → Sayfa otomatik olarak Adım 2'ye geçecek
+• Başarılı doğrulama mesajını bekle → Sayfa otomatik olarak Adım 1'e geçecek
 • Eğer kod eşleşmezse tekrar dene — kodu ekrandan doğru oku
 
 ⛔ KOD DOĞRULAMASI OLMADAN HİÇBİR ADIMA İLERLEYEMEZSİN!
 💡 Bu 3 aşama, agent bağlantısının gerçekten aktif olduğunu ve kullanıcının onay verdiğini kanıtlar.
 
-═══════════════════════════════════════
-ADIM 1 — KULLANIM MODU (Adım 1)
-═══════════════════════════════════════
-• Bu adım artık otomatik olarak geçilir (doğrulama ile)
-• Eğer Adım 1'deysen: "Agent Benim İçin Yapsın" kartına tıkla → Adım 2'ye geç
+GÖREV 2 — Mod Seçimi:
+• Doğrulama başarılı olduğunda mod otomatik olarak "agent" olarak ayarlanır
+• Sayfa otomatik olarak Adım 1'e (Araştırma Konusu) geçer
 
 ═══════════════════════════════════════
-ADIM 2 — ARAŞTIRMA KONUSU (Adım 2)
+ADIM 1 — ARAŞTIRMA KONUSU (safeGoToStep(1))
 ═══════════════════════════════════════
+GÖREV: Kullanıcının araştırma konusunu belirle ve textarea'ya yaz.
+
 • Kullanıcıya araştırma konusunu sor
-• Kullanıcının verdiği konuyu EN AZ 50 kelime olacak şekilde zenginleştirerek textarea'ya yaz
+• Kullanıcının verdiği konuyu EN AZ 50 kelime olacak şekilde zenginleştirerek textarea'ya yaz (#researchTopic veya window.setResearchTopic("metin"))
 • Konu Türkçe veya İngilizce olabilir
-• "Devam Et" butonuna bas → Adım 3'e geç
-💡 İpucu: Konu yeterince detaylı değilse kullanıcıya alt sorular sor (hedef kitle, bağlam, kapsam)
+• Konu yeterince detaylı değilse kullanıcıya alt sorular sor (hedef kitle, bağlam, kapsam)
+• "Devam Et" butonuna bas → Adım 2'ye geç
 
 ═══════════════════════════════════════
-ADIM 3 — SORGU OLUŞTUR + BibTeX YÜKLE (Adım 3)
+ADIM 2 — SORGU OLUŞTUR + BibTeX YÜKLE (safeGoToStep(2))
 ═══════════════════════════════════════
+GÖREV: Boolean araştırma sorgusu oluştur ve BibTeX dosyası yükle.
+
 AŞAMA A — Boolean Sorgusu:
 • Araştırma konusuna uygun İngilizce Boolean sorgusu oluştur
 • WoS formatı: TS=("term1" OR "synonym1") AND TS=("term2" OR "synonym2")
@@ -1154,14 +1174,16 @@ AŞAMA B — BibTeX Yükleme:
 • Kullanıcı dosyayı sağladığında, sayfadaki "BibTeX Dosyası Yükle" upload alanına tıkla
 • Dosyayı seç ve yükle — yükleme başarılı mesajını bekle
 • Yüklenen çalışma sayısını kullanıcıya bildir
-• "Devam Et" butonuyla Adım 4'e geç
+• "Devam Et" butonuyla Adım 3'e geç
 
 ═══════════════════════════════════════
-ADIM 4 — ANALİZ + ÇALIŞMA SEÇİMİ (Adım 4)
+ADIM 3 — ANALİZ + ÇALIŞMA SEÇİMİ (safeGoToStep(3))
 ═══════════════════════════════════════
+GÖREV: BibTeX verilerini analiz et, çalışmaları sınıfla ve en ilgili olanları seç.
+
 AŞAMA A — Otomatik Analiz (Subagent Delegasyonu):
 • "Agent BibTeX Analiz Promptu Oluştur" butonuna tıkla → oluşan promptu kopyala
-• Bu promptu subagent'lara dağıt veya kendisi işle:
+• Bu promptu subagent'lara dağıt veya kendin işle:
   ◦ Tematik sınıflandırma: Başlık + abstract'tan tema ata
   ◦ İlgililik puanlaması: 0.0–1.0 arası, araştırma konusuna göre
   ◦ Metodoloji çıkarımı: Nicel / Nitel / Karma, desen, analiz yöntemi
@@ -1171,18 +1193,19 @@ AŞAMA A — Otomatik Analiz (Subagent Delegasyonu):
 AŞAMA B — Akıllı Çalışma Seçimi:
 • Analiz sonuçlarını incele — her çalışmanın teması, ilgililik puanı ve metodolojisini değerlendir
 • Araştırma konusuyla EN İLGİLİ çalışmaları belirle (ilgililik ≥ 0.7 olanlar öncelikli)
-• Her çalışma kartında "Çalışmamda kullan" checkbox'ını tıklayarak işaretle
+• Her çalışma kartında "Çalışmamda kullan" checkbox'ını tıklayarak işaretle (veya window.selectStudies([0,1,3,5]))
 • İşaretlerken kullanıcıya bilgi ver: "X çalışmayı yüksek ilgililik nedeniyle seçtim, Y çalışmayı düşük ilgililik/konu dışı olduğu için dışarıda bıraktım"
 • Kullanıcıya seçimi onayla veya düzenlemesini iste
 • İsteğe bağlı: Çalışma notları eklemek için "Not" butonuna tıkla ve kısa açıklama yaz
 💡 Seçim kriterleri: Konu uyumu, metodolojik çeşitlilik, yıl dağılımı, açık erişim durumu
 
 ═══════════════════════════════════════
-ADIM 5 — KAYNAK DOĞRULAMA (Adım 5)
+ADIM 4 — KAYNAK DOĞRULAMA (safeGoToStep(4))
 ═══════════════════════════════════════
+GÖREV: Seçilen her çalışmanın DOI'sini tarayıcıda açarak erişilebilirliğini ve meta veri doğruluğunu kontrol et.
+
 ⚠️ Bu adım MUTLAKA tarayıcı üzerinden yapılmalıdır (WebLLM ile yapılamaz).
 
-• "Kaynak Doğrulama" adımına geç
 • SEÇİLMİŞ her çalışma için DOI linkini tarayıcıda aç:
   ◦ Sayfanın erişilebilir olup olmadığını kontrol et
   ◦ Başlık, yazar(lar), yıl bilgilerini BibTeX verileriyle karşılaştır
@@ -1196,8 +1219,10 @@ ADIM 5 — KAYNAK DOĞRULAMA (Adım 5)
 • Erişilemeyen kaynaklar için alternatif öner (Google Scholar, ResearchGate)
 
 ═══════════════════════════════════════
-ADIM 6 — AKADEMİK RAPOR (Adım 6)
+ADIM 5 — AKADEMİK RAPOR (safeGoToStep(5))
 ═══════════════════════════════════════
+GÖREV: APA 7 formatında sistematik literatür taraması raporu oluştur.
+
 ⚠️ RAPOR FORMATI: APA 7 Sistematik Literatür Taraması
 Bölüm yapısı: Giriş → Yöntem (Araştırma Deseni, Veri Toplama / PRISMA) → Bulgular (Tematik Dağılım, Literatür Sentezi) → Tartışma ve Sonuç → Kaynakça (APA7)
 
@@ -1205,7 +1230,7 @@ Bölüm yapısı: Giriş → Yöntem (Araştırma Deseni, Veri Toplama / PRISMA)
 • Etik onay checkbox'ını işaretle (rapor araçları bundan sonra görünür olur)
 • Tüm bölüm checkbox'larını işaretli bırak (Giriş, Yöntem, Bulgular, Tartışma, Kaynakça)
 • SAYFA SAYISI KURALI: Kaynak sayısının %20'si kadar sayfa oluşturulmalı (Agent modu). Minimum 10, maksimum 100 sayfa.
-• "Önizleme" butonuna bas → APA7 formatında rapor oluşturulur:
+• "Önizleme" butonuna bas veya window.autoGenerateReport("preview") çağır → APA7 formatında rapor oluşturulur:
   ◦ Giriş: Araştırmanın amacı, kapsamı ve temalar
   ◦ Yöntem: Araştırma deseni, PRISMA süreci, dahil etme/hariç tutma kriterleri
   ◦ Bulgular: Tematik dağılım tablosu + tema bazlı literatür sentezi (karşılaştırmalı, APA7 atıflarıyla)
@@ -1216,8 +1241,10 @@ Bölüm yapısı: Giriş → Yöntem (Araştırma Deseni, Veri Toplama / PRISMA)
 • "Kopyala" veya "İndir" butonlarıyla çıktıyı kullanıcıya sun
 
 ═══════════════════════════════════════
-ADIM 7 — ARAŞTIRMA TASARIMI (Adım 7)
+ADIM 6 — ARAŞTIRMA TASARIMI (safeGoToStep(6))
 ═══════════════════════════════════════
+GÖREV: Literatür bulgularına dayalı araştırma yöntemi ve tasarımı oluştur.
+
 • Kullanıcıyla birlikte araştırma yöntemini belirle:
   ◦ Nicel / Nitel / Karma → En uygun deseni seç
   ◦ Araştırma konusuna ve literatür bulgularına göre gerekçelendir
@@ -1232,15 +1259,17 @@ ADIM 7 — ARAŞTIRMA TASARIMI (Adım 7)
   ◦ Olası sınırlılıklar
 
 ═══════════════════════════════════════
-ADIM 8 — ÖZET + DERGİ ÖNERİSİ (Adım 8)
+ADIM 7 — ÖZET + DERGİ ÖNERİSİ (safeGoToStep(7))
 ═══════════════════════════════════════
-• Son adıma geçmek için navigasyondaki "8. Özet" butonuna tıkla
+GÖREV: Tüm süreci özetle, çıktıları doğrula ve hedef dergi önerileri sun.
+
+• Son adıma geçmek için safeGoToStep(7) veya navigasyondaki "8. Özet" butonuna tıkla
 • Tüm adımların özeti kullanıcıya otomatik sunulur
 • Çıktıları kontrol et: Akademik Rapor, Araştırma Tasarımı, BibTeX, Oturum Yedeği butonlarının çalıştığını doğrula
 • Oturum otomatik olarak kaydedilir
 
 DERGİ ÖNERİSİ:
-• Sayfa otomatik olarak algoritmik dergi önerileri üretir (kural tabanlı)
+• window.recommendJournals() ile algoritmik dergi önerilerini al (kural tabanlı)
 • Algoritmik önerileri kullanıcıya açıkla, ancak SEN daha kapsamlı bir analiz yap:
   ◦ Araştırma konusu, temalar ve kaynak dergilerine göre en uygun 8-10 dergi öner
   ◦ Her dergi için: İndeks (WoS/Scopus/TR Dizin/ERIC), Q kategorisi, güncel IF, APC, ISSN, web sitesi
@@ -1279,11 +1308,11 @@ Bu uygulama agent'lar için özel JavaScript API'leri sunar. Chrome extension ja
 • Her adımda önce getAppStatus() çağırarak durumu kontrol et
 
 🔧 PROGRAMATIK İŞLEMLER:
-• window.setResearchTopic("metin") → Araştırma konusunu programatik olarak yaz
+• window.setResearchTopic("metin") → Araştırma konusunu programatik olarak yaz (Adım 1)
 • window.safeGoToStep(n) → Güvenli adım atlama (0-7), hata kontrolü dahil
-• window.selectStudies([0,1,3,5]) → İndexe göre çalışma seç/kaldır
-• window.autoGenerateReport("preview") → Raporu otomatik oluştur (etik onayı dahil)
-• window.recommendJournals() → Algoritmik dergi önerilerini al
+• window.selectStudies([0,1,3,5]) → İndexe göre çalışma seç/kaldır (Adım 3)
+• window.autoGenerateReport("preview") → Raporu otomatik oluştur, etik onayı dahil (Adım 5)
+• window.recommendJournals() → Algoritmik dergi önerilerini al (Adım 7)
 
 ⏳ DOM BEKLEMESİ:
 • await window.waitForElement("#selector", 5000) → Element görünene kadar bekle
@@ -1295,7 +1324,7 @@ Bu uygulama agent'lar için özel JavaScript API'leri sunar. Chrome extension ja
 • Element bulunamazsa: waitForElement() kullan, timeout olarsa sayfayı yenile
 • Beklenmeyen durumda: getAppStatus() sonucunu kullanıcıya göster, yardım iste</div>
         <div style="display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap">
-          <a href="https://claude.ai/new" target="_blank" style="background:#a855f7;color:#fff;padding:8px 20px;border-radius:8px;text-decoration:none;font-size:0.85em;font-weight:600">🚀 Claude'u Aç</a>
+          <span style="font-size:0.78em;color:#c4b5fd">💡 Claude masaüstü uygulamasını Dock / Görev Çubuğu / Spotlight'tan açın → Cowork moduna geçin</span>
           <a href="https://chromewebstore.google.com/detail/claude-in-chrome/mhcmjhbbkpkjgecafhbopllcbmgbefao" target="_blank" style="background:rgba(168,85,247,0.2);color:#c084fc;padding:8px 20px;border-radius:8px;text-decoration:none;font-size:0.85em;font-weight:600;border:1px solid rgba(168,85,247,0.4)">🧩 Chrome Extension</a>
         </div>
       </div>
@@ -1426,18 +1455,6 @@ function startAgentMode() {
     var preview = document.getElementById('agentCopiedPreview');
     if (preview && copiedText) {
       preview.textContent = copiedText.substring(0, 150) + '…';
-    }
-    // "Claude'u Aç" button — opens claude.ai/new in new tab
-    var openBtn = document.getElementById('openClaudeAppBtn');
-    var openHint = document.getElementById('openClaudeAppHint');
-    if (openBtn) {
-      var ua = navigator.userAgent || '';
-      var isMac = /Mac/i.test(navigator.platform) || /Macintosh/i.test(ua);
-      var isWin = /Win/i.test(navigator.platform) || /Windows/i.test(ua);
-      var osLabel = isMac ? 'macOS' : isWin ? 'Windows' : '';
-      var btnStyle = 'display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;padding:10px 24px;border-radius:12px;text-decoration:none;font-size:0.88em;font-weight:700;box-shadow:0 4px 16px rgba(124,58,237,0.3);transition:all 0.2s;cursor:pointer';
-      openBtn.innerHTML = '<a href="https://claude.ai/new" target="_blank" style="' + btnStyle + '" onmouseover="this.style.transform=\'scale(1.03)\'" onmouseout="this.style.transform=\'scale(1)\'">🚀 Claude\'u Aç</a>';
-      if (openHint) openHint.textContent = (osLabel ? osLabel + ' — ' : '') + 'Masaüstü uygulamasında Cowork modunu açın, kopyalanan metni yapıştırın';
     }
   }
 
@@ -7570,13 +7587,14 @@ function buildGuideHTML() {
         '<a class="guide-nav-item active" data-section="overview" onclick="guideNav(\'overview\')">🏠 Genel Bakış</a>' +
         '<a class="guide-nav-item" data-section="concepts" onclick="guideNav(\'concepts\')">📚 Temel Kavramlar</a>' +
         '<a class="guide-nav-item" data-section="glossary" onclick="guideNav(\'glossary\')">📖 Terimler Sözlüğü</a>' +
-        '<a class="guide-nav-item" data-section="step0" onclick="guideNav(\'step0\')">1️⃣ Kullanım Modu</a>' +
-        '<a class="guide-nav-item" data-section="step1" onclick="guideNav(\'step1\')">2️⃣ Araştırma Konusu</a>' +
-        '<a class="guide-nav-item" data-section="step2" onclick="guideNav(\'step2\')">3️⃣ Sorgu / BibTeX</a>' +
-        '<a class="guide-nav-item" data-section="step3" onclick="guideNav(\'step3\')">4️⃣ Analiz</a>' +
-        '<a class="guide-nav-item" data-section="step4" onclick="guideNav(\'step4\')">5️⃣ Kaynak Doğrulama</a>' +
-        '<a class="guide-nav-item" data-section="step5" onclick="guideNav(\'step5\')">6️⃣ Akademik Rapor</a>' +
-        '<a class="guide-nav-item" data-section="step6" onclick="guideNav(\'step6\')">7️⃣ Araştırma Tasarımı</a>' +
+        '<a class="guide-nav-item" data-section="step0" onclick="guideNav(\'step0\')">0️⃣ Kullanım Modu</a>' +
+        '<a class="guide-nav-item" data-section="step1" onclick="guideNav(\'step1\')">1️⃣ Araştırma Konusu</a>' +
+        '<a class="guide-nav-item" data-section="step2" onclick="guideNav(\'step2\')">2️⃣ Sorgu / BibTeX</a>' +
+        '<a class="guide-nav-item" data-section="step3" onclick="guideNav(\'step3\')">3️⃣ Analiz</a>' +
+        '<a class="guide-nav-item" data-section="step4" onclick="guideNav(\'step4\')">4️⃣ Kaynak Doğrulama</a>' +
+        '<a class="guide-nav-item" data-section="step5" onclick="guideNav(\'step5\')">5️⃣ Akademik Rapor</a>' +
+        '<a class="guide-nav-item" data-section="step6" onclick="guideNav(\'step6\')">6️⃣ Araştırma Tasarımı</a>' +
+        '<a class="guide-nav-item" data-section="step7" onclick="guideNav(\'step7\')">7️⃣ Özet + Dergi</a>' +
         '<a class="guide-nav-item" data-section="scenarios" onclick="guideNav(\'scenarios\')">🎯 Kullanım Senaryoları</a>' +
         '<a class="guide-nav-item" data-section="sessions" onclick="guideNav(\'sessions\')">💾 Oturum Yönetimi</a>' +
         '<a class="guide-nav-item" data-section="webllm" onclick="guideNav(\'webllm\')">🧠 WebLLM & Chatbot</a>' +
@@ -7589,16 +7607,17 @@ function buildGuideHTML() {
         '<div id="guide-overview">' +
         '<h3>🏠 Genel Bakış</h3>' +
         '<p><strong>Açık Araştırma</strong>, sistematik literatür taraması sürecini baştan sona destekleyen, yapay zeka tabanlı bir web uygulamasıdır. Anadolu Üniversitesi Uzaktan Eğitim Araştırma Topluluğu tarafından geliştirilmiştir.</p>' +
-        '<p>Uygulama <strong>7 adımlı bir sihirbaz (wizard)</strong> yapısıyla çalışır ve her adımda araştırmacıya rehberlik eder:</p>' +
+        '<p>Uygulama <strong>8 adımlı bir sihirbaz (wizard)</strong> yapısıyla çalışır (Adım 0–7) ve her adımda araştırmacıya rehberlik eder:</p>' +
         '<table>' +
           '<tr><th>Adım</th><th>İçerik</th><th>Amaç</th></tr>' +
-          '<tr><td>1. Kullanım Modu</td><td>Manuel veya Ajan modu seçimi</td><td>İş akışını belirlemek</td></tr>' +
-          '<tr><td>2. Araştırma Konusu</td><td>Konu, alanlar, anahtar kelimeler</td><td>Araştırma kapsamını tanımlamak</td></tr>' +
-          '<tr><td>3. Sorgu / BibTeX</td><td>Veritabanı sorgusu veya BibTeX yükleme</td><td>Kaynak verilerini toplamak</td></tr>' +
-          '<tr><td>4. Analiz</td><td>Tematik analiz, filtreleme, etiketleme</td><td>Çalışmaları incelemek ve seçmek</td></tr>' +
-          '<tr><td>5. Kaynak Doğrulama</td><td>DOI üzerinden kaynak kontrolü</td><td>Kaynakların erişilebilirliğini teyit etmek</td></tr>' +
-          '<tr><td>6. Akademik Rapor</td><td>Otomatik rapor üretimi</td><td>APA 7 uyumlu taslak rapor oluşturmak</td></tr>' +
-          '<tr><td>7. Araştırma Tasarımı</td><td>Yöntem ve tasarım önerileri</td><td>Araştırma çerçevesi oluşturmak</td></tr>' +
+          '<tr><td>0. Kullanım Modu</td><td>Manuel veya Ajan modu seçimi + Agent doğrulama</td><td>İş akışını belirlemek, agent bağlantısını kurmak</td></tr>' +
+          '<tr><td>1. Araştırma Konusu</td><td>Konu, alanlar, anahtar kelimeler</td><td>Araştırma kapsamını tanımlamak</td></tr>' +
+          '<tr><td>2. Sorgu / BibTeX</td><td>Veritabanı sorgusu veya BibTeX yükleme</td><td>Kaynak verilerini toplamak</td></tr>' +
+          '<tr><td>3. Analiz</td><td>Tematik analiz, filtreleme, etiketleme</td><td>Çalışmaları incelemek ve seçmek</td></tr>' +
+          '<tr><td>4. Kaynak Doğrulama</td><td>DOI üzerinden kaynak kontrolü</td><td>Kaynakların erişilebilirliğini teyit etmek</td></tr>' +
+          '<tr><td>5. Akademik Rapor</td><td>Otomatik rapor üretimi</td><td>APA 7 uyumlu taslak rapor oluşturmak</td></tr>' +
+          '<tr><td>6. Araştırma Tasarımı</td><td>Yöntem ve tasarım önerileri</td><td>Araştırma çerçevesi oluşturmak</td></tr>' +
+          '<tr><td>7. Özet + Dergi Önerisi</td><td>Tüm adımların özeti ve dergi önerileri</td><td>Süreç özetini ve yayın stratejisini sunmak</td></tr>' +
         '</table>' +
         '<div class="tip">💡 <strong>İpucu:</strong> Tüm verileriniz tarayıcınızda (localStorage) saklanır. Sunucuya herhangi bir veri gönderilmez — çalışmanız tamamen yerel ve gizlidir.</div>' +
         '</div>' +
@@ -7654,9 +7673,9 @@ function buildGuideHTML() {
         '</table>' +
         '</div>' +
 
-        // ===== ADIM 1: KULLANIM MODU =====
+        // ===== ADIM 0: KULLANIM MODU =====
         '<div id="guide-step0">' +
-        '<h3>1️⃣ Adım 1: Kullanım Modu</h3>' +
+        '<h3>0️⃣ Adım 0: Kullanım Modu + Agent Doğrulama</h3>' +
         '<p>Uygulamanın nasıl çalışacağını belirlersiniz. İki mod mevcuttur:</p>' +
         '<h4>Manuel Mod</h4>' +
         '<p>Tüm adımları kendiniz yönetirsiniz. WebLLM (tarayıcıda çalışan yerel model) ile destek alabilirsiniz. <strong>İnternet bağlantısı gerektirmez</strong>, verileriniz tamamen yerel kalır.</p>' +
@@ -7668,7 +7687,7 @@ function buildGuideHTML() {
           '<li>"Agent Benim İçin Yapsın" kartına tıklayın → 3 gereksinim checkbox\'ı görünür</li>' +
           '<li>Üç gereksinimi onaylayın (Pro üyelik, Desktop uygulama, Chrome eklentisi)</li>' +
           '<li><strong>"Agent\'ı Başlat"</strong> butonuna basın → Agent talimatları otomatik kopyalanır</li>' +
-          '<li><strong>"🚀 Claude\'u Aç"</strong> butonuyla masaüstü uygulamasını açın, Cowork modunda kopyalanan metni yapıştırın</li>' +
+          '<li>Claude masaüstü uygulamasını açın (Dock / Görev Çubuğu / Spotlight) → <strong>Cowork moduna</strong> geçin → kopyalanan metni yapıştırıp gönderin</li>' +
           '<li>Sayfadaki <strong>mavi onay butonuna</strong> basın: "Cowork\'e yapıştırdım, çalıştırdım, onaylıyorum"</li>' +
           '<li>Agent <strong>"Ben İNSAN değilim!"</strong> checkbox\'ını tıklar → doğrulama kodu ekranda belirir</li>' +
           '<li>Agent kodu okuyup girer → <strong>"Agent Kodu Doğrulandı — Agent Devrede!"</strong> → Adım 2\'ye geçiş</li>' +
@@ -7679,7 +7698,7 @@ function buildGuideHTML() {
 
         // ===== ADIM 2: ARAŞTIRMA KONUSU =====
         '<div id="guide-step1">' +
-        '<h3>2️⃣ Adım 2: Araştırma Konusu</h3>' +
+        '<h3>1️⃣ Adım 1: Araştırma Konusu</h3>' +
         '<p>Araştırmanızın temel bilgilerini tanımlarsınız:</p>' +
         '<ul>' +
           '<li><strong>Proje/Araştırma Adı:</strong> Çalışmanızın başlığı</li>' +
@@ -7693,7 +7712,7 @@ function buildGuideHTML() {
 
         // ===== ADIM 3: SORGU / BIBTEX =====
         '<div id="guide-step2">' +
-        '<h3>3️⃣ Adım 3: Sorgu Oluşturma / BibTeX Yükleme</h3>' +
+        '<h3>2️⃣ Adım 2: Sorgu Oluşturma / BibTeX Yükleme</h3>' +
         '<p>Bu adımda iki yol mevcuttur:</p>' +
         '<h4>Yol A: Sorgu Oluşturma</h4>' +
         '<p>Veritabanı (Web of Science veya Scopus) seçersiniz. Uygulama anahtar kelimelerinizden otomatik boolean sorgu oluşturur (AND/OR operatörleriyle). Bu sorguyu ilgili veritabanında çalıştırıp sonuçları BibTeX olarak dışa aktarırsınız.</p>' +
@@ -7710,7 +7729,7 @@ function buildGuideHTML() {
 
         // ===== ADIM 4: ANALİZ =====
         '<div id="guide-step3">' +
-        '<h3>4️⃣ Adım 4: Analiz</h3>' +
+        '<h3>3️⃣ Adım 3: Analiz</h3>' +
         '<p>Yüklenen çalışmaların detaylı analizini yaparsınız. Bu en kapsamlı adımdır:</p>' +
         '<h4>Özet İstatistikler</h4>' +
         '<p>Toplam çalışma, açık erişim sayısı, ücretli erişim ve tema sayısı gösterilir.</p>' +
@@ -7731,14 +7750,14 @@ function buildGuideHTML() {
 
         // ===== ADIM 5: KAYNAK DOĞRULAMA =====
         '<div id="guide-step4">' +
-        '<h3>5️⃣ Adım 5: Kaynak Doğrulama</h3>' +
+        '<h3>4️⃣ Adım 4: Kaynak Doğrulama</h3>' +
         '<p>DOI linkleri üzerinden kaynakların erişilebilirliğini ve meta verilerini kontrol eder. Doğrulanamayan kaynaklar rapor adımında otomatik olarak hariç tutulur.</p>' +
         '<p>Bu adım isteğe bağlıdır. Atlayarak doğrudan rapora geçebilirsiniz, ancak akademik bütünlük için doğrulama önerilir.</p>' +
         '</div>' +
 
         // ===== ADIM 6: AKADEMİK RAPOR =====
         '<div id="guide-step5">' +
-        '<h3>6️⃣ Adım 6: Akademik Rapor</h3>' +
+        '<h3>5️⃣ Adım 5: Akademik Rapor</h3>' +
         '<p>Bu adımda yapay zeka, verilerinizden otomatik bir akademik rapor taslağı üretir.</p>' +
         '<h4>Etik Onay Gerekliliği</h4>' +
         '<p>Rapor oluşturmadan önce akademik etik beyanını okumanız ve onaylamanız gerekir. Bu beyan, YZ tarafından üretilen içeriğin bir taslak olduğunu ve sorumluluğun araştırmacıya ait olduğunu hatırlatır.</p>' +
@@ -7756,8 +7775,15 @@ function buildGuideHTML() {
 
         // ===== ADIM 7: ARAŞTIRMA TASARIMI =====
         '<div id="guide-step6">' +
-        '<h3>7️⃣ Adım 7: Araştırma Tasarımı</h3>' +
+        '<h3>6️⃣ Adım 6: Araştırma Tasarımı</h3>' +
         '<p>Literatür taramanıza dayalı olarak araştırma tasarımı önerileri alırsınız. Yöntem seçimi, örneklem, veri toplama araçları ve analiz yöntemleri konusunda rehberlik sağlar.</p>' +
+        '</div>' +
+
+        // ===== ADIM 7: ÖZET =====
+        '<div id="guide-step7">' +
+        '<h3>7️⃣ Adım 7: Özet + Dergi Önerisi</h3>' +
+        '<p>Son adımda tüm sürecin özeti otomatik olarak sunulur. Akademik Rapor, Araştırma Tasarımı, BibTeX verileri ve oturum yedeği butonlarıyla çıktılarınızı indirebilirsiniz.</p>' +
+        '<p><strong>Dergi Önerisi:</strong> Uygulama, araştırma konunuz ve kaynaklarınıza göre algoritmik dergi önerileri üretir. Agent modunda Claude, ek olarak internet üzerinden güncel indeksleme durumlarını kontrol ederek daha kapsamlı dergi önerileri sunar.</p>' +
         '</div>' +
 
         // ===== KULLANIM SENARYOLARI =====
@@ -7960,12 +7986,14 @@ initWebLLMBar();
             <div style="font-weight:700;font-size:0.9em;color:var(--text2);margin-top:4px">Şu An (Manuel)</div>
           </div>
           <div style="font-size:0.8em;color:var(--text2);line-height:1.7">
-            <div style="padding:4px 0;border-bottom:1px solid #eee">1. Sorgu oluşturma ✋</div>
-            <div style="padding:4px 0;border-bottom:1px solid #eee">2. WoS/Scopus'a gidip yapıştırma ✋</div>
-            <div style="padding:4px 0;border-bottom:1px solid #eee">3. BibTeX indirme ✋</div>
-            <div style="padding:4px 0;border-bottom:1px solid #eee">4. Yükleme ve filtreleme ✋</div>
-            <div style="padding:4px 0;border-bottom:1px solid #eee">5. Analiz ve rapor ✋</div>
-            <div style="padding:4px 0">6. Kaynak doğrulama ✋</div>
+            <div style="padding:4px 0;border-bottom:1px solid #eee">0. Mod seçimi ✋</div>
+            <div style="padding:4px 0;border-bottom:1px solid #eee">1. Konu belirleme ✋</div>
+            <div style="padding:4px 0;border-bottom:1px solid #eee">2. Sorgu + BibTeX ✋</div>
+            <div style="padding:4px 0;border-bottom:1px solid #eee">3. Analiz + seçim ✋</div>
+            <div style="padding:4px 0;border-bottom:1px solid #eee">4. Kaynak doğrulama ✋</div>
+            <div style="padding:4px 0;border-bottom:1px solid #eee">5. Rapor oluşturma ✋</div>
+            <div style="padding:4px 0;border-bottom:1px solid #eee">6. Araştırma tasarımı ✋</div>
+            <div style="padding:4px 0">7. Özet + dergi önerisi ✋</div>
           </div>
         </div>
         <!-- VS -->
@@ -7979,12 +8007,14 @@ initWebLLMBar();
             <div style="font-weight:700;font-size:0.9em;color:#6d28d9;margin-top:4px">Claude Agent (Otomasyon)</div>
           </div>
           <div style="font-size:0.8em;color:#4c1d95;line-height:1.7">
-            <div style="padding:4px 0;border-bottom:1px solid #ede9fe">1. Sorgu oluşturma <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
-            <div style="padding:4px 0;border-bottom:1px solid #ede9fe">2. Veritabanında arama <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
-            <div style="padding:4px 0;border-bottom:1px solid #ede9fe">3. BibTeX yükleme <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
-            <div style="padding:4px 0;border-bottom:1px solid #ede9fe">4. Filtreleme + analiz <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
+            <div style="padding:4px 0;border-bottom:1px solid #ede9fe">0. Doğrulama + mod <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
+            <div style="padding:4px 0;border-bottom:1px solid #ede9fe">1. Konu belirleme <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
+            <div style="padding:4px 0;border-bottom:1px solid #ede9fe">2. Sorgu + BibTeX <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
+            <div style="padding:4px 0;border-bottom:1px solid #ede9fe">3. Analiz + seçim <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
+            <div style="padding:4px 0;border-bottom:1px solid #ede9fe">4. Kaynak doğrulama <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
             <div style="padding:4px 0;border-bottom:1px solid #ede9fe">5. Rapor oluşturma <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
-            <div style="padding:4px 0">6. Kaynak doğrulama <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
+            <div style="padding:4px 0;border-bottom:1px solid #ede9fe">6. Araştırma tasarımı <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
+            <div style="padding:4px 0">7. Özet + dergi önerisi <span style="color:#16a34a;font-weight:700">✅ otomatik</span></div>
           </div>
         </div>
       </div>
@@ -8003,13 +8033,13 @@ initWebLLMBar();
       <div style="text-align:center;padding:16px;background:linear-gradient(135deg,#fdf4ff,#f5f3ff);border-radius:12px;border:2px solid #c4b5fd">
         <p style="font-size:0.88em;color:#4c1d95;margin-bottom:12px;line-height:1.6">
           <strong>Nasıl başlarsınız?</strong><br>
-          1. Adım 1'de "Agent Benim İçin Yapsın" kartına tıklayın<br>
+          1. Adım 0'da "Agent Benim İçin Yapsın" kartına tıklayın<br>
           2. 3 gereksinimi onaylayın → <strong>"Agent'ı Başlat"</strong> butonuna basın<br>
-          3. Kopyalanan metni Claude Cowork'e yapıştırın → 3 aşamalı doğrulama → Agent devrede!
+          3. Claude masaüstü uygulamasını açın → Cowork moduna geçin → Kopyalanan metni yapıştırın<br>
+          4. Sayfadaki onay butonuna basın → 3 aşamalı doğrulama → Agent devrede!
         </p>
         <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
           <button onclick="goToStep(0)" style="background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;padding:10px 24px;border-radius:10px;font-size:0.92em;font-weight:700;cursor:pointer;font-family:inherit">🤖 Agent Moduna Geç</button>
-          <a href="https://claude.ai/new" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#fff;color:#7c3aed;border:2px solid #7c3aed;padding:10px 24px;border-radius:10px;font-size:0.92em;font-weight:700;text-decoration:none">🚀 Claude'u Aç</a>
         </div>
         <p style="font-size:0.72em;color:#a78bfa;margin-top:8px">Claude Pro, Team veya Enterprise aboneliği gerektirir.</p>
       </div>
