@@ -699,6 +699,10 @@ function getAppStatus() {
  */
 function safeGoToStep(stepNum) {
   if (stepNum < 0 || stepNum > 7) return { success: false, error: 'Invalid step number (0-7)' };
+  // Block in agent mode without verification
+  if (useMode === 'agent' && stepNum > 0 && !window._agentVerified) {
+    return { success: false, error: 'Agent verification required! Call window.verifyAgent(code) first.' };
+  }
   if (stepNum >= 3 && stepNum <= 6 && state.studies.length === 0) return { success: false, error: 'No studies loaded yet. Load BibTeX first.' };
   goToStep(stepNum);
   return { success: true, step: stepNum, stepName: STEPS[stepNum].label };
@@ -804,6 +808,11 @@ function renderStepper() {
 }
 
 function goToStep(n) {
+  // CRITICAL: In agent mode, block ALL step advancement without code verification
+  if (useMode === 'agent' && n > 0 && !window._agentVerified) {
+    showToast('⛔ Agent modu aktif ancak doğrulama tamamlanmadı! Önce Agent bağlantı kodunu doğrulayın.');
+    return;
+  }
   if (n >= 3 && n <= 6 && state.studies.length === 0) {
     showToast('Önce BibTeX yükleyin!'); return;
   }
@@ -991,7 +1000,7 @@ function renderStep0(el) {
             </div>
           </label>
 
-          <!-- "Agent'ı Başlat" button — hidden until all checked -->
+          <!-- AŞAMA 1: "Agent'ı Başlat" button — hidden until all 3 checked -->
           <div id="notRobotBtnArea" style="display:none;animation:slideDown 0.3s ease">
             <button id="notRobotBtn" onclick="startAgentMode()" style="padding:16px 40px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:14px;font-size:1em;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 6px 24px rgba(124,58,237,0.35);transition:all 0.25s;display:inline-flex;align-items:center;gap:10px" onmouseover="this.style.transform='scale(1.03)';this.style.boxShadow='0 8px 30px rgba(124,58,237,0.45)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 6px 24px rgba(124,58,237,0.35)'">
               <span style="font-size:1.3em">🤖</span> Agent'ı Başlat
@@ -999,7 +1008,30 @@ function renderStep0(el) {
             <p style="font-size:0.72em;color:#9e9e9e;margin-top:8px">Tıklayınca Agent talimatları otomatik kopyalanır</p>
           </div>
 
-          <!-- "Ben İNSAN değilim!" checkbox — appears after button click, Agent clicks this -->
+          <!-- AŞAMA 2: Prompt kopyalandı bilgi kutusu — button click sonrası görünür -->
+          <div id="agentCopiedBox" style="display:none;margin-top:18px;animation:slideDown 0.4s ease">
+            <div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border:3px solid #4caf50;border-radius:16px;padding:20px 24px;max-width:500px;margin:0 auto;text-align:center">
+              <div style="font-size:1.5em;margin-bottom:6px">📋</div>
+              <div style="font-size:1em;font-weight:900;color:#2e7d32;margin-bottom:8px">METİN OTOMATİK KOPYALANDI!</div>
+              <div style="font-size:0.85em;color:#388e3c;font-weight:600;margin-bottom:12px">Şimdi bunu Claude Cowork'e yapıştırın.</div>
+              <div style="background:rgba(0,0,0,0.06);border-radius:10px;padding:10px 14px;font-size:0.75em;color:#555;line-height:1.6;margin-bottom:14px;text-align:left;font-family:'Cascadia Code',Consolas,monospace;max-height:80px;overflow-y:auto;border:1px dashed #a5d6a7" id="agentCopiedPreview"></div>
+              <a href="https://claude.ai/download" target="_blank" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;padding:10px 24px;border-radius:12px;text-decoration:none;font-size:0.88em;font-weight:700;box-shadow:0 4px 16px rgba(124,58,237,0.3);transition:all 0.2s" onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">⬇️ Claude Masaüstü Uygulamasını İndir</a>
+              <div style="font-size:0.68em;color:#9e9e9e;margin-top:8px">Zaten yüklüyse Cowork modunda açıp yapıştırmanız yeterli</div>
+            </div>
+          </div>
+
+          <!-- AŞAMA 3: İnsan onayı butonu — Agent bunu kontrol eder -->
+          <div id="humanConfirmArea" style="display:none;margin-top:16px;animation:slideDown 0.4s ease">
+            <div style="background:linear-gradient(135deg,#e3f2fd,#bbdefb);border:3px solid #1976d2;border-radius:16px;padding:18px 20px;max-width:500px;margin:0 auto;text-align:center">
+              <div style="font-size:1.2em;margin-bottom:8px">🧑‍💻</div>
+              <div style="font-size:0.88em;font-weight:700;color:#1565c0;margin-bottom:12px">Son kontrol — hazır mısınız?</div>
+              <button id="humanConfirmBtn" onclick="confirmHumanReady()" style="padding:14px 24px;background:linear-gradient(135deg,#1976d2,#1565c0);color:#fff;border:none;border-radius:12px;font-size:0.88em;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 16px rgba(25,118,210,0.3);transition:all 0.25s;line-height:1.5;max-width:440px" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                ✅ Claude Cowork'e metni yapıştırdım, çalıştırdım.<br>Chrome'da eklenti iznimi verdim.<br>İşlemlerin Agent tarafından yapılmasını onaylıyorum.
+              </button>
+            </div>
+          </div>
+
+          <!-- AŞAMA 4: "Ben İNSAN değilim!" checkbox — İnsan onayı sonrası, Agent tıklar -->
           <div id="agentNotHumanInline" style="display:none;margin-top:16px;animation:slideDown 0.4s ease">
             <div id="agentNotHumanArea" style="padding:18px 20px;background:linear-gradient(135deg,#fff3e0,#ffe0b2);border:3px solid #ff9800;border-radius:16px;max-width:420px;margin:0 auto">
               <label id="agentNotHumanLabel" style="display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none" for="agentNotHumanCheck">
@@ -1016,8 +1048,21 @@ function renderStep0(el) {
             </div>
           </div>
 
-          <!-- Agent doğrulama bilgi notu — checkbox tıklandıktan sonra görünür -->
-          <div id="agentVerifiedNote" style="display:none;margin-top:14px;animation:bounceIn 0.5s ease">
+          <!-- AŞAMA 5: Doğrulama kodu ekranı — Agent kodu okuyup girer -->
+          <div id="agentCodeVerifyArea" style="display:none;margin-top:16px;animation:slideDown 0.4s ease">
+            <div style="background:linear-gradient(135deg,#faf5ff,#ede9fe);border:3px dashed #7c3aed;border-radius:16px;padding:24px;max-width:420px;margin:0 auto;text-align:center">
+              <div style="font-size:0.78em;color:#7c3aed;font-weight:600;margin-bottom:8px;letter-spacing:0.5px">🔐 DOĞRULAMA KODU</div>
+              <div id="handshakeCode" style="font-size:2.4em;font-weight:900;color:#4c1d95;font-family:'Cascadia Code',Consolas,monospace;letter-spacing:6px;margin-bottom:8px"></div>
+              <div style="font-size:0.75em;color:#7c3aed;margin-bottom:12px">Agent bu kodu okuyup <code style="background:#ede9fe;padding:2px 6px;border-radius:4px">window.verifyAgent('KOD')</code> ile doğrulayacak</div>
+              <div id="codeVerifySpinner" style="display:flex;align-items:center;justify-content:center;gap:8px">
+                <div style="width:14px;height:14px;border:3px solid #7c3aed;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite"></div>
+                <span style="font-size:0.78em;color:#7c3aed;font-weight:600">Agent kodu girmesi bekleniyor…</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AŞAMA 6: Doğrulama tamamlandı — sonuç notu -->
+          <div id="agentVerifiedNote" style="display:none;margin-top:16px;animation:bounceIn 0.5s ease">
           </div>
 
           <!-- Remaining count when not all checked -->
@@ -1030,16 +1075,6 @@ function renderStep0(el) {
       <!-- Agent Modu Seçildiğinde: Hızlı Başlangıç + Talimatlar -->
       <div id="agentModeDetails" style="display:${useMode==='agent'?'block':'none'};background:#1e1133;padding:20px 24px;border-top:2px solid #7c3aed">
 
-        <!-- Kolay Başlangıç: Tek komutla Agent'ı başlat -->
-        <div style="background:linear-gradient(135deg,rgba(255,152,0,0.12),rgba(255,87,34,0.08));border:1px solid rgba(255,152,0,0.35);border-radius:14px;padding:18px 20px;margin-bottom:18px">
-          <p style="font-size:0.92em;color:#ffb74d;margin-bottom:10px;font-weight:800;display:flex;align-items:center;gap:8px">🚀 Hızlı Başlangıç</p>
-          <p style="font-size:0.8em;color:#c4b5fd;line-height:1.6;margin-bottom:10px">Claude masaüstü uygulamasını <strong style="color:#e9d5ff">Cowork modunda</strong> açın ve aşağıdaki komutu yapıştırın:</p>
-          <div style="background:rgba(0,0,0,0.35);border-radius:10px;padding:12px 16px;font-family:'Cascadia Code',Consolas,monospace;font-size:0.82em;color:#e8b4fe;cursor:pointer;position:relative;border:1px solid rgba(168,85,247,0.3);transition:all 0.2s" onclick="navigator.clipboard.writeText(this.querySelector('.agent-short-cmd').textContent.trim());showToast('📋 Komut kopyalandı!');this.style.borderColor='#4caf50'" onmouseout="this.style.borderColor='rgba(168,85,247,0.3)'">
-            <span class="agent-short-cmd">https://seoncu.github.io/acik-arastirma/ adresini aç, sayfanın altındaki "Agenta Talimatlar" bölümünü oku ve adımları takip et. İlk olarak "Ben İNSAN değilim!" checkbox'ını tıkla.</span>
-            <span style="position:absolute;top:6px;right:8px;font-size:0.7em;color:#a78bfa;opacity:0.8">📋 tıkla = kopyala</span>
-          </div>
-        </div>
-
         <!-- Agenta Talimatlar Başlığı -->
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
           <span style="font-weight:700;font-size:0.88em;color:#c4b5fd">🤖 Agenta Talimatlar</span>
@@ -1051,13 +1086,26 @@ function renderStep0(el) {
 ═══════════════════════════════════════
 ADIM 0 — BAĞLANTI DOĞRULAMA (İlk Adım!)
 ═══════════════════════════════════════
-⚠️ ÖNCELİKLİ GÖREV: Sayfaya bağlandığında "Ben İNSAN değilim!" checkbox'ını bul ve tıkla.
-• Ekranda turuncu kutucuk içinde "Ben İNSAN değilim!" checkbox'ı görünecek (#agentNotHumanCheck)
-• Bu checkbox'ı tıkla → Agent bağlantısı otomatik doğrulanacak
-• Banner turuncu renge dönecek → Sayfa otomatik olarak Adım 2'ye geçecek
-• ALTERNATİF: Ekranda doğrulama kodu varsa (ör: ARA-7X3K), Chrome extension ile şu komutu çalıştır:
+⚠️ ÖNCELİKLİ GÖREV — 3 aşamalı doğrulama süreci:
+
+AŞAMA A — İnsan Onayını Kontrol Et:
+• Sayfada mavi "✅ Onaylandı" butonu var mı kontrol et (#humanConfirmBtn)
+• Eğer buton hâlâ aktifse (onaylanmamışsa): Kullanıcıya "Lütfen sayfadaki mavi onay butonuna tıklayın" de ve BEKLE
+• Onay olmadan ilerleyemezsin!
+
+AŞAMA B — "Ben İNSAN değilim!" Checkbox'ını Tıkla:
+• Turuncu kutucuk içinde "Ben İNSAN değilim!" checkbox'ını bul (#agentNotHumanCheck)
+• Bu checkbox'ı tıkla → Doğrulama kodu ekranda görünecek
+
+AŞAMA C — Doğrulama Kodunu Gir (KRİTİK!):
+• Ekranda büyük fontla bir kod görünecek (ör: ARA-7X3K)
+• Bu kodu OKU ve Chrome extension javascript_tool ile şu komutu çalıştır:
   window.verifyAgent('BURAYA-KODU-YAZ')
-💡 Checkbox tıklaması, agent bağlantısının gerçekten aktif olduğunu kanıtlar.
+• Başarılı doğrulama mesajını bekle → Sayfa otomatik olarak Adım 2'ye geçecek
+• Eğer kod eşleşmezse tekrar dene — kodu ekrandan doğru oku
+
+⛔ KOD DOĞRULAMASI OLMADAN HİÇBİR ADIMA İLERLEYEMEZSİN!
+💡 Bu 3 aşama, agent bağlantısının gerçekten aktif olduğunu ve kullanıcının onay verdiğini kanıtlar.
 
 ═══════════════════════════════════════
 ADIM 1 — KULLANIM MODU (Adım 1)
@@ -1203,10 +1251,11 @@ AGENT DOM HELPER API — ÖNEMLİ!
 ═══════════════════════════════════════
 Bu uygulama agent'lar için özel JavaScript API'leri sunar. Chrome extension javascript_tool ile doğrudan çağırabilirsin:
 
-🔐 BAĞLANTI DOĞRULAMA (İLK ADIM!):
-• "Ben İNSAN değilim!" checkbox'ını (#agentNotHumanCheck) tıkla → Bağlantı otomatik doğrulanır
-• ALTERNATİF: window.verifyAgent('KOD') → Ekrandaki doğrulama kodunu girerek bağlantını kanıtla
-• Doğrulama başarılıysa sayfa otomatik olarak Adım 2'ye geçer
+🔐 BAĞLANTI DOĞRULAMA (İLK ADIM! — 3 AŞAMA):
+1. İnsan onayını kontrol et (#humanConfirmBtn disabled ise onaylanmış demektir)
+2. "Ben İNSAN değilim!" checkbox'ını (#agentNotHumanCheck) tıkla → Doğrulama kodu ekranda belirir
+3. window.verifyAgent('KOD') → Ekrandaki kodu girerek bağlantını kanıtla
+⛔ Kod doğrulaması olmadan hiçbir adıma ilerleyemezsin! goToStep() bloklanır.
 
 📊 DURUM SORGULAMA:
 • window.getAppStatus() → Mevcut adım, çalışma sayıları, rapor durumu, tüm state özeti döner
@@ -1306,61 +1355,86 @@ function closeAgentOnboarding() {
 
 function startAgentMode() {
   closeAgentOnboarding();
-  // Generate random verification code (kept for fallback API)
+  // Generate random verification code
   var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   var code = 'ARA-';
   for (var i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
   window._agentPendingCode = code;
   window._agentVerified = false;
+  window._humanConfirmed = false;
 
   // 1) Auto-copy the Cowork prompt
   var promptText = document.getElementById('coworkPromptBox');
+  var copiedText = '';
   if (promptText) {
-    navigator.clipboard.writeText(promptText.textContent).then(function() {
-      showToast('📋 Agenta verilecek prompt otomatik kopyalandı! Şimdi Claude Cowork\'e yapıştırın. Bu kadar! Gerisi Agent ve Subagentlarda!');
-    }).catch(function() {
-      showToast('📋 Prompt kopyalanamadı — aşağıdan manuel kopyalayabilirsiniz.');
-    });
+    copiedText = promptText.textContent;
+    navigator.clipboard.writeText(copiedText).then(function() {}).catch(function() {});
   }
 
-  // 2) Disable the button to show it's been activated
+  // 2) Disable the button
   var btn = document.getElementById('notRobotBtn');
+  if (btn) {
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    btn.style.cursor = 'default';
+    btn.innerHTML = '<span style="font-size:1.3em">✅</span> Prompt Kopyalandı';
+  }
+
+  // 3) Show "METİN OTOMATİK KOPYALANDI" info box
+  var copiedBox = document.getElementById('agentCopiedBox');
+  if (copiedBox) {
+    copiedBox.style.display = 'block';
+    // Show first 120 chars of prompt as preview
+    var preview = document.getElementById('agentCopiedPreview');
+    if (preview && copiedText) {
+      preview.textContent = copiedText.substring(0, 150) + '…';
+    }
+  }
+
+  // 4) Show human confirmation button (with slight delay for visual flow)
+  setTimeout(function() {
+    var confirmArea = document.getElementById('humanConfirmArea');
+    if (confirmArea) {
+      confirmArea.style.display = 'block';
+      confirmArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 600);
+}
+
+/**
+ * Human confirms they've pasted prompt into Cowork and granted permissions
+ * This sets window._humanConfirmed = true, then reveals "Ben İNSAN değilim!" checkbox
+ */
+function confirmHumanReady() {
+  window._humanConfirmed = true;
+
+  // Update button to confirmed state
+  var btn = document.getElementById('humanConfirmBtn');
   if (btn) {
     btn.disabled = true;
     btn.style.opacity = '0.6';
     btn.style.cursor = 'default';
-    btn.innerHTML = '<span style="font-size:1.3em">✅</span> Prompt Kopyalandı — Agent Bekleniyor…';
+    btn.style.background = '#4caf50';
+    btn.innerHTML = '✅ Onaylandı — Agent bekleniyor…';
   }
 
-  // 3) Show "Ben İNSAN değilim!" checkbox below the button
+  // Show "Ben İNSAN değilim!" checkbox
   var inlineArea = document.getElementById('agentNotHumanInline');
   if (inlineArea) {
     inlineArea.style.display = 'block';
-    inlineArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(function() {
+      inlineArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
   }
-
-  // 4) Start elapsed timer for skip button
-  var startTime = Date.now();
-  window._handshakeTimer = setInterval(function() {
-    var elapsed = Math.floor((Date.now() - startTime) / 1000);
-    if (elapsed >= 45) {
-      // After 45s, show manual skip option inside the spinner area
-      var spinner = document.getElementById('agentNotHumanSpinner');
-      if (spinner && !document.getElementById('agentSkipLink')) {
-        spinner.innerHTML += '<br><a id="agentSkipLink" href="javascript:skipAgentHandshake()" style="font-size:0.72em;color:#9e9e9e;margin-top:6px;display:inline-block">⏩ Doğrulamayı atla</a>';
-      }
-      clearInterval(window._handshakeTimer);
-      window._handshakeTimer = null;
-    }
-  }, 1000);
 }
+window.confirmHumanReady = confirmHumanReady;
 
 // showAgentHandshakeScreen removed — verification now happens inline on Step 0
 
 /**
  * "Ben İNSAN değilim!" checkbox handler
- * When Agent clicks this checkbox, it triggers verification + banner change
- * Shows an info note for spectators: "Agent kodu doğrulandı. Agent devrede!"
+ * When Agent clicks this checkbox → shows the verification CODE screen
+ * Agent must then read the code and call window.verifyAgent('ARA-XXXX')
  */
 function onAgentNotHumanCheck() {
   var cb = document.getElementById('agentNotHumanCheck');
@@ -1373,84 +1447,99 @@ function onAgentNotHumanCheck() {
     area.style.background = 'linear-gradient(135deg,#e8f5e9,#c8e6c9)';
     area.style.borderColor = '#4caf50';
   }
-  // Update spinner to success
   var spinner = document.getElementById('agentNotHumanSpinner');
-  if (spinner) spinner.innerHTML = '<span style="font-size:1.3em;animation:bounceIn 0.4s ease">✅</span> <span style="font-size:0.82em;color:#2e7d32;font-weight:700">Agent bağlandı!</span>';
+  if (spinner) spinner.innerHTML = '<span style="font-size:1.3em;animation:bounceIn 0.4s ease">✅</span> <span style="font-size:0.82em;color:#2e7d32;font-weight:700">Checkbox tıklandı!</span>';
 
-  // Mark as verified
-  window._agentVerified = true;
-  window._agentPendingCode = null;
-  if (window._handshakeTimer) { clearInterval(window._handshakeTimer); window._handshakeTimer = null; }
-
-  // Update banner to agent mode (orange)
-  if (typeof updateModeBanner === 'function') updateModeBanner();
-  showToast('✅ Agent kodu doğrulandı. Agent devrede!');
-
-  // Show verification info note for spectators
-  var note = document.getElementById('agentVerifiedNote');
-  if (note) {
-    note.style.display = 'block';
-    note.innerHTML = `
-      <div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border:2px solid #4caf50;border-radius:16px;padding:20px 24px;max-width:480px;margin:0 auto;text-align:center">
-        <div style="font-size:2.2em;margin-bottom:8px;animation:bounceIn 0.5s ease">✅</div>
-        <div style="font-size:1.1em;font-weight:900;color:#2e7d32;margin-bottom:6px">Agent Kodu Doğrulandı — Agent Devrede!</div>
-        <div style="font-size:0.82em;color:#388e3c;line-height:1.6;margin-bottom:12px">
-          Claude Agent bu sayfaya başarıyla bağlandı.<br>
-          Tüm adımları sizin için otomatik yönetecek.
-        </div>
-        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;font-size:0.72em;margin-bottom:12px">
-          <span style="background:#fff;padding:4px 12px;border-radius:10px;color:#2e7d32;border:1px solid #a5d6a7">📄 BibTeX Analizi</span>
-          <span style="background:#fff;padding:4px 12px;border-radius:10px;color:#2e7d32;border:1px solid #a5d6a7">🔍 Kaynak Doğrulama</span>
-          <span style="background:#fff;padding:4px 12px;border-radius:10px;color:#2e7d32;border:1px solid #a5d6a7">📝 Rapor Yazımı</span>
-          <span style="background:#fff;padding:4px 12px;border-radius:10px;color:#2e7d32;border:1px solid #a5d6a7">🎯 Dergi Önerisi</span>
-        </div>
-        <div style="font-size:0.78em;color:#9e9e9e">Adım 2'ye yönlendiriliyorsunuz…</div>
-        <div style="margin-top:10px;width:100%;height:4px;background:#e0e0e0;border-radius:2px;overflow:hidden">
-          <div style="width:0%;height:100%;background:linear-gradient(90deg,#2e7d32,#4caf50);border-radius:2px;animation:progressFill 1.5s ease forwards"></div>
-        </div>
-      </div>
-    `;
-    note.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  // Show verification CODE screen — Agent must now read and enter the code
+  var codeArea = document.getElementById('agentCodeVerifyArea');
+  if (codeArea) {
+    codeArea.style.display = 'block';
+    var codeEl = document.getElementById('handshakeCode');
+    if (codeEl) codeEl.textContent = window._agentPendingCode || 'ARA-????';
+    setTimeout(function() {
+      codeArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
   }
-
-  // Auto-navigate to Step 1 (Araştırma Konusu) after celebration
-  setTimeout(function() { goToStep(1); }, 2500);
 }
 window.onAgentNotHumanCheck = onAgentNotHumanCheck;
 
 /**
  * Agent Handshake Verification — Claude Agent calls this via Chrome extension
- * PRIMARY METHOD: Agent clicks the "Ben İNSAN değilim!" checkbox (#agentNotHumanCheck)
- * FALLBACK METHOD: Agent calls window.verifyAgent('ARA-XXXX') with the code
+ * Agent reads the code from the screen and calls: window.verifyAgent('ARA-XXXX')
+ * CODE MUST MATCH — this is the critical security gate!
  * Returns: { success: true/false, message: string }
  */
 function verifyAgent(code) {
   if (window._agentVerified) return { success: true, message: 'Already verified' };
-  if (window._agentPendingCode && code !== window._agentPendingCode) {
-    return { success: false, message: 'Code mismatch. Expected: ' + window._agentPendingCode };
+  if (!window._agentPendingCode) return { success: false, message: 'No pending verification. Click "Agent\'ı Başlat" first.' };
+  if (code !== window._agentPendingCode) {
+    return { success: false, message: 'Code mismatch! Expected: ' + window._agentPendingCode + ', got: ' + code };
   }
-  // SUCCESS — trigger the checkbox programmatically
-  var cb = document.getElementById('agentNotHumanCheck');
-  if (cb && !cb.checked) {
-    cb.checked = true;
-    onAgentNotHumanCheck();
-  } else if (!window._agentVerified) {
-    // Fallback if checkbox not in DOM (e.g. different step)
-    window._agentVerified = true;
-    window._agentPendingCode = null;
-    if (window._handshakeTimer) { clearInterval(window._handshakeTimer); window._handshakeTimer = null; }
-    if (typeof updateModeBanner === 'function') updateModeBanner();
-    showToast('✅ Agent kodu doğrulandı. Agent devrede!');
-    setTimeout(function() { goToStep(1); }, 2000);
+
+  // Check human confirmation
+  if (!window._humanConfirmed) {
+    return { success: false, message: 'Human has not confirmed yet. Wait for user to click the blue confirmation button.' };
   }
+
+  // SUCCESS — Code matches!
+  window._agentVerified = true;
+  window._agentPendingCode = null;
+  if (window._handshakeTimer) { clearInterval(window._handshakeTimer); window._handshakeTimer = null; }
+
+  // Update code verify spinner to success
+  var codeSpinner = document.getElementById('codeVerifySpinner');
+  if (codeSpinner) codeSpinner.innerHTML = '<span style="font-size:1.3em;animation:bounceIn 0.4s ease">✅</span> <span style="font-size:0.82em;color:#2e7d32;font-weight:700">Kod doğrulandı!</span>';
+
+  // Update code box style
+  var codeArea = document.getElementById('agentCodeVerifyArea');
+  if (codeArea) {
+    var inner = codeArea.firstElementChild;
+    if (inner) {
+      inner.style.transition = 'all 0.4s ease';
+      inner.style.background = 'linear-gradient(135deg,#e8f5e9,#c8e6c9)';
+      inner.style.borderColor = '#4caf50';
+    }
+  }
+
+  // Update banner to agent mode (orange)
+  if (typeof updateModeBanner === 'function') updateModeBanner();
+  showToast('✅ Agent kodu doğrulandı. Agent devrede!');
+
+  // Show final verification note for spectators
+  var note = document.getElementById('agentVerifiedNote');
+  if (note) {
+    note.style.display = 'block';
+    note.innerHTML = '<div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border:2px solid #4caf50;border-radius:16px;padding:20px 24px;max-width:480px;margin:0 auto;text-align:center">' +
+      '<div style="font-size:2.2em;margin-bottom:8px;animation:bounceIn 0.5s ease">✅</div>' +
+      '<div style="font-size:1.1em;font-weight:900;color:#2e7d32;margin-bottom:6px">Agent Kodu Doğrulandı — Agent Devrede!</div>' +
+      '<div style="font-size:0.82em;color:#388e3c;line-height:1.6;margin-bottom:12px">Claude Agent bu sayfaya başarıyla bağlandı.<br>Tüm adımları sizin için otomatik yönetecek.</div>' +
+      '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;font-size:0.72em;margin-bottom:12px">' +
+        '<span style="background:#fff;padding:4px 12px;border-radius:10px;color:#2e7d32;border:1px solid #a5d6a7">📄 BibTeX Analizi</span>' +
+        '<span style="background:#fff;padding:4px 12px;border-radius:10px;color:#2e7d32;border:1px solid #a5d6a7">🔍 Kaynak Doğrulama</span>' +
+        '<span style="background:#fff;padding:4px 12px;border-radius:10px;color:#2e7d32;border:1px solid #a5d6a7">📝 Rapor Yazımı</span>' +
+        '<span style="background:#fff;padding:4px 12px;border-radius:10px;color:#2e7d32;border:1px solid #a5d6a7">🎯 Dergi Önerisi</span>' +
+      '</div>' +
+      '<div style="font-size:0.78em;color:#9e9e9e">Adım 2\'ye yönlendiriliyorsunuz…</div>' +
+      '<div style="margin-top:10px;width:100%;height:4px;background:#e0e0e0;border-radius:2px;overflow:hidden">' +
+        '<div style="width:0%;height:100%;background:linear-gradient(90deg,#2e7d32,#4caf50);border-radius:2px;animation:progressFill 1.5s ease forwards"></div>' +
+      '</div></div>';
+    note.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // Auto-navigate to Step 1 after celebration
+  setTimeout(function() { goToStep(1); }, 2500);
   return { success: true, message: 'Verified! Agent connected successfully.' };
 }
 window.verifyAgent = verifyAgent;
 
 function skipAgentHandshake() {
+  // Switch back to manual mode since agent verification was skipped
+  useMode = 'manual';
   window._agentPendingCode = null;
+  window._agentVerified = false;
   if (window._handshakeTimer) { clearInterval(window._handshakeTimer); window._handshakeTimer = null; }
-  showToast('🤖 Agent modu etkinleştirildi — doğrulama atlandı.');
+  if (typeof updateModeBanner === 'function') updateModeBanner();
+  showToast('ℹ️ Agent doğrulaması atlandı — Manuel moda geçildi.');
   goToStep(1);
 }
 
