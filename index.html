@@ -3535,7 +3535,7 @@ function renderStepSummary(el) {
       '<p style="font-size:0.82em;color:var(--text2);margin-bottom:10px">Herhangi bir adıma geri dönerek düzenleme yapabilirsiniz.</p>' +
       '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">' +
         STEPS.slice(0, 7).map(function(s, i) {
-          return '<button class="btn btn-outline btn-sm" onclick="goToStep(' + i + ')" style="font-size:0.78em">' + s.icon + '. ' + s.label + '</button>';
+          return '<button class="btn btn-outline btn-sm" onclick="goToStep(' + i + ')" style="font-size:0.78em">' + s.label + '</button>';
         }).join('') +
       '</div>' +
     '</div>' +
