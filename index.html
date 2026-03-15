@@ -1359,8 +1359,31 @@ function updateInlineChecklist() {
     if (btnArea) btnArea.style.display = 'block';
     if (remaining) remaining.style.display = 'none';
   } else {
+    // Hide the button AND all subsequent stages when any checkbox is unchecked
     if (btnArea) btnArea.style.display = 'none';
     if (remaining) { remaining.style.display = 'block'; remaining.innerHTML = '🔒 ' + count + ' gereksinim daha onaylanmalı'; }
+    // Hide all agent flow stages
+    var stagesToHide = ['agentCopiedBox', 'humanConfirmArea', 'agentNotHumanInline', 'agentCodeVerifyArea', 'agentVerifiedNote'];
+    stagesToHide.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    // Reset button state if it was already clicked
+    var btn = document.getElementById('notRobotBtn');
+    if (btn) {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+      btn.innerHTML = '<span style="font-size:1.3em">🤖</span> Agent\'ı Başlat';
+    }
+    // Reset verification state
+    window._agentPendingCode = null;
+    window._agentVerified = false;
+    window._humanConfirmed = false;
+    if (window._handshakeTimer) { clearInterval(window._handshakeTimer); window._handshakeTimer = null; }
+    // Reset "Ben İNSAN değilim" checkbox
+    var notHumanCb = document.getElementById('agentNotHumanCheck');
+    if (notHumanCb) notHumanCb.checked = false;
   }
 }
 
@@ -1405,24 +1428,17 @@ function startAgentMode() {
     if (preview && copiedText) {
       preview.textContent = copiedText.substring(0, 150) + '…';
     }
-    // OS-aware "Aç" button
+    // "Claude'u Aç" button — opens claude.ai/new in new tab
     var openBtn = document.getElementById('openClaudeAppBtn');
     var openHint = document.getElementById('openClaudeAppHint');
     if (openBtn) {
       var ua = navigator.userAgent || '';
       var isMac = /Mac/i.test(navigator.platform) || /Macintosh/i.test(ua);
       var isWin = /Win/i.test(navigator.platform) || /Windows/i.test(ua);
+      var osLabel = isMac ? 'macOS' : isWin ? 'Windows' : '';
       var btnStyle = 'display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;padding:10px 24px;border-radius:12px;text-decoration:none;font-size:0.88em;font-weight:700;box-shadow:0 4px 16px rgba(124,58,237,0.3);transition:all 0.2s;cursor:pointer';
-      if (isMac) {
-        openBtn.innerHTML = '<a href="claude://" onclick="window.location=\'claude://\'" style="' + btnStyle + '" onmouseover="this.style.transform=\'scale(1.03)\'" onmouseout="this.style.transform=\'scale(1)\'"> Claude\'u Aç</a>';
-        if (openHint) openHint.textContent = 'macOS — Cowork modunda açılacak, kopyalanan metni yapıştırın';
-      } else if (isWin) {
-        openBtn.innerHTML = '<a href="claude://" onclick="window.location=\'claude://\'" style="' + btnStyle + '" onmouseover="this.style.transform=\'scale(1.03)\'" onmouseout="this.style.transform=\'scale(1)\'"> Claude\'u Aç</a>';
-        if (openHint) openHint.textContent = 'Windows — Cowork modunda açılacak, kopyalanan metni yapıştırın';
-      } else {
-        openBtn.innerHTML = '<a href="claude://" style="' + btnStyle + '">🚀 Claude Uygulamasını Aç</a>';
-        if (openHint) openHint.textContent = 'Cowork modunda açın ve kopyalanan metni yapıştırın';
-      }
+      openBtn.innerHTML = '<a href="https://claude.ai/new" target="_blank" style="' + btnStyle + '" onmouseover="this.style.transform=\'scale(1.03)\'" onmouseout="this.style.transform=\'scale(1)\'">🚀 Claude\'u Aç</a>';
+      if (openHint) openHint.textContent = (osLabel ? osLabel + ' — ' : '') + 'Masaüstü uygulamasında Cowork modunu açın, kopyalanan metni yapıştırın';
     }
   }
 
