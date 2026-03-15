@@ -238,6 +238,25 @@ label{display:block;font-weight:600;font-size:0.85em;margin-bottom:6px;color:var
 .guide-content p{margin:8px 0}
 .guide-content ul{margin:8px 0 8px 20px}
 .guide-content li{margin:4px 0}
+/* Settings Modal */
+.settings-overlay{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.settings-overlay.open{opacity:1;pointer-events:auto}
+.settings-modal{background:#fff;width:90%;max-width:560px;max-height:85vh;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3);transform:translateY(30px);transition:transform 0.3s;overflow:hidden}
+.settings-overlay.open .settings-modal{transform:translateY(0)}
+.settings-section{margin-bottom:20px}
+.settings-section h4{font-size:0.92em;color:#1a237e;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #e8eaf6;display:flex;align-items:center;gap:6px}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0}
+.settings-row:last-child{border-bottom:none}
+.settings-row label{font-size:0.88em;color:#333;font-weight:500}
+.settings-row .hint{font-size:0.75em;color:#888;margin-top:2px}
+.settings-toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+.settings-toggle input{opacity:0;width:0;height:0}
+.settings-toggle .slider{position:absolute;inset:0;background:#ccc;border-radius:12px;cursor:pointer;transition:0.3s}
+.settings-toggle .slider:before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:0.3s}
+.settings-toggle input:checked+.slider{background:#4caf50}
+.settings-toggle input:checked+.slider:before{transform:translateX(20px)}
+.settings-select{padding:4px 10px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:0.85em;font-family:inherit;cursor:pointer;background:#fff}
+.settings-input{padding:4px 10px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:0.85em;font-family:inherit;width:80px;text-align:center}
 .guide-content .term{display:inline-block;background:#e8eaf6;color:var(--primary);padding:1px 8px;border-radius:6px;font-weight:600;font-size:0.92em}
 .guide-content .tip{background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:1px solid #a5d6a7;border-radius:10px;padding:12px 16px;margin:12px 0;font-size:0.88em}
 .guide-content .warn{background:linear-gradient(135deg,#fff8e1,#fff3e0);border:1px solid #ffca28;border-radius:10px;padding:12px 16px;margin:12px 0;font-size:0.88em}
@@ -401,12 +420,13 @@ html{scroll-behavior:smooth}
     <button onclick="importSession()">📥</button>
     <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImportFile(event)">
     <div class="session-divider"></div>
+    <button onclick="openSettings()" style="background:rgba(255,255,255,0.15);font-weight:700">⚙️ Ayarlar</button>
     <button onclick="openGuide()" style="background:rgba(255,255,255,0.2);font-weight:700">📖 Kılavuz</button>
   </div>
 </div>
 
 <div class="stepper" id="stepper"></div>
-<div style="text-align:center;margin:-4px 0 8px;font-size:0.68em;color:#999;letter-spacing:0.5px">Açık Araştırma <strong style="color:#7c3aed">v1.1</strong></div>
+<div style="text-align:center;margin:-4px 0 8px;font-size:0.68em;color:#999;letter-spacing:0.5px">Açık Araştırma <strong style="color:#7c3aed">v1.2</strong></div>
 
 <!-- Session bar, WebLLM info banner, and full WebLLM bar removed — all controls now in always-compact header -->
 
@@ -644,6 +664,33 @@ let state = {
 
 let useMode = 'manual'; // 'manual' | 'agent'
 
+// ========== APP SETTINGS ==========
+var appSettings = {
+  autoSaveEnabled: true,
+  autoSaveInterval: 30, // seconds
+  maxStudyWarnThreshold: 1000,
+  defaultReportLang: 'tr',
+  showStepHints: true,
+  confirmBeforeDelete: true,
+  compactStudyList: false,
+  exportFormat: 'json' // 'json' | 'bibtex'
+};
+// Load settings from localStorage
+(function loadAppSettings() {
+  try {
+    var saved = localStorage.getItem('acik_arastirma_settings');
+    if (saved) {
+      var parsed = JSON.parse(saved);
+      Object.keys(parsed).forEach(function(k) { if (appSettings.hasOwnProperty(k)) appSettings[k] = parsed[k]; });
+    }
+  } catch(e) { console.warn('Settings load failed:', e); }
+})();
+function saveAppSettings() {
+  try {
+    localStorage.setItem('acik_arastirma_settings', JSON.stringify(appSettings));
+  } catch(e) { console.warn('Settings save failed:', e); }
+}
+
 // ========== AGENT DOM HELPERS ==========
 // These utilities help Claude Agent interact reliably with the app via Chrome extension
 // They provide wait/retry mechanisms, status queries, and safe DOM interactions
@@ -848,18 +895,39 @@ function stripLargeFields(stateObj) {
 }
 
 function autoSaveState() {
+  if (!appSettings.autoSaveEnabled) return;
+  var studyCount = state.studies ? state.studies.length : 0;
+  if (studyCount > appSettings.maxStudyWarnThreshold && !window._largeDatasetWarned) {
+    window._largeDatasetWarned = true;
+    showToast('⚠️ Veri seti büyük (' + studyCount + ' çalışma). Kaydetme yavaşlayabilir. Ayarlar\'dan eşiği değiştirebilirsiniz.', 5000);
+  }
   try {
     var stripped = stripLargeFields(state);
-    localStorage.setItem('acik_arastirma_autosave', JSON.stringify({
+    var payload = JSON.stringify({
       state: stripped,
       useMode: useMode,
       savedAt: new Date().toISOString()
-    }));
-    // Also save to session if one exists
+    });
+    // Check size before saving
+    var sizeMB = payload.length / (1024 * 1024);
+    if (sizeMB > 4.5) {
+      console.warn('autoSave: payload too large (' + sizeMB.toFixed(2) + ' MB), stripping further');
+      // Extra strip: remove notes and tags from studies
+      if (stripped.studies) {
+        stripped.studies = stripped.studies.map(function(s) {
+          var c = Object.assign({}, s);
+          delete c.notes;
+          delete c.bibtexRaw;
+          return c;
+        });
+      }
+      payload = JSON.stringify({ state: stripped, useMode: useMode, savedAt: new Date().toISOString() });
+    }
+    localStorage.setItem('acik_arastirma_autosave', payload);
     if (currentSessionId) {
       const sessions = getAllSessions();
       if (sessions[currentSessionId]) {
-        sessions[currentSessionId].state = stripLargeFields(state);
+        sessions[currentSessionId].state = stripped;
         sessions[currentSessionId].savedAt = new Date().toISOString();
         localStorage.setItem(getSessionKey(), JSON.stringify(sessions));
         flashSavedIndicator();
@@ -867,6 +935,7 @@ function autoSaveState() {
     }
   } catch(e) {
     console.warn('autoSave: localStorage quota exceeded, skipping save');
+    showToast('⚠️ Kaydetme başarısız — depolama dolu. Ayarlar > Depolama\'dan alan açabilirsiniz.');
   }
 }
 
@@ -7270,11 +7339,11 @@ function copyStudy(idx) {
   showToast('APA7 atıf kopyalandı!');
 }
 
-function showToast(msg) {
+function showToast(msg, duration) {
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2500);
+  setTimeout(() => el.classList.remove('show'), duration || 2500);
 }
 
 function updateQuery() {
@@ -7682,6 +7751,178 @@ document.addEventListener('drop', (e) => {
     processBibFile(file);
   }
 });
+
+// ========== SETTINGS MODAL ==========
+function openSettings() {
+  let overlay = document.getElementById('settingsOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'settingsOverlay';
+    overlay.className = 'settings-overlay';
+    overlay.onclick = function(e) { if (e.target === overlay) closeSettings(); };
+    overlay.innerHTML = buildSettingsHTML();
+    document.body.appendChild(overlay);
+  } else {
+    overlay.innerHTML = buildSettingsHTML();
+  }
+  setTimeout(function(){ overlay.classList.add('open'); }, 10);
+  document.body.style.overflow = 'hidden';
+}
+function closeSettings() {
+  var overlay = document.getElementById('settingsOverlay');
+  if (overlay) {
+    overlay.classList.remove('open');
+    setTimeout(function(){ overlay.remove(); }, 300);
+  }
+  document.body.style.overflow = '';
+}
+function applySettings() {
+  var el;
+  el = document.getElementById('setAutoSave');
+  if (el) appSettings.autoSaveEnabled = el.checked;
+  el = document.getElementById('setAutoSaveInterval');
+  if (el) appSettings.autoSaveInterval = parseInt(el.value) || 30;
+  el = document.getElementById('setMaxStudyWarn');
+  if (el) appSettings.maxStudyWarnThreshold = parseInt(el.value) || 1000;
+  el = document.getElementById('setDefaultReportLang');
+  if (el) appSettings.defaultReportLang = el.value;
+  el = document.getElementById('setShowStepHints');
+  if (el) appSettings.showStepHints = el.checked;
+  el = document.getElementById('setConfirmDelete');
+  if (el) appSettings.confirmBeforeDelete = el.checked;
+  el = document.getElementById('setCompactList');
+  if (el) appSettings.compactStudyList = el.checked;
+  el = document.getElementById('setExportFormat');
+  if (el) appSettings.exportFormat = el.value;
+  saveAppSettings();
+  showToast('✅ Ayarlar kaydedildi!');
+  closeSettings();
+  renderStep();
+}
+function resetSettings() {
+  if (!confirm('Tüm ayarları varsayılana sıfırlamak istediğinize emin misiniz?')) return;
+  appSettings = {
+    autoSaveEnabled: true,
+    autoSaveInterval: 30,
+    maxStudyWarnThreshold: 1000,
+    defaultReportLang: 'tr',
+    showStepHints: true,
+    confirmBeforeDelete: true,
+    compactStudyList: false,
+    exportFormat: 'json'
+  };
+  saveAppSettings();
+  showToast('🔄 Ayarlar varsayılana sıfırlandı!');
+  closeSettings();
+}
+function clearAllData() {
+  if (!confirm('⚠️ DİKKAT: Tüm oturumlar, otomatik kayıt ve ayarlar silinecek. Bu işlem geri alınamaz!\n\nDevam etmek istediğinize emin misiniz?')) return;
+  if (!confirm('Son kez onaylayın: TÜM VERİLER SİLİNECEK!')) return;
+  var keys = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (k && k.indexOf('acik_arastirma') !== -1) keys.push(k);
+  }
+  keys.forEach(function(k) { localStorage.removeItem(k); });
+  showToast('🗑️ Tüm veriler silindi. Sayfa yenileniyor...');
+  setTimeout(function() { location.reload(); }, 1500);
+}
+function buildSettingsHTML() {
+  var storageUsed = 0;
+  try {
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf('acik_arastirma') !== -1) {
+        storageUsed += (localStorage.getItem(k) || '').length;
+      }
+    }
+  } catch(e) {}
+  var storageKB = (storageUsed / 1024).toFixed(1);
+  var storageMB = (storageUsed / (1024*1024)).toFixed(2);
+  var storagePercent = Math.min(100, (storageUsed / (5 * 1024 * 1024) * 100)).toFixed(1);
+  var storageColor = storagePercent > 80 ? '#c62828' : storagePercent > 50 ? '#e65100' : '#2e7d32';
+
+  return '<div class="settings-modal">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:linear-gradient(135deg,#1a237e,#283593);color:#fff;border-radius:16px 16px 0 0;flex-shrink:0">' +
+      '<h2 style="font-size:1.1em;display:flex;align-items:center;gap:8px;margin:0">⚙️ Ayarlar</h2>' +
+      '<button onclick="closeSettings()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:1.1em;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>' +
+    '</div>' +
+    '<div style="padding:20px 24px;overflow-y:auto;flex:1">' +
+
+      '<div class="settings-section">' +
+        '<h4>💾 Kaydetme</h4>' +
+        '<div class="settings-row">' +
+          '<div><label>Otomatik kaydetme</label><div class="hint">Her adım değişikliğinde otomatik kaydet</div></div>' +
+          '<label class="settings-toggle"><input type="checkbox" id="setAutoSave" ' + (appSettings.autoSaveEnabled ? 'checked' : '') + '><span class="slider"></span></label>' +
+        '</div>' +
+        '<div class="settings-row">' +
+          '<div><label>Kaydetme aralığı (sn)</label><div class="hint">Otomatik kaydetme sıklığı</div></div>' +
+          '<input type="number" class="settings-input" id="setAutoSaveInterval" value="' + appSettings.autoSaveInterval + '" min="10" max="300">' +
+        '</div>' +
+        '<div class="settings-row">' +
+          '<div><label>Çalışma uyarı eşiği</label><div class="hint">Bu sayıyı aşan veri setlerinde kaydetme uyarısı verilir</div></div>' +
+          '<input type="number" class="settings-input" id="setMaxStudyWarn" value="' + appSettings.maxStudyWarnThreshold + '" min="100" max="5000" step="100">' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="settings-section">' +
+        '<h4>📝 Rapor & Görünüm</h4>' +
+        '<div class="settings-row">' +
+          '<div><label>Varsayılan rapor dili</label><div class="hint">Akademik rapor oluşturma varsayılan dili</div></div>' +
+          '<select class="settings-select" id="setDefaultReportLang">' +
+            '<option value="tr"' + (appSettings.defaultReportLang === 'tr' ? ' selected' : '') + '>Türkçe</option>' +
+            '<option value="en"' + (appSettings.defaultReportLang === 'en' ? ' selected' : '') + '>English</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="settings-row">' +
+          '<div><label>Adım ipuçlarını göster</label><div class="hint">Her adımda açıklayıcı bilgi kutularını göster</div></div>' +
+          '<label class="settings-toggle"><input type="checkbox" id="setShowStepHints" ' + (appSettings.showStepHints ? 'checked' : '') + '><span class="slider"></span></label>' +
+        '</div>' +
+        '<div class="settings-row">' +
+          '<div><label>Kompakt çalışma listesi</label><div class="hint">Analiz adımında çalışmaları daha sıkışık göster</div></div>' +
+          '<label class="settings-toggle"><input type="checkbox" id="setCompactList" ' + (appSettings.compactStudyList ? 'checked' : '') + '><span class="slider"></span></label>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="settings-section">' +
+        '<h4>🔒 Güvenlik</h4>' +
+        '<div class="settings-row">' +
+          '<div><label>Silme onayı iste</label><div class="hint">Oturum/çalışma silme öncesi onay iste</div></div>' +
+          '<label class="settings-toggle"><input type="checkbox" id="setConfirmDelete" ' + (appSettings.confirmBeforeDelete ? 'checked' : '') + '><span class="slider"></span></label>' +
+        '</div>' +
+        '<div class="settings-row">' +
+          '<div><label>Varsayılan dışa aktarma</label><div class="hint">Oturum dışa aktarma formatı</div></div>' +
+          '<select class="settings-select" id="setExportFormat">' +
+            '<option value="json"' + (appSettings.exportFormat === 'json' ? ' selected' : '') + '>JSON</option>' +
+            '<option value="bibtex"' + (appSettings.exportFormat === 'bibtex' ? ' selected' : '') + '>BibTeX</option>' +
+          '</select>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="settings-section">' +
+        '<h4>📊 Depolama</h4>' +
+        '<div style="background:#f5f5f5;border-radius:10px;padding:14px">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">' +
+            '<span style="font-size:0.85em;font-weight:600">Kullanılan Alan</span>' +
+            '<span style="font-size:0.85em;font-weight:700;color:' + storageColor + '">' + storageKB + ' KB (' + storagePercent + '%)</span>' +
+          '</div>' +
+          '<div style="height:8px;background:#e0e0e0;border-radius:4px;overflow:hidden">' +
+            '<div style="height:100%;width:' + storagePercent + '%;background:' + storageColor + ';border-radius:4px;transition:width 0.3s"></div>' +
+          '</div>' +
+          '<div style="font-size:0.75em;color:#888;margin-top:6px">Tarayıcı limiti: ~5 MB · Çalışma sayısı: ' + (state.studies ? state.studies.length : 0) + '</div>' +
+        '</div>' +
+        '<div style="margin-top:12px;text-align:center">' +
+          '<button onclick="clearAllData()" style="padding:8px 20px;background:#ffebee;border:1.5px solid #ef9a9a;border-radius:8px;color:#c62828;font-weight:600;font-size:0.82em;cursor:pointer;font-family:inherit">🗑️ Tüm Verileri Sil</button>' +
+        '</div>' +
+      '</div>' +
+
+    '</div>' +
+    '<div style="padding:14px 24px;border-top:2px solid #e0e0e0;display:flex;gap:10px;justify-content:flex-end;flex-shrink:0;background:#fafafa;border-radius:0 0 16px 16px">' +
+      '<button onclick="resetSettings()" style="padding:8px 18px;border:1.5px solid #e0e0e0;border-radius:8px;background:#fff;color:#666;font-size:0.85em;cursor:pointer;font-family:inherit">🔄 Varsayılana Dön</button>' +
+      '<button onclick="applySettings()" style="padding:8px 24px;border:none;border-radius:8px;background:linear-gradient(135deg,#1a237e,#283593);color:#fff;font-size:0.85em;font-weight:700;cursor:pointer;font-family:inherit">💾 Kaydet</button>' +
+    '</div>' +
+  '</div>';
+}
 
 // ========== APPLICATION GUIDE ==========
 function openGuide(section) {
@@ -8203,7 +8444,7 @@ initWebLLMBar();
 
 <footer style="text-align:center;padding:24px 20px 80px;font-size:0.82em;color:#666;border-top:2px solid #e0e0e0;margin-top:40px;background:#fafafa">
   <div style="margin-bottom:8px">&copy; SEÖ, 2026</div>
-  <div style="font-size:1em;color:#444">Açık Araştırma <strong style="color:#7c3aed;font-size:1.15em">v1.1</strong> — Ajan Destekli Akademik Yayın İnceleme Platformu</div>
+  <div style="font-size:1em;color:#444">Açık Araştırma <strong style="color:#7c3aed;font-size:1.15em">v1.2</strong> — Ajan Destekli Akademik Yayın İnceleme Platformu</div>
   <div style="font-size:0.88em;color:#888;margin-top:4px">Anadolu Üniversitesi Uzaktan Eğitim Araştırma Topluluğu</div>
 </footer>
 </body>
