@@ -945,7 +945,7 @@ function renderStep0(el) {
             <div style="width:64px;height:64px;margin:0 auto 14px;background:linear-gradient(135deg,#a855f7,#7c3aed);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2em">🤖</div>
             <h3 style="font-size:1.15em;font-weight:800;color:#6d28d9;margin-bottom:8px">Agent Benim İçin Yapsın</h3>
             <p style="font-size:0.82em;color:#4c1d95;line-height:1.6;margin-bottom:10px">
-              <strong>Claude Pro/Team üyeliğiniz varsa;</strong> Chrome'da bu sayfayı açın, Claude masaüstü uygulamasına promptu yapıştırın — BibTeX yükleme, filtreleme, rapor ve kaynak doğrulamaya kadar <strong>her şeyi sizin yerinize yapar</strong>. Sıradan chatbot deneyiminin çok ötesinde!
+              <strong>Claude Pro/Team üyeliğiniz varsa;</strong> Agent tüm süreci sizin yerinize yönetir — BibTeX yükleme, filtreleme, rapor yazımı ve kaynak doğrulamaya kadar <strong>her şeyi otomatik yapar</strong>.
             </p>
             <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;font-size:0.7em;margin-bottom:12px">
               <span style="background:#ede9fe;padding:3px 10px;border-radius:10px;color:#6d28d9">Çoklu Adım Ajan</span>
@@ -1006,45 +1006,37 @@ function renderStep0(el) {
         </div>
       </div>
 
-      <!-- Agent Modu Seçildiğinde: Kurulum Rehberi + Cowork Prompt -->
+      <!-- Agent Modu Seçildiğinde: Hızlı Başlangıç + Talimatlar -->
       <div id="agentModeDetails" style="display:${useMode==='agent'?'block':'none'};background:#1e1133;padding:20px 24px;border-top:2px solid #7c3aed">
 
-        <!-- 1) Claude Extension Kurulum Rehberi -->
-        <div style="background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(124,58,237,0.1));border:1px solid rgba(168,85,247,0.3);border-radius:12px;padding:16px 18px;margin-bottom:16px">
-          <div style="font-weight:700;font-size:0.9em;color:#e9d5ff;margin-bottom:10px;display:flex;align-items:center;gap:6px">🔧 Önce: Claude Masaüstü Uygulaması ve Chrome Extension Kurulumu</div>
-          <div style="display:grid;grid-template-columns:auto 1fr;gap:8px 12px;font-size:0.78em;color:#c4b5fd;line-height:1.6">
-            <span style="background:#7c3aed;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85em;flex-shrink:0">1</span>
-            <span><strong style="color:#e9d5ff">Claude Masaüstü Uygulamasını</strong> indirin ve kurun: <a href="https://claude.ai/download" target="_blank" style="color:#c084fc;text-decoration:underline">claude.ai/download</a></span>
-            <span style="background:#7c3aed;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85em;flex-shrink:0">2</span>
-            <span><strong style="color:#e9d5ff">Claude in Chrome</strong> eklentisini kurun (Agent'ın tarayıcınızı kontrol edebilmesi için): <a href="https://chromewebstore.google.com/detail/claude-in-chrome/mhcmjhbbkpkjgecafhbopllcbmgbefao" target="_blank" style="color:#c084fc;text-decoration:underline">Chrome Web Store'dan Yükle</a></span>
-            <span style="background:#7c3aed;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85em;flex-shrink:0">3</span>
-            <span>Claude masaüstü uygulamasında <strong style="color:#e9d5ff">Cowork modunu</strong> açın, bu sayfayı Chrome'da açık tutun</span>
-            <span style="background:#7c3aed;color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85em;flex-shrink:0">4</span>
-            <span>Aşağıdaki promptu kopyalayıp Claude'a yapıştırın — gerisini o halletsin!</span>
-          </div>
-          <div style="margin-top:10px;padding:8px 12px;background:rgba(255,255,255,0.06);border-radius:8px;font-size:0.72em;color:#a78bfa;line-height:1.5">
-            <strong style="color:#c084fc">Not:</strong> Claude in Chrome eklentisi, Agent'ın bu web sayfasındaki butonlara tıklamasını, form doldurmasını ve adımlar arası geçiş yapmasını sağlar. Eklenti olmadan Agent yalnızca metin tabanlı yardım sunabilir.
+        <!-- Kolay Başlangıç: Tek komutla Agent'ı başlat -->
+        <div style="background:linear-gradient(135deg,rgba(255,152,0,0.12),rgba(255,87,34,0.08));border:1px solid rgba(255,152,0,0.35);border-radius:14px;padding:18px 20px;margin-bottom:18px">
+          <p style="font-size:0.92em;color:#ffb74d;margin-bottom:10px;font-weight:800;display:flex;align-items:center;gap:8px">🚀 Hızlı Başlangıç</p>
+          <p style="font-size:0.8em;color:#c4b5fd;line-height:1.6;margin-bottom:10px">Claude masaüstü uygulamasını <strong style="color:#e9d5ff">Cowork modunda</strong> açın ve aşağıdaki komutu yapıştırın:</p>
+          <div style="background:rgba(0,0,0,0.35);border-radius:10px;padding:12px 16px;font-family:'Cascadia Code',Consolas,monospace;font-size:0.82em;color:#e8b4fe;cursor:pointer;position:relative;border:1px solid rgba(168,85,247,0.3);transition:all 0.2s" onclick="navigator.clipboard.writeText(this.querySelector('.agent-short-cmd').textContent.trim());showToast('📋 Komut kopyalandı!');this.style.borderColor='#4caf50'" onmouseout="this.style.borderColor='rgba(168,85,247,0.3)'">
+            <span class="agent-short-cmd">https://seoncu.github.io/acik-arastirma/ adresini aç, sayfanın altındaki "Agenta Talimatlar" bölümünü oku ve adımları takip et. İlk olarak "Ben İNSAN değilim!" checkbox'ını tıkla.</span>
+            <span style="position:absolute;top:6px;right:8px;font-size:0.7em;color:#a78bfa;opacity:0.8">📋 tıkla = kopyala</span>
           </div>
         </div>
 
-        <!-- 2) Cowork Prompt Alanı -->
+        <!-- Agenta Talimatlar Başlığı -->
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-          <span style="font-weight:700;font-size:0.88em;color:#c4b5fd">📋 Claude Agent Cowork Promptu — Kopyala ve Claude'a Yapıştır</span>
-          <button onclick="copyCoworkPrompt()" style="background:#7c3aed;border:none;color:#fff;padding:6px 18px;border-radius:6px;font-size:0.8em;cursor:pointer;font-family:inherit;font-weight:600">📋 Kopyala</button>
+          <span style="font-weight:700;font-size:0.88em;color:#c4b5fd">🤖 Agenta Talimatlar</span>
+          <button onclick="copyCoworkPrompt()" style="background:#7c3aed;border:none;color:#fff;padding:6px 18px;border-radius:6px;font-size:0.8em;cursor:pointer;font-family:inherit;font-weight:600">📋 Tümünü Kopyala</button>
         </div>
-        <p style="font-size:0.78em;color:#a78bfa;margin-bottom:10px;line-height:1.5">Bu promptu kopyalayıp Claude masaüstü uygulamasına (Cowork) yapıştırın. Agent bu sayfayı açıp tüm adımları sizin için otomatik gerçekleştirecektir.</p>
+        <p style="font-size:0.72em;color:#9e9e9e;margin-bottom:10px;line-height:1.5">Agent bu talimatları sayfadan okuyarak otomatik çalışır. Genellikle kopyalamanıza gerek yoktur.</p>
         <div style="background:rgba(255,255,255,0.06);border-radius:8px;padding:12px;max-height:300px;overflow-y:auto;font-size:0.75em;line-height:1.6;font-family:'Cascadia Code',Consolas,monospace;white-space:pre-wrap;color:#e2d9f3" id="coworkPromptBox">Bu sayfa "Açık Araştırma" adlı 7 adımlık sistematik literatür tarama uygulamasıdır. Sen bu uygulamanın ana agent'ısın. Chrome extension üzerinden bu sayfayla doğrudan etkileşime geçerek (buton tıklama, form doldurma, dosya yükleme) tüm süreci yöneteceksin. Kullanıcıyla her adımda iletişim kur, onay al ve kararları birlikte ver.
 
 ═══════════════════════════════════════
 ADIM 0 — BAĞLANTI DOĞRULAMA (İlk Adım!)
 ═══════════════════════════════════════
-⚠️ ÖNCELİKLİ GÖREV: Sayfaya bağlandığında ekranda bir doğrulama kodu görünecek (ör: ARA-7X3K).
-• Sayfadaki doğrulama kodunu oku (büyük fontla gösterilir)
-• Chrome extension javascript_tool ile şu komutu çalıştır:
+⚠️ ÖNCELİKLİ GÖREV: Sayfaya bağlandığında "Ben İNSAN değilim!" checkbox'ını bul ve tıkla.
+• Ekranda turuncu kutucuk içinde "Ben İNSAN değilim!" checkbox'ı görünecek (#agentNotHumanCheck)
+• Bu checkbox'ı tıkla → Agent bağlantısı otomatik doğrulanacak
+• Banner turuncu renge dönecek → Sayfa otomatik olarak Adım 2'ye geçecek
+• ALTERNATİF: Ekranda doğrulama kodu varsa (ör: ARA-7X3K), Chrome extension ile şu komutu çalıştır:
   window.verifyAgent('BURAYA-KODU-YAZ')
-• Başarılı doğrulama mesajını bekle → Sayfa otomatik olarak Adım 2'ye geçecek
-• Eğer kod eşleşmezse tekrar dene — kodu ekrandan doğru oku
-💡 Bu adım, agent bağlantısının gerçekten aktif olduğunu kanıtlar.
+💡 Checkbox tıklaması, agent bağlantısının gerçekten aktif olduğunu kanıtlar.
 
 ═══════════════════════════════════════
 ADIM 1 — KULLANIM MODU (Adım 1)
@@ -1191,7 +1183,8 @@ AGENT DOM HELPER API — ÖNEMLİ!
 Bu uygulama agent'lar için özel JavaScript API'leri sunar. Chrome extension javascript_tool ile doğrudan çağırabilirsin:
 
 🔐 BAĞLANTI DOĞRULAMA (İLK ADIM!):
-• window.verifyAgent('KOD') → Ekrandaki doğrulama kodunu girerek bağlantını kanıtla
+• "Ben İNSAN değilim!" checkbox'ını (#agentNotHumanCheck) tıkla → Bağlantı otomatik doğrulanır
+• ALTERNATİF: window.verifyAgent('KOD') → Ekrandaki doğrulama kodunu girerek bağlantını kanıtla
 • Doğrulama başarılıysa sayfa otomatik olarak Adım 2'ye geçer
 
 📊 DURUM SORGULAMA:
@@ -1221,10 +1214,6 @@ Bu uygulama agent'lar için özel JavaScript API'leri sunar. Chrome extension ja
           <a href="https://claude.ai/new" target="_blank" style="background:rgba(255,255,255,0.08);color:#a78bfa;padding:8px 20px;border-radius:8px;text-decoration:none;font-size:0.85em;font-weight:600;border:1px solid rgba(255,255,255,0.15)">🌐 claude.ai</a>
         </div>
       </div>
-
-      <!-- Küçük kart bölümü kaldırıldı — büyük kartlar doğrudan aksiyonu tetikliyor -->
-
-      <!-- Eski modal kaldırıldı — inline checklist kullanılıyor -->
 
       <!-- Alt Bilgi Şeridi -->
       <div style="background:linear-gradient(90deg,#1a237e,#283593);padding:8px 24px;text-align:center">
@@ -1302,7 +1291,7 @@ function startAgentMode() {
   for (var i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
   window._agentPendingCode = code;
   window._agentVerified = false;
-  // Show handshake verification screen
+  // Show handshake verification screen with "Ben İNSAN değilim!" checkbox
   showAgentHandshakeScreen(code);
 }
 
@@ -1325,13 +1314,22 @@ function showAgentHandshakeScreen(code) {
             <div style="font-size:0.78em;color:#7c3aed;font-weight:600;margin-bottom:8px;letter-spacing:0.5px">DOĞRULAMA KODU</div>
             <div id="handshakeCode" style="font-size:2.4em;font-weight:900;color:#4c1d95;font-family:'Cascadia Code',Consolas,monospace;letter-spacing:6px">${code}</div>
           </div>
-          <!-- Spinner -->
-          <div id="handshakeSpinner" style="margin-bottom:20px">
-            <div style="display:inline-flex;gap:6px;align-items:center;padding:10px 20px;background:#fff3e0;border-radius:20px;border:1px solid #ffcc80">
+
+          <!-- "Ben İNSAN değilim!" Checkbox — Agent must click this -->
+          <div id="agentNotHumanArea" style="margin-bottom:24px;padding:20px;background:linear-gradient(135deg,#fff3e0,#ffe0b2);border:3px solid #ff9800;border-radius:16px;animation:bounceIn 0.5s ease">
+            <label id="agentNotHumanLabel" style="display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none" for="agentNotHumanCheck">
+              <input type="checkbox" id="agentNotHumanCheck" onchange="onAgentNotHumanCheck()" style="width:28px;height:28px;accent-color:#e65100;cursor:pointer;flex-shrink:0">
+              <div style="text-align:left">
+                <div style="font-size:1.1em;font-weight:900;color:#e65100">Ben İNSAN değilim!</div>
+                <div style="font-size:0.75em;color:#bf360c;margin-top:3px">Agent'ın bu kutuyu işaretlemesi bekleniyor…</div>
+              </div>
+            </label>
+            <div id="agentNotHumanSpinner" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px">
               <div style="width:14px;height:14px;border:3px solid #ff9800;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite"></div>
-              <span style="font-size:0.82em;color:#e65100;font-weight:600">Agent bağlantısı bekleniyor…</span>
+              <span style="font-size:0.78em;color:#e65100;font-weight:600">Agent bekleniyor…</span>
             </div>
           </div>
+
           <!-- Instructions -->
           <div style="background:#f5f5f5;border-radius:12px;padding:16px;text-align:left;margin-bottom:20px">
             <div style="font-size:0.82em;font-weight:700;color:#333;margin-bottom:10px">📋 Nasıl bağlanır?</div>
@@ -1367,43 +1365,85 @@ function showAgentHandshakeScreen(code) {
 }
 
 /**
+ * "Ben İNSAN değilim!" checkbox handler
+ * When Agent clicks this checkbox, it triggers verification + banner change
+ * The Agent should: find this checkbox and click it as the FIRST action
+ */
+function onAgentNotHumanCheck() {
+  var cb = document.getElementById('agentNotHumanCheck');
+  if (!cb || !cb.checked) return;
+
+  // Visual feedback — checkbox area turns green
+  var area = document.getElementById('agentNotHumanArea');
+  if (area) {
+    area.style.transition = 'all 0.4s ease';
+    area.style.background = 'linear-gradient(135deg,#e8f5e9,#c8e6c9)';
+    area.style.borderColor = '#4caf50';
+  }
+  // Hide spinner
+  var spinner = document.getElementById('agentNotHumanSpinner');
+  if (spinner) spinner.innerHTML = '<span style="font-size:1.3em;animation:bounceIn 0.4s ease">✅</span> <span style="font-size:0.82em;color:#2e7d32;font-weight:700">Agent bağlandı!</span>';
+
+  // Mark as verified
+  window._agentVerified = true;
+  window._agentPendingCode = null;
+  if (window._handshakeTimer) { clearInterval(window._handshakeTimer); window._handshakeTimer = null; }
+
+  // Update banner to agent mode (orange)
+  if (typeof updateModeBanner === 'function') updateModeBanner();
+  showToast('✅ Agent bağlantısı doğrulandı! Süreç başlıyor…');
+
+  // After short celebration, show full success and navigate
+  setTimeout(function() {
+    var card = document.getElementById('agentHandshakeCard');
+    if (card) {
+      card.innerHTML = `
+        <div style="background:linear-gradient(135deg,#2e7d32,#1b5e20);padding:32px 24px 24px;color:#fff;text-align:center">
+          <div style="font-size:3.5em;margin-bottom:8px;animation:bounceIn 0.5s ease">✅</div>
+          <h2 style="font-size:1.4em;font-weight:800;margin-bottom:6px;display:block">Agent Bağlandı!</h2>
+          <p style="font-size:0.88em;opacity:0.95">Claude Agent doğrulandı ve hazır</p>
+        </div>
+        <div style="padding:28px 24px;text-align:center">
+          <div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-radius:16px;padding:20px;margin-bottom:16px">
+            <div style="font-size:0.85em;color:#2e7d32;font-weight:600">🎯 Agent tüm adımları sizin için yönetecek</div>
+            <div style="font-size:0.78em;color:#388e3c;margin-top:6px">Araştırma konusu → Analiz → Rapor → Dergi Önerisi</div>
+          </div>
+          <div style="font-size:0.82em;color:#9e9e9e">Adım 2'ye yönlendiriliyorsunuz…</div>
+          <div style="margin-top:12px;width:100%;height:4px;background:#e0e0e0;border-radius:2px;overflow:hidden">
+            <div style="width:0%;height:100%;background:linear-gradient(90deg,#2e7d32,#4caf50);border-radius:2px;animation:progressFill 1.5s ease forwards"></div>
+          </div>
+        </div>
+      `;
+    }
+    setTimeout(function() { goToStep(1); }, 1500);
+  }, 1000);
+}
+window.onAgentNotHumanCheck = onAgentNotHumanCheck;
+
+/**
  * Agent Handshake Verification — Claude Agent calls this via Chrome extension
- * Usage (from Chrome extension): window.verifyAgent('ARA-XXXX')
+ * PRIMARY METHOD: Agent clicks the "Ben İNSAN değilim!" checkbox (#agentNotHumanCheck)
+ * FALLBACK METHOD: Agent calls window.verifyAgent('ARA-XXXX') with the code
  * Returns: { success: true/false, message: string }
  */
 function verifyAgent(code) {
   if (window._agentVerified) return { success: true, message: 'Already verified' };
   if (!window._agentPendingCode) return { success: false, message: 'No pending verification' };
   if (code !== window._agentPendingCode) return { success: false, message: 'Code mismatch. Expected: ' + window._agentPendingCode };
-  // SUCCESS — Agent verified!
-  window._agentVerified = true;
-  window._agentPendingCode = null;
-  if (window._handshakeTimer) { clearInterval(window._handshakeTimer); window._handshakeTimer = null; }
-  // Animate success
-  var card = document.getElementById('agentHandshakeCard');
-  if (card) {
-    card.innerHTML = `
-      <div style="background:linear-gradient(135deg,#2e7d32,#1b5e20);padding:32px 24px 24px;color:#fff;text-align:center">
-        <div style="font-size:3.5em;margin-bottom:8px;animation:bounceIn 0.5s ease">✅</div>
-        <h2 style="font-size:1.4em;font-weight:800;margin-bottom:6px;display:block">Agent Bağlandı!</h2>
-        <p style="font-size:0.88em;opacity:0.95">Claude Agent doğrulandı ve hazır</p>
-      </div>
-      <div style="padding:28px 24px;text-align:center">
-        <div style="background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-radius:16px;padding:20px;margin-bottom:16px">
-          <div style="font-size:0.85em;color:#2e7d32;font-weight:600">🎯 Agent tüm adımları sizin için yönetecek</div>
-          <div style="font-size:0.78em;color:#388e3c;margin-top:6px">Araştırma konusu → Analiz → Rapor → Dergi Önerisi</div>
-        </div>
-        <div style="font-size:0.82em;color:#9e9e9e">Adım 2'ye yönlendiriliyorsunuz…</div>
-        <div style="margin-top:12px;width:100%;height:4px;background:#e0e0e0;border-radius:2px;overflow:hidden">
-          <div style="width:0%;height:100%;background:linear-gradient(90deg,#2e7d32,#4caf50);border-radius:2px;animation:progressFill 1.5s ease forwards"></div>
-        </div>
-      </div>
-    `;
+  // SUCCESS — trigger the checkbox click programmatically
+  var cb = document.getElementById('agentNotHumanCheck');
+  if (cb && !cb.checked) {
+    cb.checked = true;
+    onAgentNotHumanCheck();
+  } else {
+    // Fallback if checkbox not found
+    window._agentVerified = true;
+    window._agentPendingCode = null;
+    if (window._handshakeTimer) { clearInterval(window._handshakeTimer); window._handshakeTimer = null; }
+    if (typeof updateModeBanner === 'function') updateModeBanner();
+    showToast('✅ Agent bağlantısı doğrulandı!');
+    setTimeout(function() { goToStep(1); }, 2000);
   }
-  showToast('✅ Agent bağlantısı doğrulandı! Süreç başlıyor…');
-  if (typeof updateModeBanner === 'function') updateModeBanner();
-  // Auto-navigate to Step 1 after celebration
-  setTimeout(function() { goToStep(1); }, 2000);
   return { success: true, message: 'Verified! Agent connected successfully.' };
 }
 window.verifyAgent = verifyAgent;
