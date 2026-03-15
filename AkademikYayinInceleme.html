@@ -629,7 +629,7 @@ let state = {
   chatHistory: [],
   savedProjects: [],
   researchDesign: {
-    method: '', // 'nicel' | 'nitel' | 'karma'
+    method: '', // 'nicel' | 'nitel' | 'karma' | 'tasarimTabanli' | 'kuramsal'
     subDesign: '',
     questions: [],
     hypotheses: []
@@ -1205,14 +1205,14 @@ AŞAMA A — Otomatik Analiz (Subagent Delegasyonu):
 • Bu promptu subagent'lara dağıt veya kendin işle:
   ◦ Tematik sınıflandırma: Başlık + abstract'tan tema ata
   ◦ İlgililik puanlaması: 0.0–1.0 arası, araştırma konusuna göre
-  ◦ Metodoloji çıkarımı: Nicel / Nitel / Karma, desen, analiz yöntemi
+  ◦ Metodoloji çıkarımı: Nicel / Nitel / Karma / Tasarım Tabanlı / Kuramsal / Derleme / Meta-analiz, desen, analiz yöntemi
 
 ⚠️ JSON FORMATI VE KEY UYARISI (KRİTİK!):
 • getStudySummary() fonksiyonu BibTeX key döndürmez!
 • Gerçek key'ler YALNIZCA localStorage'dan alınır:
   JSON.parse(localStorage.getItem('acik_arastirma_autosave')).state.studies[i].key
 • Örnek key formatı: "WOS:001442966400001" veya "10.1234/abc" (DOI tabanlı)
-• JSON sonuç formatı: [{"key":"WOS:001442966400001","relevance":0.85,"theme":"Öz-Düzenlemeli Öğrenme","methodology":"nicel",...}]
+• JSON sonuç formatı: [{"key":"WOS:001442966400001","relevance":0.85,"theme":"Öz-Düzenlemeli Öğrenme","methodology":"nicel|nitel|karma|tasarimTabanli|kuramsal|derleme|meta-analiz",...}]
 • key alanı MUTLAKA BibTeX key ile birebir eşleşmeli — aksi halde "Uygula" çalışmaz!
 
 • Sonuçları JSON formatında "Agent Analiz Sonucunu Yapıştırın" alanına yapıştır ve "Uygula" butonuna bas
@@ -1229,7 +1229,7 @@ AŞAMA C — Akıllı Çalışma Seçimi:
 • İlgililik ≥ 0.7 olanlardan bu aralığa düşecek kadar seç
 • Seçim kriterleri (tümü dikkate alınmalı):
   ◦ Konu uyumu (ilgililik puanı)
-  ◦ Metodolojik çeşitlilik (nicel/nitel/karma dağılımı)
+  ◦ Metodolojik çeşitlilik (nicel/nitel/karma/tasarım tabanlı/kuramsal dağılımı)
   ◦ Yıl dağılımı (son 5 yıla ağırlık, ama önemli eski çalışmalar dahil)
   ◦ Coğrafi/kültürel çeşitlilik
   ◦ Açık erişim durumu (OA olanlara bonus)
@@ -1302,16 +1302,20 @@ ADIM 6 — ARAŞTIRMA TASARIMI (safeGoToStep(6))
 ═══════════════════════════════════════
 GÖREV: Literatür bulgularına dayalı araştırma yöntemi ve tasarımı oluştur.
 
-• Kullanıcıyla birlikte araştırma yöntemini belirle:
-  ◦ Nicel / Nitel / Karma → En uygun deseni seç
+• Kullanıcıyla birlikte araştırma yöntemini belirle (5 seçenek mevcut):
+  ◦ Nicel Araştırma — Deneysel, yarı-deneysel, tarama, korelasyonel desenler
+  ◦ Nitel Araştırma — Olgubilim, durum çalışması, gömülü teori, eylem araştırması, anlatı
+  ◦ Karma Yöntem — Yakınsayan, açımlayıcı sıralı, keşfedici sıralı, iç içe, dönüştürücü
+  ◦ Tasarım Tabanlı Araştırma (DBR) — Ürün/müdahale geliştirme, tasarım ilkeleri, model doğrulama, eğitsel DBR
+  ◦ Kuramsal/Kavramsal Araştırma — Kavramsal analiz, kuramsal sentez/çerçeve, eleştirel kuram, meta-sentez, bibliyometrik haritalama
   ◦ Araştırma konusuna ve literatür bulgularına göre gerekçelendir
 • Uygulama içindeki formu doldur: Yöntem, desen, veri toplama araçları
 • "Claude ile Araştırma Tasarımı Oluştur" butonundan kapsamlı tasarım öner:
-  ◦ Araştırma soruları / hipotezler
-  ◦ Örneklem büyüklüğü ve seçim yöntemi
+  ◦ Araştırma soruları / hipotezler (yöntem tipine uygun)
+  ◦ Örneklem büyüklüğü ve seçim yöntemi (nicel/karma için) veya katılımcı/kaynak seçimi (nitel/kuramsal için)
   ◦ Veri toplama araçları ve süreci
   ◦ Analiz yöntemleri (adım adım)
-  ◦ Geçerlik ve güvenirlik stratejileri
+  ◦ Geçerlik ve güvenirlik stratejileri (veya kuramsal tutarlılık ölçütleri)
   ◦ Etik değerlendirme noktaları
   ◦ Olası sınırlılıklar
 
@@ -1328,7 +1332,7 @@ GÖREV: Tüm süreci özetle, çıktıları doğrula ve hedef dergi önerileri s
 DERGİ ÖNERİSİ:
 • window.recommendJournals() ile algoritmik dergi önerilerini al (kural tabanlı)
 • Algoritmik önerileri kullanıcıya açıkla, ancak SEN daha kapsamlı bir analiz yap:
-  ◦ Araştırma konusu, temalar ve kaynak dergilerine göre en uygun 8-10 dergi öner
+  ◦ Araştırma konusu, temalar, seçilen araştırma yöntemi ve kaynak dergilerine göre en uygun 8-10 dergi öner
   ◦ Her dergi için: İndeks (WoS/Scopus/TR Dizin/ERIC), Q kategorisi, güncel IF, APC, ISSN, web sitesi
   ◦ İnternet üzerinden dergilerin güncel indeksleme durumlarını doğrula
   ◦ "Sistematik Derleme" kabul eden dergilere öncelik ver
@@ -2149,7 +2153,7 @@ function renderStep2(el) {
             </div>
             <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #ddd6fe">
               <strong style="color:#7c3aed">🔬 Subagent 3: Metodoloji Çıkarımı</strong>
-              <p style="color:var(--text2);margin-top:3px;font-size:0.9em">Nicel/nitel/karma yöntem, örneklem ve analiz yöntemini tespit eder</p>
+              <p style="color:var(--text2);margin-top:3px;font-size:0.9em">Nicel/nitel/karma/tasarım tabanlı/kuramsal yöntem, örneklem ve analiz yöntemini tespit eder</p>
             </div>
             <div style="background:#fff;border-radius:8px;padding:10px;border:1px solid #ddd6fe">
               <strong style="color:#7c3aed">🔓 Subagent 4: OA & Erişim Kontrolü</strong>
@@ -2933,6 +2937,37 @@ const RESEARCH_DESIGNS = {
     questionLabel: 'Araştırma Sorusu / Hipotez',
     questionPrefix: 'AS/H',
     questionHint: 'Karma yöntemde hem nicel hipotez hem nitel araştırma sorusu kullanılabilir. Desene göre sıralama yapılır.'
+  },
+  tasarimTabanli: {
+    label: 'Tasarım Tabanlı Araştırma',
+    icon: '🔧',
+    color: '#00695c',
+    bg: '#e0f2f1',
+    designs: [
+      {name:'Tip 1: Ürün/Müdahale Geliştirme (Design & Development)', desc:'Eğitim yazılımı, öğretim materyali, program veya ortam gibi somut bir ürün tasarlanır, geliştirilir ve iteratif döngülerle iyileştirilir.', tools:'Prototipleme araçları, MAXQDA, SPSS, Gözlem formları', analysis:'İteratif analiz: Tasarla → Uygula → Değerlendir → Revize et (en az 2-3 döngü)', collection:'Gözlem, Görüşme, Kullanılabilirlik Testi, Anket, Log Analizi'},
+      {name:'Tip 2: Tasarım İlkeleri Geliştirme (Design Principles)', desc:'Belirli bir bağlamda işe yarayan tasarım ilkeleri ve teorik çerçeve oluşturmak üzere iteratif araştırma yapılır.', tools:'MAXQDA, NVivo, Reflektif günlük', analysis:'Tematik analiz + Çapraz döngü karşılaştırması + İlke çıkarımı', collection:'Görüşme, Gözlem, Doküman İnceleme, Odak Grup'},
+      {name:'Tip 3: Model Doğrulama (Model Validation)', desc:'Mevcut bir tasarım modeli veya çerçevesinin farklı bağlamlarda test edilmesi ve doğrulanması.', tools:'SPSS, AMOS, SmartPLS, MAXQDA', analysis:'Karma analiz: İstatistiksel testler + Nitel değerlendirme', collection:'Anket, Görüşme, Uzman Değerlendirmesi'},
+      {name:'Eğitsel Tasarım Araştırması (Educational DBR)', desc:'Öğretim süreçlerini doğal ortamda sistematik olarak iyileştirmeye yönelik katılımcı araştırma.', tools:'Video analiz, MAXQDA, Gözlem protokolleri', analysis:'Mikro-analiz + Retrospektif analiz + Tasarım argümanı', collection:'Video Kayıt, Alan Notları, Öğrenci Ürünleri, Görüşme'}
+    ],
+    questionLabel: 'Araştırma Sorusu',
+    questionPrefix: 'AS',
+    questionHint: 'Tasarım tabanlı araştırmada süreç odaklı ve iyileştirme hedefli sorular kullanılır. Ör: "X ortamının tasarım ilkeleri nelerdir ve iteratif döngüler sonucunda bu ilkeler nasıl evrilerek öğrenme çıktılarını iyileştirmiştir?"'
+  },
+  kuramsal: {
+    label: 'Kuramsal / Kavramsal Araştırma',
+    icon: '🧠',
+    color: '#4e342e',
+    bg: '#efebe9',
+    designs: [
+      {name:'Kavramsal Analiz (Conceptual Analysis)', desc:'Bir kavramın tanımını, kapsamını, sınırlarını ve ilişkili kavramlarla bağlantısını sistematik olarak inceler.', tools:'Bibliyometrik araçlar, VOSviewer, kavram haritası yazılımları', analysis:'Kavram haritalama, Tanım analizi, Sınıflandırma', collection:'Akademik literatür, Kuramsal metinler, Sözlükler'},
+      {name:'Kuramsal Sentez / Çerçeve Geliştirme (Theoretical Framework)', desc:'Mevcut kuramları sentezleyerek yeni bir teorik çerçeve veya model önerir.', tools:'VOSviewer, CiteSpace, Kavram haritası', analysis:'Kuram karşılaştırması, Sentez matrisi, Model oluşturma', collection:'Kuramsal literatür, Meta-sentez, Sistematik derleme'},
+      {name:'Eleştirel Kuram İncelemesi (Critical Theory Review)', desc:'Belirli bir kuramı veya kuramsal geleneği eleştirel bir perspektifle değerlendirir ve yeniden yorumlar.', tools:'Hermeneutik yaklaşım, Söylem analizi araçları', analysis:'Eleştirel analiz, Söylem analizi, Karşılaştırmalı değerlendirme', collection:'Orijinal kuramsal metinler, Tartışma yazıları, Felsefi kaynaklar'},
+      {name:'Meta-Sentez / Nitel Meta-Analiz', desc:'Nitel çalışmaların bulgularını sistematik olarak sentezleyerek üst düzey yorumlar ve kuramsal çıkarımlar üretir.', tools:'MAXQDA, NVivo, EPPI-Reviewer', analysis:'Reciprocal Translation, Refutational Sentez, Line of Argument Sentez', collection:'Nitel araştırma makaleleri, Sistematik tarama'},
+      {name:'Bibliyometrik Haritalama (Science Mapping)', desc:'Bir alanın entelektüel yapısını, gelişim eğilimlerini ve tematik kümelerini bibliyometrik yöntemlerle haritalandırır.', tools:'VOSviewer, Bibliometrix (R), CiteSpace, SciMAT', analysis:'Ortak atıf analizi, Bibliyografik eşleşme, Anahtar kelime eş-oluşum, Tematik evrim', collection:'WoS/Scopus veritabanı çıktıları'}
+    ],
+    questionLabel: 'Araştırma Sorusu',
+    questionPrefix: 'AS',
+    questionHint: 'Kuramsal/kavramsal araştırmada analitik ve senteze yönelik sorular kullanılır. Ör: "X kuramının Y bağlamındaki açıklayıcı gücü nedir ve mevcut kavramsal çerçeve hangi boyutlarda genişletilmelidir?"'
   }
 };
 
@@ -2977,6 +3012,21 @@ function generateResearchQuestions() {
     state.researchDesign.hypotheses = [
       'H1: ' + topic.substring(0,60) + ' bağlamında ölçülen değişkenler arasında anlamlı bir ilişki/fark vardır.'
     ];
+  } else if (rd.method === 'tasarimTabanli') {
+    state.researchDesign.questions = [
+      'AS1: ' + topic.substring(0,60) + ' bağlamında geliştirilen tasarımın temel tasarım ilkeleri nelerdir?',
+      'AS2: İteratif tasarım döngüleri boyunca bu ilkeler nasıl evrilmiştir?',
+      'AS3: Geliştirilen tasarımın öğrenme çıktıları / kullanıcı deneyimi üzerindeki etkisi nasıldır?',
+      'AS4: Tasarım sürecinden çıkarılan yerel tasarım ilkeleri (local design principles) nelerdir?'
+    ];
+    state.researchDesign.hypotheses = [];
+  } else if (rd.method === 'kuramsal') {
+    state.researchDesign.questions = [
+      'AS1: ' + topic.substring(0,60) + ' alanındaki mevcut kuramsal çerçevelerin temel varsayımları ve sınırlılıkları nelerdir?',
+      'AS2: Bu kuramsal yaklaşımlar arasındaki ortaklıklar, farklılıklar ve tamamlayıcılıklar nelerdir?',
+      'AS3: Mevcut kuramsal birikimden yola çıkarak nasıl bir bütünleştirici/genişletilmiş kavramsal çerçeve önerilebilir?'
+    ];
+    state.researchDesign.hypotheses = [];
   }
   renderStep();
 }
@@ -2995,7 +3045,7 @@ function generateDesignClaudePrompt() {
     '\nSeçilen desen: ' + (rd.subDesign || 'Henüz seçilmedi') +
     (design ? '\nVeri toplama: ' + design.collection + '\nAnaliz: ' + design.analysis : '') +
     (studyInfo ? '\n\n' + studyInfo : '') +
-    '\n\nLütfen şunları yap:\n1. Bu araştırma için en uygun deseni ve gerekçesini açıkla\n2. Araştırma soruları/hipotezler öner (Türkçe)\n3. Örneklem büyüklüğü ve seçim yöntemini öner\n4. Veri toplama araçlarını detaylandır\n5. Analiz yöntemlerini adım adım anlat\n6. Olası sınırlılıkları belirt\n7. Etik değerlendirme noktalarını listele';
+    '\n\nLütfen şunları yap:\n1. Bu araştırma için en uygun deseni ve gerekçesini açıkla\n2. Araştırma soruları/hipotezler öner (Türkçe, yöntem tipine uygun)\n3. ' + (rd.method === 'kuramsal' ? 'Kaynak seçim stratejisi ve dahil etme/dışlama ölçütleri öner' : rd.method === 'tasarimTabanli' ? 'İteratif tasarım döngüleri planı ve katılımcı profilini öner' : 'Örneklem büyüklüğü ve seçim yöntemini öner') + '\n4. Veri toplama araçlarını detaylandır\n5. Analiz yöntemlerini adım adım anlat\n6. ' + (rd.method === 'kuramsal' ? 'Kuramsal tutarlılık ve güvenilirlik ölçütlerini belirt' : 'Geçerlik ve güvenirlik stratejilerini belirt') + '\n7. Olası sınırlılıkları belirt\n8. Etik değerlendirme noktalarını listele';
 
   return prompt;
 }
@@ -3024,16 +3074,19 @@ function renderStepDesign(el) {
       <!-- Yöntem Seçimi -->
       <div style="margin-bottom:20px">
         <h3 style="font-size:0.95em;margin-bottom:12px">1. Araştırma Yönteminizi Seçin</h3>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
-          ${['nicel','nitel','karma'].map(m => {
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
+          ${['nicel','nitel','karma','tasarimTabanli','kuramsal'].map(m => {
             const d = RESEARCH_DESIGNS[m];
             const isActive = rd.method === m;
+            const shortDesc = m === 'nicel' ? 'Sayısal veriler, istatistiksel analiz'
+              : m === 'nitel' ? 'Sözel veriler, tematik analiz'
+              : m === 'karma' ? 'Nicel + Nitel birlikte'
+              : m === 'tasarimTabanli' ? 'İteratif tasarım döngüleri'
+              : 'Kuram geliştirme, kavramsal sentez';
             return '<div onclick="selectResearchMethod(\'' + m + '\')" style="cursor:pointer;border:2px solid ' + (isActive ? d.color : '#e0e0e0') + ';border-radius:12px;padding:16px;text-align:center;background:' + (isActive ? d.bg : '#fff') + ';transition:all 0.3s;' + (isActive ? 'box-shadow:0 4px 12px rgba(0,0,0,0.1)' : '') + '">' +
               '<div style="font-size:2em;margin-bottom:6px">' + d.icon + '</div>' +
-              '<div style="font-weight:700;color:' + d.color + ';font-size:0.95em">' + d.label + '</div>' +
-              '<div style="font-size:0.75em;color:var(--text2);margin-top:4px">' +
-              (m === 'nicel' ? 'Sayısal veriler, istatistiksel analiz' : m === 'nitel' ? 'Sözel veriler, tematik analiz' : 'Nicel + Nitel birlikte') +
-              '</div></div>';
+              '<div style="font-weight:700;color:' + d.color + ';font-size:0.88em">' + d.label + '</div>' +
+              '<div style="font-size:0.72em;color:var(--text2);margin-top:4px">' + shortDesc + '</div></div>';
           }).join('')}
         </div>
       </div>
@@ -3648,6 +3701,28 @@ function recommendJournals() {
     // 6. Free APC bonus (slight preference for researchers)
     if (j.apc === 'Free' || j.apc.indexOf('OA') !== -1) score += 2;
 
+    // 7. Methodology affinity bonus (max 15 points)
+    if (methodType) {
+      var methodKeywords = {
+        'nicel': ['experimental','quantitative','survey','statistical','measurement','assessment','psychometric'],
+        'nitel': ['qualitative','phenomenology','case study','grounded theory','narrative','ethnograph','interview'],
+        'karma': ['mixed method','convergent','sequential','embedded','multi-method'],
+        'tasarimTabanli': ['design-based','design research','DBR','iterative design','intervention','development','prototype','action research','design science'],
+        'kuramsal': ['theoretical','conceptual','framework','systematic review','meta-analysis','bibliometric','science mapping','review','synthesis','critical','theory']
+      };
+      var mKws = methodKeywords[methodType] || [];
+      var methodMatchCount = 0;
+      mKws.forEach(function(mk) {
+        if (jFieldNorm.indexOf(mk.toLowerCase()) !== -1) methodMatchCount++;
+      });
+      if (methodMatchCount > 0) {
+        var mBonus = Math.min(15, methodMatchCount * 5);
+        score += mBonus;
+        var methodLabels = {nicel:'Nicel',nitel:'Nitel',karma:'Karma',tasarimTabanli:'Tasarım Tabanlı',kuramsal:'Kuramsal'};
+        reasons.push((methodLabels[methodType] || methodType) + ' araştırmaya uygun');
+      }
+    }
+
     return {
       journal: j,
       score: score,
@@ -3765,9 +3840,8 @@ function copyJournalRecommendationPrompt() {
   // Research design info
   var rd = state.researchDesign || {};
   var methodLabel = '';
-  if (rd.method === 'nicel') methodLabel = 'Nicel';
-  else if (rd.method === 'nitel') methodLabel = 'Nitel';
-  else if (rd.method === 'karma') methodLabel = 'Karma';
+  var rdData = rd.method ? RESEARCH_DESIGNS[rd.method] : null;
+  if (rdData) methodLabel = rdData.label;
   var designLabel = rd.subDesign || '';
   var questionsText = (rd.questions || []).join('; ');
   var hypothesesText = (rd.hypotheses || []).join('; ');
@@ -3815,7 +3889,8 @@ function copyJournalRecommendationPrompt() {
     '- Dergileri kabul zorluk sırasına göre sırala (Q1 en üstte, ulusal en altta)\n' +
     '- Çeşitlilik sağla: en az 2 Q1, 2 Q2, 1 Q3-Q4 ve 2 ulusal/bölgesel dergi olsun\n' +
     '- Taranan kaynaklarda sık geçen dergiler varsa onları MUTLAKA değerlendir\n' +
-    '- "Sistematik Derleme" kabul eden dergilere öncelik ver\n' +
+    '- "Sistematik Derleme" kabul eden dergilere öncelik ver (kuramsal çalışma ise "review/theoretical" odaklı dergilere de bak)\n' +
+    '- Araştırma yöntemi (nicel/nitel/karma/tasarım tabanlı/kuramsal) dergi seçiminde gözetilsin\n' +
     '- Her derginin internet sitesini kontrol ederek güncel bilgileri doğrula\n' +
     '- Kabul şansını gerçekçi hesapla (derleme türü avantajını da göz önünde bulundur)\n' +
     '- Sonuçları Türkçe sun\n' +
@@ -4056,7 +4131,7 @@ Her çalışmanın araştırma konusuyla ilgililiğini 0.0-1.0 arası puanla.
 İlgililik puanı, başlık + abstract + anahtar kelime eşleşmesine göre belirlensin.
 
 📌 SUBAGENT 3 — METODOLOJİ ÇIKARIMI:
-Her çalışmanın araştırma yöntemini tespit et: nicel/nitel/karma/derleme/meta-analiz
+Her çalışmanın araştırma yöntemini tespit et: nicel/nitel/karma/tasarım tabanlı/kuramsal/derleme/meta-analiz
 Mümkünse: desen, örneklem büyüklüğü, veri toplama aracı, analiz yöntemi
 
 📌 SUBAGENT 4 — BİBLİYOMETRİK ANALİZ:
@@ -6620,7 +6695,7 @@ function generateChatResponse(q) {
 
   if (ql.includes('metodoloji') || ql.includes('yöntem')) {
     return `Yüklü çalışmalarda sıkça kullanılan metodolojik yaklaşımlar:\n\n` +
-      `• Deneysel/yarı-deneysel tasarım\n• Anket tabanlı çalışmalar\n• Sistematik literatür taraması\n• Tasarım tabanlı araştırma\n• Karma yöntem (mixed methods)\n\n` +
+      `• Nicel: Deneysel/yarı-deneysel, tarama, korelasyonel\n• Nitel: Olgubilim, durum çalışması, gömülü teori, eylem araştırması\n• Karma yöntem (mixed methods)\n• Tasarım tabanlı araştırma (DBR): Ürün/müdahale geliştirme, tasarım ilkeleri\n• Kuramsal/Kavramsal: Kavramsal analiz, kuramsal sentez, meta-sentez, bibliyometrik haritalama\n\n` +
       `Detaylı metodoloji analizi için çalışmaların tam metinlerinin incelenmesi gerekmektedir.`;
   }
 
@@ -7691,7 +7766,7 @@ function buildGuideHTML() {
           '<tr><td>3. Analiz</td><td>Tematik analiz, filtreleme, etiketleme</td><td>Çalışmaları incelemek ve seçmek</td></tr>' +
           '<tr><td>4. Kaynak Doğrulama</td><td>DOI üzerinden kaynak kontrolü</td><td>Kaynakların erişilebilirliğini teyit etmek</td></tr>' +
           '<tr><td>5. Akademik Rapor</td><td>Otomatik rapor üretimi</td><td>APA 7 uyumlu taslak rapor oluşturmak</td></tr>' +
-          '<tr><td>6. Araştırma Tasarımı</td><td>Yöntem ve tasarım önerileri</td><td>Araştırma çerçevesi oluşturmak</td></tr>' +
+          '<tr><td>6. Araştırma Tasarımı</td><td>Yöntem seçimi (Nicel/Nitel/Karma/DBR/Kuramsal) ve tasarım önerileri</td><td>Araştırma çerçevesi oluşturmak</td></tr>' +
           '<tr><td>7. Özet + Dergi Önerisi</td><td>Tüm adımların özeti ve dergi önerileri</td><td>Süreç özetini ve yayın stratejisini sunmak</td></tr>' +
         '</table>' +
         '<div class="tip">💡 <strong>İpucu:</strong> Tüm verileriniz tarayıcınızda (localStorage) saklanır. Sunucuya herhangi bir veri gönderilmez — çalışmanız tamamen yerel ve gizlidir.</div>' +
@@ -7851,14 +7926,14 @@ function buildGuideHTML() {
         // ===== ADIM 7: ARAŞTIRMA TASARIMI =====
         '<div id="guide-step6">' +
         '<h3>6️⃣ Adım 6: Araştırma Tasarımı</h3>' +
-        '<p>Literatür taramanıza dayalı olarak araştırma tasarımı önerileri alırsınız. Yöntem seçimi, örneklem, veri toplama araçları ve analiz yöntemleri konusunda rehberlik sağlar.</p>' +
+        '<p>Literatür taramanıza dayalı olarak araştırma tasarımı önerileri alırsınız. 5 ana yöntem kategorisinden seçim yapabilirsiniz: Nicel, Nitel, Karma, Tasarım Tabanlı Araştırma (DBR) ve Kuramsal/Kavramsal Araştırma. Her yöntem için özel alt desenler, araştırma soruları, veri toplama araçları ve analiz yöntemleri önerilir.</p>' +
         '</div>' +
 
         // ===== ADIM 7: ÖZET =====
         '<div id="guide-step7">' +
         '<h3>7️⃣ Adım 7: Özet + Dergi Önerisi</h3>' +
         '<p>Son adımda tüm sürecin özeti otomatik olarak sunulur. Akademik Rapor, Araştırma Tasarımı, BibTeX verileri ve oturum yedeği butonlarıyla çıktılarınızı indirebilirsiniz.</p>' +
-        '<p><strong>Dergi Önerisi:</strong> Uygulama, araştırma konunuz ve kaynaklarınıza göre algoritmik dergi önerileri üretir. Agent modunda Claude, ek olarak internet üzerinden güncel indeksleme durumlarını kontrol ederek daha kapsamlı dergi önerileri sunar.</p>' +
+        '<p><strong>Dergi Önerisi:</strong> Uygulama, araştırma konunuz, temalarınız, kaynak dergileriniz ve seçtiğiniz araştırma yöntemine göre algoritmik dergi önerileri üretir. Yöntem uyumu (nicel/nitel/karma/DBR/kuramsal) da skorlamada etkilidir. Agent modunda Claude, ek olarak internet üzerinden güncel indeksleme durumlarını kontrol ederek daha kapsamlı dergi önerileri sunar.</p>' +
         '</div>' +
 
         // ===== KULLANIM SENARYOLARI =====
@@ -8127,7 +8202,7 @@ initWebLLMBar();
 
 <footer style="text-align:center;padding:20px 20px 80px;font-size:0.75em;color:#999;border-top:1px solid #e0e0e0;margin-top:40px">
   <div style="margin-bottom:6px">&copy; SEÖ, 2026</div>
-  <div style="font-size:0.92em;color:#bbb">Açık Araştırma <strong style="color:#7c3aed">v1.0</strong> — Ajan Destekli Akademik Yayın İnceleme Platformu</div>
+  <div style="font-size:0.92em;color:#bbb">Açık Araştırma <strong style="color:#7c3aed">v1.1</strong> — Ajan Destekli Akademik Yayın İnceleme Platformu</div>
   <div style="font-size:0.85em;color:#ccc;margin-top:3px">Anadolu Üniversitesi Uzaktan Eğitim Araştırma Topluluğu</div>
 </footer>
 </body>
