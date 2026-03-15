@@ -925,7 +925,7 @@ function renderStep0(el) {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 
           <!-- A: Ben Yapacağım -->
-          <div id="modeCardManual" onclick="selectMode('manual')" style="border:3px solid ${useMode==='manual'?'#1a237e':'#e0e0e0'};border-radius:16px;padding:28px 24px;cursor:pointer;transition:all 0.25s;text-align:center;${useMode==='manual'?'background:#e8eaf6;box-shadow:0 4px 20px rgba(26,35,126,0.15)':'background:#fff'}">
+          <div id="modeCardManual" onclick="confirmManualMode()" style="border:3px solid ${useMode==='manual'?'#1a237e':'#e0e0e0'};border-radius:16px;padding:28px 24px;cursor:pointer;transition:all 0.25s;text-align:center;${useMode==='manual'?'background:#e8eaf6;box-shadow:0 4px 20px rgba(26,35,126,0.15)':'background:#fff'}">
             <div style="width:64px;height:64px;margin:0 auto 14px;background:linear-gradient(135deg,#e8eaf6,#c5cae9);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2em">🧑‍💻</div>
             <h3 style="font-size:1.15em;font-weight:800;color:#1a237e;margin-bottom:8px">Ben Yapacağım</h3>
             <p style="font-size:0.82em;color:var(--text2);line-height:1.6;margin-bottom:14px">
@@ -940,7 +940,7 @@ function renderStep0(el) {
           </div>
 
           <!-- B: Agent Yapsın -->
-          <div id="modeCardAgent" onclick="selectMode('agent')" style="border:3px solid ${useMode==='agent'?'#7c3aed':'#e0e0e0'};border-radius:16px;padding:28px 24px;cursor:pointer;transition:all 0.25s;text-align:center;position:relative;${useMode==='agent'?'background:linear-gradient(135deg,#faf5ff,#f5f3ff);box-shadow:0 4px 20px rgba(124,58,237,0.15)':'background:#fff'}">
+          <div id="modeCardAgent" onclick="showAgentChecklist()" style="border:3px solid ${useMode==='agent'?'#7c3aed':'#e0e0e0'};border-radius:16px;padding:28px 24px;cursor:pointer;transition:all 0.25s;text-align:center;position:relative;${useMode==='agent'?'background:linear-gradient(135deg,#faf5ff,#f5f3ff);box-shadow:0 4px 20px rgba(124,58,237,0.15)':'background:#fff'}">
             <div style="position:absolute;top:12px;right:12px;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.68em;font-weight:700">PRO</div>
             <div style="width:64px;height:64px;margin:0 auto 14px;background:linear-gradient(135deg,#a855f7,#7c3aed);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2em">🤖</div>
             <h3 style="font-size:1.15em;font-weight:800;color:#6d28d9;margin-bottom:8px">Agent Benim İçin Yapsın</h3>
@@ -954,6 +954,54 @@ function renderStep0(el) {
               <span style="background:#ede9fe;padding:3px 10px;border-radius:10px;color:#6d28d9">200K Bağlam</span>
             </div>
             <div style="font-size:0.78em;font-weight:700;padding:8px 16px;background:${useMode==='agent'?'#7c3aed':'#ede9fe'};color:${useMode==='agent'?'#fff':'#6d28d9'};border-radius:8px;display:inline-block;transition:all 0.2s">${useMode==='agent'?'✅ Seçildi':'Bunu Seç'}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent Checklist (inline, initially hidden) -->
+      <div id="agentChecklistArea" style="display:none;background:linear-gradient(135deg,#faf5ff,#f3e8ff);border-top:3px solid #7c3aed;padding:24px;text-align:center;animation:slideDown 0.3s ease">
+        <div style="max-width:520px;margin:0 auto">
+          <h3 style="font-size:1.05em;font-weight:800;color:#4c1d95;margin-bottom:6px;display:block">🤖 Agent Modu Gereksinimleri</h3>
+          <p style="font-size:0.8em;color:#7c3aed;margin-bottom:16px">Devam etmek için aşağıdaki gereksinimleri onaylayın</p>
+
+          <!-- Checkbox 1 -->
+          <label style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;margin-bottom:8px;background:#fff;border:2px solid #ede9fe;border-radius:12px;cursor:pointer;transition:all 0.2s;text-align:left" onclick="event.stopPropagation();var cb=this.querySelector('input');cb.checked=!cb.checked;updateInlineChecklist()">
+            <input type="checkbox" id="inlineCheck1" style="width:20px;height:20px;accent-color:#7c3aed;flex-shrink:0;margin-top:2px;cursor:pointer" onclick="event.stopPropagation();updateInlineChecklist()">
+            <div>
+              <strong style="font-size:0.85em;color:#4a148c">Claude Pro/Team/Enterprise üyeliğim var</strong>
+              <p style="font-size:0.73em;color:#7c3aed;margin-top:2px">Agent modu için aktif abonelik gerekir. <a href="https://claude.ai" target="_blank" style="color:#5b21b6;font-weight:600;text-decoration:underline" onclick="event.stopPropagation()">claude.ai</a></p>
+            </div>
+          </label>
+
+          <!-- Checkbox 2 -->
+          <label style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;margin-bottom:8px;background:#fff;border:2px solid #ede9fe;border-radius:12px;cursor:pointer;transition:all 0.2s;text-align:left" onclick="event.stopPropagation();var cb=this.querySelector('input');cb.checked=!cb.checked;updateInlineChecklist()">
+            <input type="checkbox" id="inlineCheck2" style="width:20px;height:20px;accent-color:#7c3aed;flex-shrink:0;margin-top:2px;cursor:pointer" onclick="event.stopPropagation();updateInlineChecklist()">
+            <div>
+              <strong style="font-size:0.85em;color:#4a148c">Claude Desktop uygulamasını kurdum</strong>
+              <p style="font-size:0.73em;color:#7c3aed;margin-top:2px"><a href="https://claude.ai/download" target="_blank" style="color:#5b21b6;font-weight:600;text-decoration:underline" onclick="event.stopPropagation()">İndir ↗</a></p>
+            </div>
+          </label>
+
+          <!-- Checkbox 3 -->
+          <label style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;margin-bottom:14px;background:#fff;border:2px solid #ede9fe;border-radius:12px;cursor:pointer;transition:all 0.2s;text-align:left" onclick="event.stopPropagation();var cb=this.querySelector('input');cb.checked=!cb.checked;updateInlineChecklist()">
+            <input type="checkbox" id="inlineCheck3" style="width:20px;height:20px;accent-color:#7c3aed;flex-shrink:0;margin-top:2px;cursor:pointer" onclick="event.stopPropagation();updateInlineChecklist()">
+            <div>
+              <strong style="font-size:0.85em;color:#4a148c">Claude in Chrome extension'ını kurdum</strong>
+              <p style="font-size:0.73em;color:#7c3aed;margin-top:2px"><a href="https://chromewebstore.google.com/detail/claude-in-chrome/mhcmjhbbkpkjgecafhbopllcbmgbefao" target="_blank" style="color:#5b21b6;font-weight:600;text-decoration:underline" onclick="event.stopPropagation()">Chrome Web Store ↗</a></p>
+            </div>
+          </label>
+
+          <!-- "Ben İnsan Değilim" button — hidden until all checked -->
+          <div id="notRobotBtnArea" style="display:none;animation:slideDown 0.3s ease">
+            <button id="notRobotBtn" onclick="startAgentMode()" style="padding:16px 40px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:14px;font-size:1em;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 6px 24px rgba(124,58,237,0.35);transition:all 0.25s;display:inline-flex;align-items:center;gap:10px" onmouseover="this.style.transform='scale(1.03)';this.style.boxShadow='0 8px 30px rgba(124,58,237,0.45)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 6px 24px rgba(124,58,237,0.35)'">
+              <span style="font-size:1.3em">🤖</span> Ben İnsan Değilim — Agent'ı Başlat
+            </button>
+            <p style="font-size:0.72em;color:#9e9e9e;margin-top:8px">Tıklayınca Agent bağlantı doğrulaması başlayacak</p>
+          </div>
+
+          <!-- Remaining count when not all checked -->
+          <div id="checklistRemaining" style="font-size:0.82em;color:#9e9e9e;padding:10px">
+            🔒 3 gereksinim daha onaylanmalı
           </div>
         </div>
       </div>
@@ -1174,90 +1222,9 @@ Bu uygulama agent'lar için özel JavaScript API'leri sunar. Chrome extension ja
         </div>
       </div>
 
-      <!-- Devam Butonu — Mod Onay Akışı -->
-      <div style="background:#fff;padding:20px 24px;border-top:1px solid #f0e0f0;text-align:center" id="modeConfirmArea">
-        <p style="font-size:0.95em;font-weight:700;color:var(--primary);margin-bottom:14px">Nasıl devam etmek istiyorsunuz?</p>
-        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;max-width:500px;margin:0 auto">
-          <!-- İnsan -->
-          <button onclick="confirmManualMode()" style="flex:1;min-width:180px;padding:20px;background:#fff;border:3px solid #1565c0;border-radius:16px;cursor:pointer;transition:all 0.25s;text-align:center;font-family:inherit" onmouseover="this.style.background='#e3f2fd';this.style.boxShadow='0 4px 20px rgba(21,101,192,0.2)'" onmouseout="this.style.background='#fff';this.style.boxShadow='none'">
-            <div style="font-size:2.5em;margin-bottom:8px">🧑‍💻</div>
-            <div style="font-weight:800;font-size:0.95em;color:#1565c0">Ben Yapacağım</div>
-            <div style="font-size:0.75em;color:#616161;margin-top:4px;line-height:1.4">Manuel mod — adım adım<br>kendim yöneteceğim</div>
-          </button>
-          <!-- Robot -->
-          <button onclick="confirmAgentMode()" style="flex:1;min-width:180px;padding:20px;background:#fff;border:3px solid #7c3aed;border-radius:16px;cursor:pointer;transition:all 0.25s;text-align:center;font-family:inherit" onmouseover="this.style.background='#f5f3ff';this.style.boxShadow='0 4px 20px rgba(124,58,237,0.2)'" onmouseout="this.style.background='#fff';this.style.boxShadow='none'">
-            <div style="font-size:2.5em;margin-bottom:8px">🤖</div>
-            <div style="font-weight:800;font-size:0.95em;color:#7c3aed">Agent Yapsın</div>
-            <div style="font-size:0.75em;color:#616161;margin-top:4px;line-height:1.4">Claude Agent — otomatik<br>her şeyi o halleder</div>
-          </button>
-        </div>
-      </div>
+      <!-- Küçük kart bölümü kaldırıldı — büyük kartlar doğrudan aksiyonu tetikliyor -->
 
-      <!-- Agent Onboarding Modal (gizli, robot tıklanınca açılır) -->
-      <div id="agentOnboardingModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center">
-        <div style="background:#fff;width:92%;max-width:520px;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:slideDown 0.3s ease">
-          <!-- Header -->
-          <div style="background:linear-gradient(135deg,#7c3aed,#5b21b6);padding:24px;text-align:center;color:#fff;position:relative">
-            <button onclick="closeAgentOnboarding()" style="position:absolute;top:12px;right:16px;background:rgba(255,255,255,0.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1.1em">&times;</button>
-            <div style="font-size:2em;margin-bottom:6px">🤖</div>
-            <h3 style="font-size:1.15em;font-weight:800;margin-bottom:4px">Agent Modu Hazırlık Kontrolü</h3>
-            <p style="font-size:0.82em;opacity:0.9">Agent'ın çalışması için aşağıdaki gereksinimleri kontrol edin</p>
-          </div>
-
-          <!-- Checklist -->
-          <div style="padding:20px 24px">
-            <!-- Requirement 1 -->
-            <label style="display:flex;align-items:flex-start;gap:12px;padding:14px;margin-bottom:10px;background:#faf5ff;border:2px solid #ede9fe;border-radius:12px;cursor:pointer;transition:all 0.2s" onclick="this.querySelector('input').checked=!this.querySelector('input').checked;updateAgentChecklist()">
-              <input type="checkbox" id="agentCheck1" style="width:20px;height:20px;accent-color:#7c3aed;flex-shrink:0;margin-top:2px;cursor:pointer" onclick="event.stopPropagation();updateAgentChecklist()">
-              <div>
-                <strong style="font-size:0.88em;color:#4a148c">Claude Pro/Team/Enterprise üyeliğim var</strong>
-                <p style="font-size:0.75em;color:#7c3aed;margin-top:2px;line-height:1.4">Agent modu için aktif bir Claude aboneliği gereklidir. <a href="https://claude.ai" target="_blank" style="color:#5b21b6;font-weight:600;text-decoration:underline">claude.ai</a></p>
-              </div>
-            </label>
-
-            <!-- Requirement 2 -->
-            <label style="display:flex;align-items:flex-start;gap:12px;padding:14px;margin-bottom:10px;background:#faf5ff;border:2px solid #ede9fe;border-radius:12px;cursor:pointer;transition:all 0.2s" onclick="this.querySelector('input').checked=!this.querySelector('input').checked;updateAgentChecklist()">
-              <input type="checkbox" id="agentCheck2" style="width:20px;height:20px;accent-color:#7c3aed;flex-shrink:0;margin-top:2px;cursor:pointer" onclick="event.stopPropagation();updateAgentChecklist()">
-              <div>
-                <strong style="font-size:0.88em;color:#4a148c">Claude Desktop uygulamasını kurdum</strong>
-                <p style="font-size:0.75em;color:#7c3aed;margin-top:2px;line-height:1.4">Claude masaüstü uygulaması (Cowork) gereklidir. <a href="https://claude.ai/download" target="_blank" style="color:#5b21b6;font-weight:600;text-decoration:underline">İndir ↗</a></p>
-              </div>
-            </label>
-
-            <!-- Requirement 3 -->
-            <label style="display:flex;align-items:flex-start;gap:12px;padding:14px;margin-bottom:10px;background:#faf5ff;border:2px solid #ede9fe;border-radius:12px;cursor:pointer;transition:all 0.2s" onclick="this.querySelector('input').checked=!this.querySelector('input').checked;updateAgentChecklist()">
-              <input type="checkbox" id="agentCheck3" style="width:20px;height:20px;accent-color:#7c3aed;flex-shrink:0;margin-top:2px;cursor:pointer" onclick="event.stopPropagation();updateAgentChecklist()">
-              <div>
-                <strong style="font-size:0.88em;color:#4a148c">Claude in Chrome extension'ını kurdum</strong>
-                <p style="font-size:0.75em;color:#7c3aed;margin-top:2px;line-height:1.4">Agent'ın bu sayfayla etkileşimi için gereklidir. <a href="https://chromewebstore.google.com/detail/claude-in-chrome/mhcmjhbbkpkjgecafhbopllcbmgbefao" target="_blank" style="color:#5b21b6;font-weight:600;text-decoration:underline">Chrome Web Store ↗</a></p>
-              </div>
-            </label>
-
-            <!-- Info box -->
-            <div style="background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:1px solid #a5d6a7;border-radius:10px;padding:12px;margin-bottom:14px">
-              <div style="font-size:0.8em;color:#2e7d32;line-height:1.6">
-                <strong>Agent sizin için neler yapacak?</strong><br>
-                ✅ Araştırma konunuzu zenginleştirecek<br>
-                ✅ Boolean sorgu oluşturacak (WoS/Scopus)<br>
-                ✅ BibTeX'i yükleyip tematik analiz yapacak<br>
-                ✅ Kaynakları DOI ile tek tek doğrulayacak<br>
-                ✅ APA7 formatında akademik rapor yazacak<br>
-                ✅ Araştırma tasarımı önerecek<br>
-                ✅ Uygun dergileri araştırıp önerecek<br>
-                <span style="color:#1b5e20;font-weight:600">Sizden sadece birkaç soruya yanıt vermeniz yeterli!</span>
-              </div>
-            </div>
-
-            <!-- Buttons -->
-            <div style="display:flex;gap:10px">
-              <button id="agentStartBtn" onclick="startAgentMode()" disabled style="flex:1;padding:14px;background:#ccc;color:#fff;border:none;border-radius:12px;font-size:0.95em;font-weight:700;cursor:not-allowed;font-family:inherit;transition:all 0.3s">
-                🔒 Yukarıdaki gereksinimleri onaylayın
-              </button>
-              <button onclick="closeAgentOnboarding()" style="padding:14px 20px;background:#f5f5f5;color:#616161;border:2px solid #e0e0e0;border-radius:12px;font-size:0.88em;cursor:pointer;font-family:inherit">İptal</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Eski modal kaldırıldı — inline checklist kullanılıyor -->
 
       <!-- Alt Bilgi Şeridi -->
       <div style="background:linear-gradient(90deg,#1a237e,#283593);padding:8px 24px;text-align:center">
@@ -1282,40 +1249,49 @@ function confirmManualMode() {
 }
 
 function confirmAgentMode() {
+  showAgentChecklist();
+}
+
+function showAgentChecklist() {
   useMode = 'agent';
-  renderStep0(document.getElementById('mainContent'));
-  // Show onboarding modal
-  setTimeout(function() {
-    var modal = document.getElementById('agentOnboardingModal');
-    if (modal) { modal.style.display = 'flex'; }
-  }, 100);
+  // Highlight agent card
+  var manualCard = document.getElementById('modeCardManual');
+  var agentCard = document.getElementById('modeCardAgent');
+  if (manualCard) { manualCard.style.border = '3px solid #e0e0e0'; manualCard.style.background = '#fff'; manualCard.style.opacity = '0.5'; }
+  if (agentCard) { agentCard.style.border = '3px solid #7c3aed'; agentCard.style.background = 'linear-gradient(135deg,#faf5ff,#f5f3ff)'; agentCard.style.boxShadow = '0 4px 20px rgba(124,58,237,0.15)'; }
+  // Show inline checklist
+  var area = document.getElementById('agentChecklistArea');
+  if (area) {
+    area.style.display = 'block';
+    area.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  // Also show agent details (prompt etc.)
+  var details = document.getElementById('agentModeDetails');
+  if (details) details.style.display = 'block';
+}
+
+function updateInlineChecklist() {
+  var c1 = document.getElementById('inlineCheck1');
+  var c2 = document.getElementById('inlineCheck2');
+  var c3 = document.getElementById('inlineCheck3');
+  var btnArea = document.getElementById('notRobotBtnArea');
+  var remaining = document.getElementById('checklistRemaining');
+  if (!c1 || !c2 || !c3) return;
+
+  var allChecked = c1.checked && c2.checked && c3.checked;
+  var count = 3 - (c1.checked ? 1 : 0) - (c2.checked ? 1 : 0) - (c3.checked ? 1 : 0);
+  if (allChecked) {
+    if (btnArea) btnArea.style.display = 'block';
+    if (remaining) remaining.style.display = 'none';
+  } else {
+    if (btnArea) btnArea.style.display = 'none';
+    if (remaining) { remaining.style.display = 'block'; remaining.innerHTML = '🔒 ' + count + ' gereksinim daha onaylanmalı'; }
+  }
 }
 
 function closeAgentOnboarding() {
   var modal = document.getElementById('agentOnboardingModal');
   if (modal) modal.style.display = 'none';
-}
-
-function updateAgentChecklist() {
-  var c1 = document.getElementById('agentCheck1');
-  var c2 = document.getElementById('agentCheck2');
-  var c3 = document.getElementById('agentCheck3');
-  var btn = document.getElementById('agentStartBtn');
-  if (!c1 || !c2 || !c3 || !btn) return;
-
-  var allChecked = c1.checked && c2.checked && c3.checked;
-  if (allChecked) {
-    btn.disabled = false;
-    btn.style.background = 'linear-gradient(135deg,#7c3aed,#5b21b6)';
-    btn.style.cursor = 'pointer';
-    btn.innerHTML = '🤖 Agent Modunda Başla →';
-  } else {
-    btn.disabled = true;
-    btn.style.background = '#ccc';
-    btn.style.cursor = 'not-allowed';
-    var remaining = 3 - (c1.checked ? 1 : 0) - (c2.checked ? 1 : 0) - (c3.checked ? 1 : 0);
-    btn.innerHTML = '🔒 ' + remaining + ' gereksinim daha onaylanmalı';
-  }
 }
 
 function startAgentMode() {
