@@ -4,110 +4,118 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Açık Araştırma — Ajan Destekli Akademik Yayın İnceleme</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--primary:#1a237e;--primary-light:#3949ab;--accent:#ff6f00;--accent-light:#ffa000;--bg:#f5f5f5;--card:#fff;--text:#212121;--text2:#616161;--border:#e0e0e0;--success:#2e7d32;--danger:#c62828;--radius:12px;--shadow:0 2px 12px rgba(0,0,0,0.08)}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
-/* Header — always compact, stable on all widths */
-.app-header{background:linear-gradient(135deg,var(--primary),#283593);color:#fff;padding:0;display:flex;align-items:center;text-align:left;position:sticky;top:0;z-index:200;box-shadow:0 4px 20px rgba(0,0,0,0.15);min-height:42px;flex-wrap:nowrap}
+:root{--primary:#4F46E5;--primary-light:#6366F1;--primary-dark:#3730A3;--accent:#F59E0B;--accent-light:#FBBF24;--bg:#F8FAFC;--card:#FFFFFF;--text:#1E293B;--text2:#64748B;--border:rgba(0,0,0,0.06);--success:#059669;--danger:#DC2626;--radius:12px;--radius-lg:24px;--shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 24px rgba(0,0,0,0.04);--shadow-lg:0 10px 40px -10px rgba(0,0,0,0.06);--shadow-glow:0 0 0 3px rgba(79,70,229,0.15);--font:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;--transition:all 0.25s cubic-bezier(0.4,0,0.2,1)}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+/* Header — glassmorphism compact bar */
+.app-header{background:rgba(255,255,255,0.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);color:var(--text);padding:0;display:flex;align-items:center;text-align:left;position:sticky;top:0;z-index:200;box-shadow:0 1px 0 var(--border),0 4px 20px rgba(0,0,0,0.03);min-height:48px;flex-wrap:nowrap;border-bottom:1px solid rgba(0,0,0,0.04)}
 .app-header .header-brand{display:flex;align-items:center;gap:10px;padding:8px 14px;white-space:nowrap;flex-shrink:0}
-.app-header h1{font-size:0.95em;letter-spacing:0.3px;margin:0}
+.app-header h1{font-size:0.95em;letter-spacing:0.3px;margin:0;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--primary-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .app-header .subtitle,.app-header .org{display:none}
 /* WebLLM mini in header — prominent widget */
-.app-header .header-wllm{display:flex;align-items:center;gap:8px;padding:6px 16px;margin-left:10px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:10px;flex-shrink:0;position:relative;cursor:pointer;transition:background 0.15s}
-.app-header .header-wllm:hover{background:rgba(255,255,255,0.18)}
-.app-header .header-wllm .wllm-mini-label{font-size:0.82em;font-weight:700;opacity:0.95;white-space:nowrap}
+.app-header .header-wllm{display:flex;align-items:center;gap:8px;padding:6px 16px;margin-left:10px;background:rgba(79,70,229,0.06);border:1px solid rgba(79,70,229,0.12);border-radius:12px;flex-shrink:0;position:relative;cursor:pointer;transition:var(--transition)}
+.app-header .header-wllm:hover{background:rgba(79,70,229,0.1)}
+.app-header .header-wllm .wllm-mini-label{font-size:0.82em;font-weight:700;color:var(--primary);white-space:nowrap}
 .app-header .header-wllm .wllm-mini-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;box-shadow:0 0 4px currentColor}
-.app-header .header-wllm .wllm-mini-status{font-size:0.8em;opacity:0.9;white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
-.app-header .header-wllm .wllm-info-btn{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.5);background:rgba(255,255,255,0.15);color:#fff;font-size:0.7em;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s;font-style:italic;font-family:Georgia,serif;line-height:1}
-.app-header .header-wllm .wllm-info-btn:hover{background:rgba(255,255,255,0.35);transform:scale(1.1)}
-.app-header .header-wllm .wllm-info-btn.open{background:rgba(255,255,255,0.35);border-color:#fff}
+.app-header .header-wllm .wllm-mini-status{font-size:0.8em;color:var(--text2);white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+.app-header .header-wllm .wllm-info-btn{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(79,70,229,0.3);background:rgba(79,70,229,0.08);color:var(--primary);font-size:0.7em;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--transition);font-style:italic;font-family:Georgia,serif;line-height:1}
+.app-header .header-wllm .wllm-info-btn:hover{background:rgba(79,70,229,0.15);transform:scale(1.1)}
+.app-header .header-wllm .wllm-info-btn.open{background:rgba(79,70,229,0.15);border-color:var(--primary)}
 /* Session controls */
 .app-header .header-session{display:flex;align-items:center;gap:6px;margin-left:auto;padding:6px 14px;flex-shrink:1;min-width:0;white-space:nowrap}
-.app-header .header-session button{padding:3px 10px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);border-radius:6px;font-size:0.78em;cursor:pointer;font-family:inherit;color:#fff;transition:all 0.15s;white-space:nowrap;flex-shrink:0}
-.app-header .header-session button:hover{background:rgba(255,255,255,0.25)}
-.app-header .header-session .session-divider{width:1px;height:16px;background:rgba(255,255,255,0.2);flex-shrink:0}
-.app-header .header-session select{padding:3px 8px;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:0.78em;font-family:inherit;background:rgba(255,255,255,0.1);color:#fff;max-width:180px;cursor:pointer;flex-shrink:1;min-width:0}
+.app-header .header-session button{padding:4px 12px;border:1px solid var(--border);background:rgba(79,70,229,0.04);border-radius:8px;font-size:0.78em;cursor:pointer;font-family:inherit;color:var(--text);transition:var(--transition);white-space:nowrap;flex-shrink:0;font-weight:500}
+.app-header .header-session button:hover{background:rgba(79,70,229,0.08);border-color:rgba(79,70,229,0.2)}
+.app-header .header-session .session-divider{width:1px;height:16px;background:rgba(0,0,0,0.06);flex-shrink:0}
+.app-header .header-session select{padding:3px 8px;border:1px solid var(--border);border-radius:8px;font-size:0.78em;font-family:inherit;background:#fff;color:var(--text);max-width:180px;cursor:pointer;flex-shrink:1;min-width:0}
 .app-header .header-session select option{color:#333;background:#fff}
-.app-header .header-session .session-name{font-weight:700;font-size:0.82em;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:0.9;flex-shrink:1;min-width:0}
+.app-header .header-session .session-name{font-weight:700;font-size:0.82em;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--primary);flex-shrink:1;min-width:0}
 .app-header .header-session .saved-ind{font-size:0.75em;opacity:0;transition:opacity 0.3s}
 .app-header .header-session .saved-ind.show{opacity:0.9}
-/* Expanded panel — fixed position to avoid any overflow clipping */
-.wllm-expand-panel{display:none;position:fixed;top:48px;left:120px;min-width:340px;background:linear-gradient(135deg,#1a237e,#283593);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:16px 18px;box-shadow:0 12px 40px rgba(0,0,0,0.35);z-index:260;color:#fff;font-size:0.85em}
-.wllm-expand-panel.open{display:block}
-.wllm-expand-panel::before{content:'';position:absolute;top:-7px;left:30px;width:14px;height:14px;background:linear-gradient(135deg,#1a237e,#283593);border-left:1px solid rgba(255,255,255,0.2);border-top:1px solid rgba(255,255,255,0.2);transform:rotate(45deg)}
+/* Expanded panel — glassmorphism dropdown */
+.wllm-expand-panel{display:none;position:fixed;top:52px;left:120px;min-width:340px;background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:16px;padding:16px 18px;box-shadow:var(--shadow-lg);z-index:260;color:var(--text);font-size:0.85em}
+.wllm-expand-panel.open{display:block;animation:fadeSlideDown 0.2s ease}
+.wllm-expand-panel::before{content:'';position:absolute;top:-7px;left:30px;width:14px;height:14px;background:rgba(255,255,255,0.95);border-left:1px solid var(--border);border-top:1px solid var(--border);transform:rotate(45deg)}
 .wllm-expand-panel .wep-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.wllm-expand-panel select{padding:4px 10px;border:1px solid rgba(255,255,255,0.3);border-radius:6px;font-size:0.95em;font-family:inherit;background:rgba(255,255,255,0.1);color:#fff;width:100%;cursor:pointer}
+.wllm-expand-panel select{padding:6px 10px;border:1px solid var(--border);border-radius:8px;font-size:0.95em;font-family:inherit;background:#fff;color:var(--text);width:100%;cursor:pointer}
 .wllm-expand-panel select option{color:#333;background:#fff}
-.wllm-expand-panel button{padding:5px 14px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.12);border-radius:6px;font-size:0.92em;cursor:pointer;font-family:inherit;color:#fff;white-space:nowrap;transition:all 0.15s}
-.wllm-expand-panel button:hover:not(:disabled){background:rgba(255,255,255,0.25)}
+.wllm-expand-panel button{padding:6px 14px;border:1px solid var(--border);background:rgba(79,70,229,0.06);border-radius:8px;font-size:0.92em;cursor:pointer;font-family:inherit;color:var(--primary);white-space:nowrap;transition:var(--transition);font-weight:500}
+.wllm-expand-panel button:hover:not(:disabled){background:rgba(79,70,229,0.12)}
 .wllm-expand-panel button:disabled{opacity:0.4;cursor:not-allowed}
-.wllm-expand-panel .wep-hint{font-size:0.85em;opacity:0.7;line-height:1.5;margin-top:4px}
+.wllm-expand-panel .wep-hint{font-size:0.85em;color:var(--text2);line-height:1.5;margin-top:4px}
 
 /* Stepper */
-.stepper{display:flex;justify-content:center;gap:0;padding:10px 20px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:40px;z-index:190;overflow-x:auto;transition:top 0.3s}
-.step-item{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:0.82em;color:var(--text2);cursor:pointer;border-radius:8px;transition:all 0.2s;white-space:nowrap}
-.step-item:hover{background:#f0f0f0}
-.step-item.active{background:var(--primary);color:#fff;font-weight:600}
+.stepper{display:flex;justify-content:center;gap:2px;padding:10px 20px;background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:48px;z-index:190;overflow-x:auto;transition:top 0.3s}
+.step-item{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:0.82em;color:var(--text2);cursor:pointer;border-radius:12px;transition:var(--transition);white-space:nowrap}
+.step-item:hover{background:rgba(79,70,229,0.04)}
+.step-item.active{background:var(--primary);color:#fff;font-weight:600;box-shadow:0 4px 12px rgba(79,70,229,0.25)}
 .step-item.completed{color:var(--success);font-weight:600}
-.step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:700;border:2px solid currentColor;flex-shrink:0}
+.step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:700;border:2px solid currentColor;flex-shrink:0;transition:var(--transition)}
 .step-item.active .step-num{background:#fff;color:var(--primary);border-color:#fff}
 .step-item.completed .step-num{background:var(--success);color:#fff;border-color:var(--success)}
-.step-arrow{color:#ccc;margin:0 4px}
+.step-arrow{color:#cbd5e1;margin:0 4px}
 
-.container{max-width:1100px;margin:0 auto;padding:20px}
-.card{background:var(--card);border-radius:var(--radius);padding:24px;margin-bottom:16px;box-shadow:var(--shadow)}
-.card h2{font-size:1.15em;color:var(--primary);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.container{max-width:1100px;margin:0 auto;padding:24px}
+.card{background:var(--card);border-radius:var(--radius-lg);padding:28px;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid var(--border);transition:var(--transition)}
+.card:hover{box-shadow:var(--shadow-lg)}
+.card h2{font-size:1.15em;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;font-weight:700}
 
 /* Buttons */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border:none;border-radius:8px;font-size:0.9em;font-weight:600;cursor:pointer;transition:all 0.2s}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:var(--primary-light)}
-.btn-accent{background:var(--accent);color:#fff}
-.btn-accent:hover{background:var(--accent-light)}
-.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
-.btn-outline:hover{background:var(--primary);color:#fff}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border:none;border-radius:var(--radius);font-size:0.9em;font-weight:600;cursor:pointer;transition:var(--transition);position:relative;overflow:hidden}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(79,70,229,0.2)}
+.btn-primary:hover{background:var(--primary-light);box-shadow:0 4px 16px rgba(79,70,229,0.3);transform:translateY(-1px)}
+.btn-accent{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(245,158,11,0.2)}
+.btn-accent:hover{background:var(--accent-light);transform:translateY(-1px)}
+.btn-outline{background:transparent;border:2px solid rgba(79,70,229,0.2);color:var(--primary)}
+.btn-outline:hover{background:rgba(79,70,229,0.06);border-color:var(--primary)}
 .btn-sm{padding:6px 14px;font-size:0.82em}
-.btn-success{background:var(--success);color:#fff}
+.btn-success{background:var(--success);color:#fff;box-shadow:0 2px 8px rgba(5,150,105,0.2)}
 .btn-danger{background:var(--danger);color:#fff}
-.btn:disabled{opacity:0.5;cursor:not-allowed}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important}
 
 /* Forms */
-input,select,textarea{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:8px;font-size:0.9em;font-family:inherit;transition:border-color 0.2s}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary)}
+input,select,textarea{width:100%;padding:10px 14px;border:1.5px solid rgba(0,0,0,0.08);border-radius:var(--radius);font-size:0.9em;font-family:inherit;transition:var(--transition);background:#fff}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);box-shadow:var(--shadow-glow)}
 textarea{resize:vertical;min-height:100px}
 label{display:block;font-weight:600;font-size:0.85em;margin-bottom:6px;color:var(--text2)}
 .form-group{margin-bottom:16px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.checkbox-row{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#e8eaf6;border-radius:8px;cursor:pointer}
-.checkbox-row input[type="checkbox"]{width:auto;cursor:pointer}
+.checkbox-row{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(79,70,229,0.04);border-radius:var(--radius);cursor:pointer;border:1px solid rgba(79,70,229,0.08);transition:var(--transition)}
+.checkbox-row:hover{background:rgba(79,70,229,0.07)}
+.checkbox-row input[type="checkbox"]{width:auto;cursor:pointer;accent-color:var(--primary)}
 
 /* Tags */
-.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.72em;font-weight:600}
-.tag-oa{background:#e8f5e9;color:#2e7d32}
-.tag-pw{background:#ffebee;color:#c62828}
-.tag-theme{background:#e3f2fd;color:#1565c0}
-.tag-rec{background:#fff3e0;color:#e65100}
+.tag{display:inline-block;padding:4px 12px;border-radius:20px;font-size:0.72em;font-weight:600;letter-spacing:0.02em}
+.tag-oa{background:rgba(5,150,105,0.08);color:#059669}
+.tag-pw{background:rgba(220,38,38,0.08);color:#DC2626}
+.tag-theme{background:rgba(79,70,229,0.08);color:var(--primary)}
+.tag-rec{background:rgba(245,158,11,0.08);color:#D97706}
 
 /* Study cards */
-.study-card{border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;transition:all 0.2s}
-.study-card:hover{border-color:var(--primary-light);box-shadow:0 4px 16px rgba(0,0,0,0.08)}
-.study-title{font-weight:600;font-size:0.92em;margin-bottom:4px}
+.study-card{border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;transition:var(--transition);background:#fff}
+.study-card:hover{border-color:rgba(79,70,229,0.15);box-shadow:0 4px 20px rgba(0,0,0,0.04);transform:translateY(-1px)}
+.study-title{font-weight:600;font-size:0.92em;margin-bottom:4px;color:var(--text)}
 .study-meta{font-size:0.82em;color:var(--text2)}
 .study-tags{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
 .study-links{display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap}
-.study-links a{padding:4px 12px;border-radius:5px;text-decoration:none;font-size:0.78em;font-weight:500}
-.link-doi{background:#e3f2fd;color:#1565c0}
-.link-pdf{background:#1565c0;color:#fff}
-.link-copy{background:#f3e5f5;color:#7b1fa2;cursor:pointer;border:none;font-family:inherit}
+.study-links a{padding:4px 12px;border-radius:8px;text-decoration:none;font-size:0.78em;font-weight:500;transition:var(--transition)}
+.link-doi{background:rgba(79,70,229,0.06);color:var(--primary)}
+.link-doi:hover{background:rgba(79,70,229,0.12)}
+.link-pdf{background:var(--primary);color:#fff;box-shadow:0 2px 6px rgba(79,70,229,0.2)}
+.link-copy{background:rgba(168,85,247,0.06);color:#7c3aed;cursor:pointer;border:none;font-family:inherit;transition:var(--transition)}
+.link-copy:hover{background:rgba(168,85,247,0.12)}
 
 /* Filters */
 .filters-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
 .filters-bar select,.filters-bar input{width:auto;flex:1;min-width:160px}
-.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
-.stat-box{text-align:center;padding:14px;border-radius:10px;background:#f8f9fa}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-box{text-align:center;padding:16px;border-radius:16px;background:#fff;border:1px solid var(--border);transition:var(--transition)}
+.stat-box:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
 .stat-box .num{font-size:1.8em;font-weight:800}
-.stat-box .lbl{font-size:0.75em;color:var(--text2)}
+.stat-box .lbl{font-size:0.75em;color:var(--text2);font-weight:500}
 .stat-oa .num{color:var(--success)}
 .stat-pw .num{color:var(--danger)}
 .stat-total .num{color:var(--primary)}
@@ -115,22 +123,23 @@ label{display:block;font-weight:600;font-size:0.85em;margin-bottom:6px;color:var
 
 /* Chat */
 .chat-container{display:flex;flex-direction:column;height:400px}
-.chat-messages{flex:1;overflow-y:auto;padding:12px;background:#fafafa;border-radius:8px;margin-bottom:10px}
+.chat-messages{flex:1;overflow-y:auto;padding:12px;background:var(--bg);border-radius:16px;margin-bottom:10px;border:1px solid var(--border)}
 .chat-msg{margin-bottom:10px;display:flex;gap:8px}
 .chat-msg.user{justify-content:flex-end}
-.chat-bubble{max-width:80%;padding:10px 14px;border-radius:12px;font-size:0.88em;line-height:1.5}
-.chat-bubble.bot{background:#e8eaf6;color:var(--text)}
-.chat-bubble.user{background:var(--primary);color:#fff}
+.chat-bubble{max-width:80%;padding:10px 14px;border-radius:16px;font-size:0.88em;line-height:1.5}
+.chat-bubble.bot{background:#fff;color:var(--text);border:1px solid var(--border)}
+.chat-bubble.user{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(79,70,229,0.2)}
 .chat-input-row{display:flex;gap:8px}
 .chat-input-row input{flex:1}
 
 /* Tabs */
 .tab-bar{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:16px}
-.tab-btn{padding:10px 20px;border:none;background:transparent;font-size:0.88em;cursor:pointer;border-bottom:3px solid transparent;transition:all 0.2s;font-family:inherit;font-weight:500}
-.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:700}
+.tab-btn{padding:10px 20px;border:none;background:transparent;font-size:0.88em;cursor:pointer;border-bottom:3px solid transparent;transition:var(--transition);font-family:inherit;font-weight:500;color:var(--text2);border-radius:8px 8px 0 0}
+.tab-btn:hover{background:rgba(79,70,229,0.04)}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);font-weight:700;background:rgba(79,70,229,0.04)}
 
 /* Report preview */
-.report-preview{background:#f8f9fa;border:1px solid var(--border);border-radius:8px;padding:20px;max-height:400px;overflow-y:auto;font-size:0.88em}
+.report-preview{background:#fff;border:1px solid var(--border);border-radius:16px;padding:24px;max-height:400px;overflow-y:auto;font-size:0.88em;box-shadow:var(--shadow)}
 .report-preview h3{font-size:1em;margin:12px 0 6px;color:var(--primary)}
 .report-preview p{margin-bottom:8px}
 
@@ -139,65 +148,75 @@ label{display:block;font-weight:600;font-size:0.85em;margin-bottom:6px;color:var
 
 /* Post-query banner animation */
 @keyframes slideDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+/* Page/step transition */
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeSlideDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+/* Skeleton loader */
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.skeleton{background:linear-gradient(90deg,rgba(0,0,0,0.04) 25%,rgba(0,0,0,0.08) 50%,rgba(0,0,0,0.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+/* Step content animation */
+.container{animation:fadeSlideUp 0.3s ease}
 
-/* Claude panel */
-.claude-panel{position:fixed;left:0;top:0;width:420px;height:100vh;background:#fff;box-shadow:4px 0 24px rgba(0,0,0,0.15);z-index:300;transform:translateX(-100%);transition:transform 0.3s;display:flex;flex-direction:column}
+/* Claude panel — slide-in drawer */
+.claude-panel{position:fixed;left:0;top:0;width:420px;height:100vh;background:#fff;box-shadow:8px 0 40px rgba(0,0,0,0.08);z-index:300;transform:translateX(-100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;border-right:1px solid var(--border)}
 .claude-panel.open{transform:translateX(0)}
-.claude-header{background:var(--primary);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
-.claude-body{flex:1;overflow-y:auto;padding:16px}
-.claude-footer{padding:12px;border-top:1px solid var(--border)}
-.claude-fab{position:fixed;bottom:24px;left:24px;height:44px;border-radius:22px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;font-size:0.85em;cursor:pointer;box-shadow:0 4px 16px rgba(124,58,237,0.35);z-index:250;display:flex;align-items:center;gap:6px;padding:0 16px 0 12px;transition:all 0.2s;font-family:inherit;font-weight:600}
-.claude-fab:hover{transform:scale(1.03);box-shadow:0 6px 20px rgba(124,58,237,0.45)}
+.claude-header{background:var(--primary);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-radius:0}
+.claude-body{flex:1;overflow-y:auto;padding:20px;background:var(--bg)}
+.claude-footer{padding:12px;border-top:1px solid var(--border);background:#fff}
+.claude-fab{position:fixed;bottom:24px;left:24px;height:44px;border-radius:var(--radius);background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;font-size:0.85em;cursor:pointer;box-shadow:0 4px 20px rgba(124,58,237,0.25);z-index:250;display:flex;align-items:center;gap:6px;padding:0 16px 0 12px;transition:var(--transition);font-family:inherit;font-weight:600}
+.claude-fab:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,0.35)}
 
 /* Upload area */
-.upload-area{border:2px dashed var(--border);border-radius:12px;padding:40px;text-align:center;cursor:pointer;transition:all 0.2s}
-.upload-area:hover,.upload-area.dragover{border-color:var(--primary);background:#e8eaf6}
+.upload-area{border:2px dashed rgba(79,70,229,0.2);border-radius:var(--radius-lg);padding:40px;text-align:center;cursor:pointer;transition:var(--transition);background:rgba(79,70,229,0.02)}
+.upload-area:hover,.upload-area.dragover{border-color:var(--primary);background:rgba(79,70,229,0.06)}
 .upload-icon{font-size:2.5em;margin-bottom:8px}
 
 /* Progress */
-.progress-bar{background:#e0e0e0;border-radius:6px;height:8px;overflow:hidden}
-.progress-fill{background:var(--primary);height:100%;transition:width 0.3s;border-radius:6px}
+.progress-bar{background:rgba(0,0,0,0.04);border-radius:8px;height:8px;overflow:hidden}
+.progress-fill{background:linear-gradient(90deg,var(--primary),var(--primary-light));height:100%;transition:width 0.4s cubic-bezier(0.4,0,0.2,1);border-radius:8px}
 
 /* Toast */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:12px 24px;border-radius:8px;font-size:0.88em;z-index:400;opacity:0;transition:opacity 0.3s}
-.toast.show{opacity:1}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:#fff;padding:12px 24px;border-radius:var(--radius);font-size:0.88em;z-index:400;opacity:0;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);box-shadow:0 8px 30px rgba(0,0,0,0.15)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* Study extras */
-.study-use-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 0;border-top:1px solid #f0f0f0}
+.study-use-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 0;border-top:1px solid rgba(0,0,0,0.04)}
 .study-use-row input[type="checkbox"]{width:auto;cursor:pointer;accent-color:var(--primary)}
 .study-use-row label{margin:0;font-size:0.82em;cursor:pointer;color:var(--primary);font-weight:600}
 .study-note{margin-top:6px}
-.study-note textarea{min-height:40px;font-size:0.82em;padding:6px 10px;border:1px solid #e0e0e0;border-radius:6px}
-.study-note-toggle{font-size:0.78em;color:var(--primary-light);cursor:pointer;border:none;background:none;font-family:inherit;padding:0}
-.study-card.selected{border-color:var(--primary);background:#f5f7ff}
-.selected-count{background:var(--primary);color:#fff;padding:4px 12px;border-radius:20px;font-size:0.82em;font-weight:600}
+.study-note textarea{min-height:40px;font-size:0.82em;padding:6px 10px;border:1px solid rgba(0,0,0,0.06);border-radius:8px}
+.study-note-toggle{font-size:0.78em;color:var(--primary-light);cursor:pointer;border:none;background:none;font-family:inherit;padding:0;transition:color 0.15s}
+.study-note-toggle:hover{color:var(--primary)}
+.study-card.selected{border-color:rgba(79,70,229,0.3);background:rgba(79,70,229,0.02);box-shadow:0 0 0 2px rgba(79,70,229,0.08)}
+.selected-count{background:var(--primary);color:#fff;padding:4px 12px;border-radius:20px;font-size:0.82em;font-weight:600;box-shadow:0 2px 6px rgba(79,70,229,0.2)}
 
 /* DB Guide */
-.db-guide{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;padding:16px;margin:12px 0;font-size:0.85em}
-.db-guide h4{color:#f57f17;margin-bottom:6px}
+.db-guide{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.15);border-radius:16px;padding:16px;margin:12px 0;font-size:0.85em}
+.db-guide h4{color:#D97706;margin-bottom:6px}
 .db-guide ol{padding-left:20px}
 .db-guide li{margin-bottom:4px}
-.db-guide img{max-width:100%;border-radius:6px;margin:8px 0}
-.claude-help-box{background:linear-gradient(135deg,#ede7f6,#e8eaf6);border:1px solid #b39ddb;border-radius:10px;padding:16px;margin:12px 0}
-.claude-help-box h4{color:#5e35b1;margin-bottom:8px}
+.db-guide img{max-width:100%;border-radius:var(--radius);margin:8px 0}
+.claude-help-box{background:rgba(79,70,229,0.04);border:1px solid rgba(79,70,229,0.1);border-radius:16px;padding:16px;margin:12px 0}
+.claude-help-box h4{color:var(--primary);margin-bottom:8px}
 
 /* Query builder */
-.query-block{background:#f5f5f5;border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px}
-.query-output{background:#263238;color:#80cbc4;padding:16px;border-radius:8px;font-family:'Consolas','Fira Code',monospace;font-size:0.82em;white-space:pre-wrap;word-break:break-all;max-height:200px;overflow-y:auto;margin-top:12px}
+.query-block{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px}
+.query-output{background:#1E293B;color:#67E8F9;padding:16px;border-radius:var(--radius);font-family:'Consolas','Fira Code',monospace;font-size:0.82em;white-space:pre-wrap;word-break:break-all;max-height:200px;overflow-y:auto;margin-top:12px;box-shadow:inset 0 2px 8px rgba(0,0,0,0.2)}
 
 .hidden{display:none!important}
 
 /* Floating Chatbot */
-.chatbot-fab{position:fixed;bottom:24px;right:24px;height:44px;border-radius:22px;background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;border:none;font-size:0.85em;cursor:pointer;box-shadow:0 4px 16px rgba(21,101,192,0.35);z-index:300;display:flex;align-items:center;gap:6px;padding:0 16px 0 12px;transition:all 0.2s;font-family:inherit;font-weight:600}
-.chatbot-fab:hover{transform:scale(1.03);box-shadow:0 6px 20px rgba(21,101,192,0.45)}
-.chatbot-panel{position:fixed;bottom:90px;right:24px;width:400px;max-height:500px;background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,0.2);z-index:310;display:none;flex-direction:column;overflow:hidden}
-.chatbot-panel.open{display:flex}
-.chatbot-header{background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
-.chatbot-body{flex:1;overflow-y:auto;padding:12px;max-height:320px;background:#fafafa}
-.chatbot-footer{padding:10px;border-top:1px solid #e0e0e0;background:#fff}
-.chatbot-quick-btns{display:flex;gap:4px;flex-wrap:wrap;padding:6px 10px;border-top:1px solid #f0f0f0;background:#fafafa}
-.chatbot-quick-btns button{font-size:0.7em;padding:4px 10px;border:1px solid #bbdefb;background:#e3f2fd;border-radius:12px;cursor:pointer;color:#1565c0;font-family:inherit;transition:all 0.15s}
-.chatbot-quick-btns button:hover{background:#1565c0;color:#fff}
+.chatbot-fab{position:fixed;bottom:24px;right:24px;height:44px;border-radius:var(--radius);background:var(--primary);color:#fff;border:none;font-size:0.85em;cursor:pointer;box-shadow:0 4px 20px rgba(79,70,229,0.25);z-index:300;display:flex;align-items:center;gap:6px;padding:0 16px 0 12px;transition:var(--transition);font-family:inherit;font-weight:600}
+.chatbot-fab:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(79,70,229,0.35)}
+.chatbot-panel{position:fixed;bottom:90px;right:24px;width:400px;max-height:500px;background:#fff;border-radius:var(--radius-lg);box-shadow:0 16px 60px rgba(0,0,0,0.12);z-index:310;display:none;flex-direction:column;overflow:hidden;border:1px solid var(--border)}
+.chatbot-panel.open{display:flex;animation:fadeSlideUp 0.3s ease}
+.chatbot-header{background:var(--primary);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.chatbot-body{flex:1;overflow-y:auto;padding:12px;max-height:320px;background:var(--bg)}
+.chatbot-footer{padding:10px;border-top:1px solid var(--border);background:#fff}
+.chatbot-quick-btns{display:flex;gap:4px;flex-wrap:wrap;padding:6px 10px;border-top:1px solid var(--border);background:var(--bg)}
+.chatbot-quick-btns button{font-size:0.7em;padding:4px 10px;border:1px solid rgba(79,70,229,0.15);background:rgba(79,70,229,0.04);border-radius:var(--radius);cursor:pointer;color:var(--primary);font-family:inherit;transition:var(--transition)}
+.chatbot-quick-btns button:hover{background:var(--primary);color:#fff}
 
 /* (session bar removed — all controls in compact header) */
 
@@ -210,70 +229,73 @@ label{display:block;font-weight:600;font-size:0.85em;margin-bottom:6px;color:var
 @keyframes progressFill{0%{width:0%}100%{width:100%}}
 
 /* Claude help sticky banner */
-.claude-help-banner{position:fixed;bottom:0;left:0;right:0;z-index:240;transition:transform 0.3s ease}
+.claude-help-banner{position:fixed;bottom:0;left:0;right:0;z-index:240;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1)}
 .claude-help-banner.hidden{transform:translateY(100%)}
-.claude-help-mini{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 20px;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;cursor:pointer;font-size:0.85em;font-weight:600;text-align:center;box-shadow:0 -4px 20px rgba(168,85,247,0.3)}
-.claude-help-mini:hover{background:linear-gradient(135deg,#db2777,#9333ea)}
-.claude-help-expanded{display:none;background:#fff;max-height:70vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,0.15)}
-.claude-help-expanded.open{display:block}
+.claude-help-mini{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 20px;background:linear-gradient(135deg,#7c3aed,var(--primary));color:#fff;cursor:pointer;font-size:0.85em;font-weight:600;text-align:center;box-shadow:0 -4px 20px rgba(79,70,229,0.15);backdrop-filter:blur(8px)}
+.claude-help-mini:hover{background:linear-gradient(135deg,#6d28d9,var(--primary-dark))}
+.claude-help-expanded{display:none;background:#fff;max-height:70vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,0.08)}
+.claude-help-expanded.open{display:block;animation:fadeSlideUp 0.25s ease}
 
-/* Guide Modal */
-.guide-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s}
+/* Guide Modal — slide-in */
+.guide-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.3);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s}
 .guide-overlay.open{opacity:1;pointer-events:auto}
-.guide-modal{background:#fff;width:92%;max-width:900px;max-height:88vh;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3);transform:translateY(30px);transition:transform 0.3s}
+.guide-modal{background:#fff;width:92%;max-width:900px;max-height:88vh;border-radius:var(--radius-lg);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.12);transform:translateY(30px);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);border:1px solid var(--border)}
 .guide-overlay.open .guide-modal{transform:translateY(0)}
-.guide-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:linear-gradient(135deg,var(--primary),#283593);color:#fff;border-radius:16px 16px 0 0;flex-shrink:0}
+.guide-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:var(--primary);color:#fff;border-radius:var(--radius-lg) var(--radius-lg) 0 0;flex-shrink:0}
 .guide-header h2{font-size:1.15em;display:flex;align-items:center;gap:8px}
-.guide-close{background:rgba(255,255,255,0.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.2em;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s}
-.guide-close:hover{background:rgba(255,255,255,0.4)}
+.guide-close{background:rgba(255,255,255,0.15);border:none;color:#fff;width:36px;height:36px;border-radius:var(--radius);font-size:1.2em;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--transition)}
+.guide-close:hover{background:rgba(255,255,255,0.3)}
 .guide-body{display:flex;flex:1;overflow:hidden}
-.guide-nav{width:220px;background:#f5f5f5;border-right:1px solid #e0e0e0;overflow-y:auto;flex-shrink:0;padding:12px 0}
-.guide-nav-item{display:block;padding:10px 18px;font-size:0.84em;color:var(--text2);cursor:pointer;border-left:3px solid transparent;transition:all 0.15s;text-decoration:none}
-.guide-nav-item:hover{background:#e8eaf6;color:var(--primary)}
-.guide-nav-item.active{background:#e8eaf6;color:var(--primary);font-weight:700;border-left-color:var(--primary)}
+.guide-nav{width:220px;background:var(--bg);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding:12px 0}
+.guide-nav-item{display:block;padding:10px 18px;font-size:0.84em;color:var(--text2);cursor:pointer;border-left:3px solid transparent;transition:var(--transition);text-decoration:none}
+.guide-nav-item:hover{background:rgba(79,70,229,0.04);color:var(--primary)}
+.guide-nav-item.active{background:rgba(79,70,229,0.06);color:var(--primary);font-weight:700;border-left-color:var(--primary)}
 .guide-content{flex:1;overflow-y:auto;padding:24px 28px;font-size:0.9em;line-height:1.75;color:var(--text)}
-.guide-content h3{font-size:1.1em;color:var(--primary);margin:24px 0 12px;padding-bottom:6px;border-bottom:2px solid #e8eaf6;display:flex;align-items:center;gap:8px}
+.guide-content h3{font-size:1.1em;color:var(--text);margin:24px 0 12px;padding-bottom:6px;border-bottom:2px solid rgba(79,70,229,0.08);display:flex;align-items:center;gap:8px;font-weight:700}
 .guide-content h3:first-child{margin-top:0}
-.guide-content h4{font-size:0.95em;color:#283593;margin:16px 0 8px;font-weight:700}
+.guide-content h4{font-size:0.95em;color:var(--primary);margin:16px 0 8px;font-weight:700}
 .guide-content p{margin:8px 0}
 .guide-content ul{margin:8px 0 8px 20px}
 .guide-content li{margin:4px 0}
-/* Settings Modal */
-.settings-overlay{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s}
+/* Settings Modal — slide-in */
+.settings-overlay{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.3);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s}
 .settings-overlay.open{opacity:1;pointer-events:auto}
-.settings-modal{background:#fff;width:90%;max-width:560px;max-height:85vh;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.3);transform:translateY(30px);transition:transform 0.3s;overflow:hidden}
+.settings-modal{background:#fff;width:90%;max-width:560px;max-height:85vh;border-radius:var(--radius-lg);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.12);transform:translateY(30px);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);overflow:hidden;border:1px solid var(--border)}
 .settings-overlay.open .settings-modal{transform:translateY(0)}
 .settings-section{margin-bottom:20px}
-.settings-section h4{font-size:0.92em;color:#1a237e;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #e8eaf6;display:flex;align-items:center;gap:6px}
-.settings-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0}
+.settings-section h4{font-size:0.92em;color:var(--primary);margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid rgba(79,70,229,0.08);display:flex;align-items:center;gap:6px}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(0,0,0,0.04)}
 .settings-row:last-child{border-bottom:none}
-.settings-row label{font-size:0.88em;color:#333;font-weight:500}
-.settings-row .hint{font-size:0.75em;color:#888;margin-top:2px}
+.settings-row label{font-size:0.88em;color:var(--text);font-weight:500}
+.settings-row .hint{font-size:0.75em;color:var(--text2);margin-top:2px}
 .settings-toggle{position:relative;width:44px;height:24px;flex-shrink:0}
 .settings-toggle input{opacity:0;width:0;height:0}
 .settings-toggle .slider{position:absolute;inset:0;background:#ccc;border-radius:12px;cursor:pointer;transition:0.3s}
 .settings-toggle .slider:before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:0.3s}
-.settings-toggle input:checked+.slider{background:#4caf50}
+.settings-toggle input:checked+.slider{background:var(--primary)}
 .settings-toggle input:checked+.slider:before{transform:translateX(20px)}
 .settings-select{padding:4px 10px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:0.85em;font-family:inherit;cursor:pointer;background:#fff}
 .settings-input{padding:4px 10px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:0.85em;font-family:inherit;width:80px;text-align:center}
-.guide-content .term{display:inline-block;background:#e8eaf6;color:var(--primary);padding:1px 8px;border-radius:6px;font-weight:600;font-size:0.92em}
-.guide-content .tip{background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:1px solid #a5d6a7;border-radius:10px;padding:12px 16px;margin:12px 0;font-size:0.88em}
-.guide-content .warn{background:linear-gradient(135deg,#fff8e1,#fff3e0);border:1px solid #ffca28;border-radius:10px;padding:12px 16px;margin:12px 0;font-size:0.88em}
-.guide-content .important{background:linear-gradient(135deg,#ffebee,#fce4ec);border:1px solid #ef9a9a;border-radius:10px;padding:12px 16px;margin:12px 0;font-size:0.88em}
-.guide-content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:0.88em}
-.guide-content th{background:#e8eaf6;color:var(--primary);padding:10px 12px;text-align:left;font-weight:700;border:1px solid #c5cae9}
-.guide-content td{padding:8px 12px;border:1px solid #e0e0e0}
-.guide-content tr:nth-child(even) td{background:#fafafa}
+.guide-content .term{display:inline-block;background:rgba(79,70,229,0.06);color:var(--primary);padding:2px 10px;border-radius:8px;font-weight:600;font-size:0.92em}
+.guide-content .tip{background:rgba(5,150,105,0.04);border:1px solid rgba(5,150,105,0.15);border-radius:var(--radius);padding:12px 16px;margin:12px 0;font-size:0.88em}
+.guide-content .warn{background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.2);border-radius:var(--radius);padding:12px 16px;margin:12px 0;font-size:0.88em}
+.guide-content .important{background:rgba(220,38,38,0.04);border:1px solid rgba(220,38,38,0.12);border-radius:var(--radius);padding:12px 16px;margin:12px 0;font-size:0.88em}
+.guide-content table{width:100%;border-collapse:separate;border-spacing:0;margin:12px 0;font-size:0.88em;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+.guide-content th{background:rgba(79,70,229,0.06);color:var(--primary);padding:10px 12px;text-align:left;font-weight:700;border-bottom:1px solid var(--border)}
+.guide-content td{padding:8px 12px;border-bottom:1px solid var(--border)}
+.guide-content tr:last-child td{border-bottom:none}
+.guide-content tr:nth-child(even) td{background:rgba(0,0,0,0.01)}
 @media(max-width:768px){
   .form-row{grid-template-columns:1fr}
   .stat-row{grid-template-columns:repeat(2,1fr)}
   .claude-panel{width:100%}
   .chatbot-panel{width:calc(100% - 48px);right:24px}
-  .stepper{gap:0;padding:10px 8px}
+  .stepper{gap:0;padding:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .stepper::-webkit-scrollbar{display:none}
   .step-item{padding:6px 8px;font-size:0.72em}
   .guide-nav{display:none}
-  .guide-modal{width:98%;max-height:92vh}
+  .guide-modal{width:98%;max-height:92vh;border-radius:16px}
+  .settings-modal{width:96%;border-radius:16px}
   /* Header responsive — hide less-critical session controls */
   .app-header .header-session .session-divider:nth-of-type(n+3){display:none}
   .app-header .header-session .session-name{max-width:80px;font-size:0.75em}
@@ -292,8 +314,8 @@ label{display:block;font-weight:600;font-size:0.85em;margin-bottom:6px;color:var
   .app-header .header-session .session-name{display:none}
   .app-header .header-session select{max-width:90px}
   .wllm-expand-panel{min-width:250px;font-size:0.78em}
-  .container{padding:10px 8px}
-  .card{padding:14px 12px;border-radius:8px}
+  .container{padding:12px 10px}
+  .card{padding:16px 14px;border-radius:16px}
   .card h2{font-size:1em;gap:6px}
   .step-item span{display:none}
   .step-item{padding:6px 4px}
@@ -341,26 +363,35 @@ html{scroll-behavior:smooth}
 
 /* Dark mode support (optional, auto-detect) */
 @media(prefers-color-scheme:dark){
-  :root{--bg:#121212;--card:#1e1e1e;--text:#e0e0e0;--text2:#9e9e9e;--border:#333;--shadow:0 2px 12px rgba(0,0,0,0.3)}
-  .study-card{background:#1e1e1e}
-  .study-card:hover{border-color:var(--primary-light);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
-  .stat-box{background:#1a1a1a}
-  input,select,textarea{background:#2a2a2a;color:#e0e0e0;border-color:#444}
-  .chat-messages,.chatbot-body{background:#1a1a1a}
-  .chat-bubble.bot{background:#263238;color:#e0e0e0}
-  .claude-panel,.chatbot-panel{background:#1e1e1e}
-  .filters-bar select,.filters-bar input{background:#2a2a2a;color:#e0e0e0}
+  :root{--bg:#0F172A;--card:#1E293B;--text:#E2E8F0;--text2:#94A3B8;--border:rgba(255,255,255,0.06);--shadow:0 2px 12px rgba(0,0,0,0.3);--shadow-lg:0 10px 40px rgba(0,0,0,0.3);--shadow-glow:0 0 0 3px rgba(99,102,241,0.25)}
+  .app-header{background:rgba(15,23,42,0.85);border-bottom-color:rgba(255,255,255,0.06);color:var(--text)}
+  .app-header h1{background:linear-gradient(135deg,#818CF8,#A78BFA);-webkit-background-clip:text;background-clip:text}
+  .app-header .header-session button{background:rgba(99,102,241,0.08);border-color:rgba(255,255,255,0.08);color:var(--text)}
+  .app-header .header-session select{background:#1E293B;color:var(--text);border-color:rgba(255,255,255,0.08)}
+  .app-header .header-wllm{background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2)}
+  .stepper{background:rgba(15,23,42,0.7)}
+  .study-card{background:#1E293B;border-color:rgba(255,255,255,0.06)}
+  .study-card:hover{border-color:rgba(99,102,241,0.2);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
+  .stat-box{background:#1E293B;border-color:rgba(255,255,255,0.06)}
+  input,select,textarea{background:#1E293B;color:#E2E8F0;border-color:rgba(255,255,255,0.08)}
+  .chat-messages,.chatbot-body{background:#0F172A}
+  .chat-bubble.bot{background:#1E293B;color:#E2E8F0;border-color:rgba(255,255,255,0.06)}
+  .claude-panel,.chatbot-panel{background:#1E293B}
+  .filters-bar select,.filters-bar input{background:#1E293B;color:#E2E8F0}
   .tab-btn{color:var(--text2)}
   .tab-btn.active{color:var(--primary-light)}
-  .guide-modal{background:#1e1e1e}
-  .guide-nav{background:#161616}
-  .guide-content{color:#e0e0e0}
-  .guide-content td{border-color:#333}
-  .guide-content tr:nth-child(even) td{background:#1a1a1a}
-  .guide-content th{background:#1a237e}
-  .report-preview{background:#1a1a1a;border-color:#333}
-  .upload-area{border-color:#444}
-  .upload-area:hover,.upload-area.dragover{background:#1a237e33}
+  .guide-modal{background:#1E293B;border-color:rgba(255,255,255,0.06)}
+  .guide-nav{background:#0F172A}
+  .guide-content{color:#E2E8F0}
+  .guide-content td{border-color:rgba(255,255,255,0.06)}
+  .guide-content tr:nth-child(even) td{background:rgba(255,255,255,0.02)}
+  .guide-content th{background:rgba(79,70,229,0.15)}
+  .report-preview{background:#1E293B;border-color:rgba(255,255,255,0.06)}
+  .upload-area{border-color:rgba(99,102,241,0.2)}
+  .upload-area:hover,.upload-area.dragover{background:rgba(99,102,241,0.08)}
+  .settings-modal{background:#1E293B;border-color:rgba(255,255,255,0.06)}
+  .wllm-expand-panel{background:rgba(30,41,59,0.95);border-color:rgba(255,255,255,0.06);color:var(--text)}
+  .wllm-expand-panel::before{background:rgba(30,41,59,0.95);border-color:rgba(255,255,255,0.06)}
 }
 </style>
 </head>
@@ -397,7 +428,7 @@ html{scroll-behavior:smooth}
       </div>
       <div style="display:flex;gap:8px;margin-top:6px">
         <button onclick="loadSelectedWebLLM(false)" id="wllmLoadBtnMini" style="flex:1">🚀 Modeli Yükle</button>
-        <button onclick="clearWebLLMCache();toggleWllmExpand()" style="border-color:rgba(239,83,80,0.5);color:#ef9a9a">✕ Temizle</button>
+        <button onclick="clearWebLLMCache();toggleWllmExpand()" style="border-color:rgba(220,38,38,0.2);color:#DC2626">✕ Temizle</button>
       </div>
       <div id="wllmExpandProgress" style="display:none;margin-top:8px;text-align:center;padding:4px;background:rgba(255,255,255,0.08);border-radius:6px"></div>
       <div class="wep-hint">Model tarayıcınızda yerel olarak çalışır. İlk yüklemede internetten indirilir, sonraki kullanımlarda önbellekten hızlıca yüklenir.</div>
@@ -414,14 +445,14 @@ html{scroll-behavior:smooth}
     <select id="sessionList" onchange="loadSessionFromSelect(this.value)">
       <option value="">-- Oturumlar --</option>
     </select>
-    <button onclick="deleteCurrentSession()" style="border-color:rgba(239,83,80,0.5);color:#ef9a9a">🗑️</button>
+    <button onclick="deleteCurrentSession()" style="border-color:rgba(220,38,38,0.15);color:#DC2626">🗑️</button>
     <div class="session-divider"></div>
     <button onclick="exportSession()">⬆️ Dışa Aktar</button>
     <button onclick="importSession()">⬇️ İçe Aktar</button>
     <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImportFile(event)">
     <div class="session-divider"></div>
-    <button onclick="openSettings()" style="background:rgba(255,255,255,0.15);font-weight:700">⚙️ Ayarlar</button>
-    <button onclick="openGuide()" style="background:rgba(255,255,255,0.2);font-weight:700">📖 Kılavuz</button>
+    <button onclick="openSettings()" style="background:rgba(79,70,229,0.08);font-weight:700;color:var(--primary)">⚙️ Ayarlar</button>
+    <button onclick="openGuide()" style="background:rgba(79,70,229,0.08);font-weight:700;color:var(--primary)">📖 Kılavuz</button>
   </div>
 </div>
 
@@ -460,23 +491,23 @@ html{scroll-behavior:smooth}
 
       <!-- Quick Prompt Buttons -->
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
-        <button class="claude-quick-btn" onclick="buildClaudePrompt('query')" style="text-align:left;padding:10px 14px;border:1px solid #e0e0e0;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:all 0.15s">
+        <button class="claude-quick-btn" onclick="buildClaudePrompt('query')" style="text-align:left;padding:10px 14px;border:1px solid rgba(0,0,0,0.06);border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:all 0.15s">
           <div style="font-weight:600;font-size:0.88em;color:#5b21b6">🔍 WoS/Scopus Sorgusu Oluştur</div>
           <div style="font-size:0.75em;color:#999">Türkçe konunuzdan İngilizce arama sorgusu üretir</div>
         </button>
-        <button class="claude-quick-btn" onclick="buildClaudePrompt('relevance')" style="text-align:left;padding:10px 14px;border:1px solid #e0e0e0;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:all 0.15s">
+        <button class="claude-quick-btn" onclick="buildClaudePrompt('relevance')" style="text-align:left;padding:10px 14px;border:1px solid rgba(0,0,0,0.06);border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:all 0.15s">
           <div style="font-weight:600;font-size:0.88em;color:#5b21b6">🎯 Çalışmaları Puanla (İlgililik Filtresi)</div>
           <div style="font-size:0.75em;color:#999">Her çalışmaya 0-1 arası ilgililik skoru verir → JSON döner</div>
         </button>
-        <button class="claude-quick-btn" onclick="buildClaudePrompt('themes')" style="text-align:left;padding:10px 14px;border:1px solid #e0e0e0;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:all 0.15s">
+        <button class="claude-quick-btn" onclick="buildClaudePrompt('themes')" style="text-align:left;padding:10px 14px;border:1px solid rgba(0,0,0,0.06);border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:all 0.15s">
           <div style="font-weight:600;font-size:0.88em;color:#5b21b6">📊 Tematik Analiz Yap</div>
           <div style="font-size:0.75em;color:#999">Çalışmaları tematik gruplara ayırır ve özetler</div>
         </button>
-        <button class="claude-quick-btn" onclick="buildClaudePrompt('gaps')" style="text-align:left;padding:10px 14px;border:1px solid #e0e0e0;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:all 0.15s">
+        <button class="claude-quick-btn" onclick="buildClaudePrompt('gaps')" style="text-align:left;padding:10px 14px;border:1px solid rgba(0,0,0,0.06);border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:all 0.15s">
           <div style="font-weight:600;font-size:0.88em;color:#5b21b6">🔬 Araştırma Boşluklarını Bul</div>
           <div style="font-size:0.75em;color:#999">Literatürdeki eksiklikleri ve gelecek çalışma önerilerini belirler</div>
         </button>
-        <button class="claude-quick-btn" onclick="buildClaudePrompt('custom')" style="text-align:left;padding:10px 14px;border:1px solid #e0e0e0;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:all 0.15s">
+        <button class="claude-quick-btn" onclick="buildClaudePrompt('custom')" style="text-align:left;padding:10px 14px;border:1px solid rgba(0,0,0,0.06);border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;transition:all 0.15s">
           <div style="font-weight:600;font-size:0.88em;color:#5b21b6">✏️ Kendi Sorunuzu Sorun</div>
           <div style="font-size:0.75em;color:#999">Özel bir soru veya analiz talebi yazın</div>
         </button>
@@ -528,7 +559,7 @@ html{scroll-behavior:smooth}
   </div>
   <div class="chatbot-body" id="chatbotMessages">
     <!-- Welcome bubble -->
-    <div style="background:linear-gradient(135deg,#e3f2fd,#e8eaf6);border:1px solid #90caf9;border-radius:12px;padding:14px;margin-bottom:14px">
+    <div style="background:linear-gradient(135deg,rgba(79,70,229,0.04),rgba(79,70,229,0.08));border:1px solid #90caf9;border-radius:12px;padding:14px;margin-bottom:14px">
       <div style="font-weight:700;color:#1565c0;font-size:0.95em;margin-bottom:6px">👋 Ben Literatür Analiz Botuyum!</div>
       <p style="font-size:0.82em;color:#0d47a1;line-height:1.5;margin-bottom:8px">BibTeX ile yüklediğiniz çalışmaları <strong>doğrudan burada</strong> analiz ediyorum. İnternet veya dış araç gerekmez — tüm cevaplar yüklü verilerinize dayanır.</p>
       <div style="font-size:0.78em;color:#1565c0;display:flex;flex-wrap:wrap;gap:4px">
@@ -983,7 +1014,7 @@ function renderStep0(el) {
       <div style="font-size:1.15em;color:var(--primary);font-weight:700;letter-spacing:0.3px;line-height:1.4">Ajan Destekli Akademik Yayın İnceleme Uygulaması</div>
       <div style="font-size:0.88em;color:var(--text2);margin-top:4px;font-weight:500">Anadolu Üniversitesi Uzaktan Eğitim Araştırma Topluluğu</div>
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px">
-        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 12px;background:#e8eaf6;border-radius:16px;font-size:0.75em;font-weight:700;color:#1a237e">📊 Web of Science</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 12px;background:rgba(79,70,229,0.06);border-radius:16px;font-size:0.75em;font-weight:700;color:#4F46E5">📊 Web of Science</span>
         <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 12px;background:#e3f2fd;border-radius:16px;font-size:0.75em;font-weight:700;color:#0d47a1">🔍 Scopus</span>
       </div>
     </div>
@@ -1026,22 +1057,22 @@ function renderStep0(el) {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 
           <!-- A: Ben Yapacağım -->
-          <div id="modeCardManual" onclick="confirmManualMode()" style="border:3px solid ${useMode==='manual'?'#1a237e':'#e0e0e0'};border-radius:16px;padding:28px 24px;cursor:pointer;transition:all 0.25s;text-align:center;${useMode==='manual'?'background:#e8eaf6;box-shadow:0 4px 20px rgba(26,35,126,0.15)':'background:#fff'}">
-            <div style="width:64px;height:64px;margin:0 auto 14px;background:linear-gradient(135deg,#e8eaf6,#c5cae9);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2em">🧑‍💻</div>
-            <h3 style="font-size:1.15em;font-weight:800;color:#1a237e;margin-bottom:8px">Ben Yapacağım</h3>
+          <div id="modeCardManual" onclick="confirmManualMode()" style="border:2px solid ${useMode==='manual'?'var(--primary)':'rgba(0,0,0,0.06)'};border-radius:var(--radius-lg);padding:28px 24px;cursor:pointer;transition:all 0.25s;text-align:center;${useMode==='manual'?'background:rgba(79,70,229,0.04);box-shadow:0 4px 20px rgba(79,70,229,0.1)':'background:#fff'}">
+            <div style="width:64px;height:64px;margin:0 auto 14px;background:linear-gradient(135deg,rgba(79,70,229,0.08),rgba(79,70,229,0.15));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2em">🧑‍💻</div>
+            <h3 style="font-size:1.15em;font-weight:800;color:#4F46E5;margin-bottom:8px">Ben Yapacağım</h3>
             <p style="font-size:0.82em;color:var(--text2);line-height:1.6;margin-bottom:14px">
               Tüm adımları kendiniz yönetin. Araştırma konusu belirleyin, sorgu oluşturun, BibTeX yükleyin, çalışmaları filtreleyin ve raporunuzu oluşturun. Her aşamada tam kontrol sizde.
             </p>
             <div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;font-size:0.7em;margin-bottom:12px">
-              <span style="background:#e8eaf6;padding:3px 10px;border-radius:10px;color:#1a237e">Adım Adım Süreç</span>
-              <span style="background:#e8eaf6;padding:3px 10px;border-radius:10px;color:#1a237e">Tam Kontrol</span>
-              <span style="background:#e8eaf6;padding:3px 10px;border-radius:10px;color:#1a237e">Ücretsiz</span>
+              <span style="background:rgba(79,70,229,0.06);padding:3px 10px;border-radius:10px;color:#4F46E5">Adım Adım Süreç</span>
+              <span style="background:rgba(79,70,229,0.06);padding:3px 10px;border-radius:10px;color:#4F46E5">Tam Kontrol</span>
+              <span style="background:rgba(79,70,229,0.06);padding:3px 10px;border-radius:10px;color:#4F46E5">Ücretsiz</span>
             </div>
-            <div style="font-size:0.78em;color:#1a237e;font-weight:700;padding:8px 16px;background:${useMode==='manual'?'#1a237e':'#e8eaf6'};color:${useMode==='manual'?'#fff':'#1a237e'};border-radius:8px;display:inline-block;transition:all 0.2s">${useMode==='manual'?'✅ Seçildi':'Bunu Seç'}</div>
+            <div style="font-size:0.78em;font-weight:700;padding:8px 16px;background:${useMode==='manual'?'var(--primary)':'rgba(79,70,229,0.06)'};color:${useMode==='manual'?'#fff':'var(--primary)'};border-radius:var(--radius);display:inline-block;transition:all 0.2s">${useMode==='manual'?'✅ Seçildi':'Bunu Seç'}</div>
           </div>
 
           <!-- B: Agent Yapsın -->
-          <div id="modeCardAgent" onclick="showAgentChecklist()" style="border:3px solid ${useMode==='agent'?'#7c3aed':'#e0e0e0'};border-radius:16px;padding:28px 24px;cursor:pointer;transition:all 0.25s;text-align:center;position:relative;${useMode==='agent'?'background:linear-gradient(135deg,#faf5ff,#f5f3ff);box-shadow:0 4px 20px rgba(124,58,237,0.15)':'background:#fff'}">
+          <div id="modeCardAgent" onclick="showAgentChecklist()" style="border:2px solid ${useMode==='agent'?'#7c3aed':'rgba(0,0,0,0.06)'};border-radius:var(--radius-lg);padding:28px 24px;cursor:pointer;transition:all 0.25s;text-align:center;position:relative;${useMode==='agent'?'background:linear-gradient(135deg,rgba(168,85,247,0.04),rgba(124,58,237,0.06));box-shadow:0 4px 20px rgba(124,58,237,0.1)':'background:#fff'}">
             <div style="position:absolute;top:12px;right:12px;background:linear-gradient(135deg,#ec4899,#a855f7);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.68em;font-weight:700">PRO</div>
             <div style="width:64px;height:64px;margin:0 auto 14px;background:linear-gradient(135deg,#a855f7,#7c3aed);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:2em">🤖</div>
             <h3 style="font-size:1.15em;font-weight:800;color:#6d28d9;margin-bottom:8px">Agent Benim İçin Yapsın</h3>
@@ -1069,7 +1100,7 @@ function renderStep0(el) {
           <label style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;margin-bottom:8px;background:#fff;border:2px solid #ede9fe;border-radius:12px;cursor:pointer;transition:all 0.2s;text-align:left" onclick="event.stopPropagation();var cb=this.querySelector('input');cb.checked=!cb.checked;updateInlineChecklist()">
             <input type="checkbox" id="inlineCheck1" style="width:20px;height:20px;accent-color:#7c3aed;flex-shrink:0;margin-top:2px;cursor:pointer" onclick="event.stopPropagation();updateInlineChecklist()">
             <div>
-              <strong style="font-size:0.85em;color:#4a148c">Claude Pro/Team/Enterprise üyeliğim var</strong>
+              <strong style="font-size:0.85em;color:#3730A3">Claude Pro/Team/Enterprise üyeliğim var</strong>
               <p style="font-size:0.73em;color:#7c3aed;margin-top:2px">Agent modu için aktif abonelik gerekir. <a href="https://claude.ai" target="_blank" style="color:#5b21b6;font-weight:600;text-decoration:underline" onclick="event.stopPropagation()">claude.ai</a></p>
             </div>
           </label>
@@ -1078,7 +1109,7 @@ function renderStep0(el) {
           <label style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;margin-bottom:8px;background:#fff;border:2px solid #ede9fe;border-radius:12px;cursor:pointer;transition:all 0.2s;text-align:left" onclick="event.stopPropagation();var cb=this.querySelector('input');cb.checked=!cb.checked;updateInlineChecklist()">
             <input type="checkbox" id="inlineCheck2" style="width:20px;height:20px;accent-color:#7c3aed;flex-shrink:0;margin-top:2px;cursor:pointer" onclick="event.stopPropagation();updateInlineChecklist()">
             <div>
-              <strong style="font-size:0.85em;color:#4a148c">Claude Desktop uygulamasını kurdum</strong>
+              <strong style="font-size:0.85em;color:#3730A3">Claude Desktop uygulamasını kurdum</strong>
               <p style="font-size:0.73em;color:#7c3aed;margin-top:2px"><a href="https://claude.ai/download" target="_blank" style="color:#5b21b6;font-weight:600;text-decoration:underline" onclick="event.stopPropagation()">İndir ↗</a></p>
             </div>
           </label>
@@ -1087,7 +1118,7 @@ function renderStep0(el) {
           <label style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;margin-bottom:8px;background:#fff;border:2px solid #ede9fe;border-radius:12px;cursor:pointer;transition:all 0.2s;text-align:left" onclick="event.stopPropagation();var cb=this.querySelector('input');cb.checked=!cb.checked;updateInlineChecklist()">
             <input type="checkbox" id="inlineCheck3" style="width:20px;height:20px;accent-color:#7c3aed;flex-shrink:0;margin-top:2px;cursor:pointer" onclick="event.stopPropagation();updateInlineChecklist()">
             <div>
-              <strong style="font-size:0.85em;color:#4a148c">Claude in Chrome extension'ını kurdum</strong>
+              <strong style="font-size:0.85em;color:#3730A3">Claude in Chrome extension'ını kurdum</strong>
               <p style="font-size:0.73em;color:#7c3aed;margin-top:2px"><a href="https://chromewebstore.google.com/detail/claude-in-chrome/mhcmjhbbkpkjgecafhbopllcbmgbefao" target="_blank" style="color:#5b21b6;font-weight:600;text-decoration:underline" onclick="event.stopPropagation()">Chrome Web Store ↗</a></p>
             </div>
           </label>
@@ -1110,7 +1141,7 @@ function renderStep0(el) {
 
           <!-- AŞAMA 1: "Agent'ı Başlat" button — hidden until all 3 checked -->
           <div id="notRobotBtnArea" style="display:none;animation:slideDown 0.3s ease">
-            <button id="notRobotBtn" onclick="startAgentMode()" style="padding:16px 40px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:14px;font-size:1em;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 6px 24px rgba(124,58,237,0.35);transition:all 0.25s;display:inline-flex;align-items:center;gap:10px" onmouseover="this.style.transform='scale(1.03)';this.style.boxShadow='0 8px 30px rgba(124,58,237,0.45)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 6px 24px rgba(124,58,237,0.35)'">
+            <button id="notRobotBtn" onclick="startAgentMode()" style="padding:16px 40px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:16px;font-size:1em;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 6px 24px rgba(124,58,237,0.35);transition:all 0.25s;display:inline-flex;align-items:center;gap:10px" onmouseover="this.style.transform='scale(1.03)';this.style.boxShadow='0 8px 30px rgba(124,58,237,0.45)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 6px 24px rgba(124,58,237,0.35)'">
               <span style="font-size:1.3em">🤖</span> Agent'ı Başlat
             </button>
             <p style="font-size:0.72em;color:#9e9e9e;margin-top:8px">Tıklayınca Agent talimatları otomatik kopyalanır</p>
@@ -1474,7 +1505,7 @@ Bu uygulama agent'lar için özel JavaScript API'leri sunar. Chrome extension ja
       </div>
 
       <!-- Alt Bilgi Şeridi -->
-      <div style="background:linear-gradient(90deg,#1a237e,#283593);padding:8px 24px;text-align:center">
+      <div style="background:linear-gradient(90deg,#4F46E5,#3730A3);padding:8px 24px;text-align:center">
         <span style="font-size:0.72em;color:rgba(255,255,255,0.7);line-height:1.5">Bu uygulama, Anadolu Üniversitesi Uzaktan Eğitim Araştırma Topluluğu için geliştirilmiştir. İzinsiz kullanılamaz.</span>
       </div>
     </div>
@@ -1808,7 +1839,7 @@ function renderStepTopic(el) {
         </div>
       </div>
 
-      <div style="padding:10px 14px;background:#e8eaf6;border-radius:8px;font-size:0.82em;margin-bottom:12px;border-left:4px solid var(--primary)">
+      <div style="padding:10px 14px;background:rgba(79,70,229,0.06);border-radius:8px;font-size:0.82em;margin-bottom:12px;border-left:4px solid var(--primary)">
         💡 <strong>Neden 50-250 kelime?</strong> Detaylı bir konu tanımı, LLM'in doğru anahtar kelimeler çıkarmasını, ilgili sorguyu oluşturmasını ve analiz adımında çalışmaları konuyla eşleştirmesini sağlar.
       </div>
 
@@ -1819,7 +1850,7 @@ function renderStepTopic(el) {
       <!-- Sorgu Oluşturma Seçenekleri -->
       <div style="text-align:center;margin-bottom:16px">
         <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:8px">
-          <button onclick="aiSuggestQuery()" id="aiSuggestBtn" style="background:linear-gradient(135deg,#7c4dff,#e040fb);color:#fff;border:none;padding:12px 28px;border-radius:12px;font-size:0.95em;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(124,77,255,0.3);transition:all 0.3s;display:inline-flex;align-items:center;gap:8px">
+          <button onclick="aiSuggestQuery()" id="aiSuggestBtn" style="background:linear-gradient(135deg,#6366F1,#e040fb);color:#fff;border:none;padding:12px 28px;border-radius:12px;font-size:0.95em;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(124,77,255,0.3);transition:all 0.3s;display:inline-flex;align-items:center;gap:8px">
             <span style="font-size:1.2em">🤖</span> Yapay Zeka Benim İçin Sorgu Önersin
           </button>
           <button onclick="goToStep(2)" id="manualEntryBtn" style="background:linear-gradient(135deg,#1565c0,#1976d2);color:#fff;border:none;padding:12px 28px;border-radius:12px;font-size:0.95em;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(21,101,192,0.3);transition:all 0.3s;display:inline-flex;align-items:center;gap:8px">
@@ -1832,7 +1863,7 @@ function renderStepTopic(el) {
         <p style="font-size:0.76em;color:var(--text2);margin-top:6px">WebLLM ile otomatik sorgu oluşturun, kendi sorgunuzu yazın veya doğrudan BibTeX yükleyin</p>
         <div id="aiSuggestResult" style="display:none;margin-top:12px;text-align:left"></div>
         <div id="manualQueryEntry" style="display:none;margin-top:12px;text-align:left">
-          <div style="background:linear-gradient(135deg,#e3f2fd,#e8eaf6);border-radius:12px;padding:16px;border:2px solid #1565c0">
+          <div style="background:linear-gradient(135deg,rgba(79,70,229,0.04),rgba(79,70,229,0.08));border-radius:12px;padding:16px;border:2px solid #1565c0">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:1.3em">✍️</span><strong style="color:#0d47a1">Elle Sorgu Girişi</strong></div>
             <p style="font-size:0.84em;color:var(--text2);margin-bottom:10px">Boolean sorgunuzu doğrudan yazın. WoS veya Scopus formatında olmalıdır.</p>
             <textarea id="manualQueryTextarea" rows="4" placeholder='Ör: TS=("artificial intelligence" OR "generative AI") AND TS=("cognitive load") AND DT=Article AND PY=2021-2025' style="font-family:monospace;font-size:0.85em;min-height:80px">${state.generatedQuery||''}</textarea>
@@ -1864,10 +1895,10 @@ function renderStep1(el) {
   }
   el.innerHTML = `
     <!-- Konu Özeti -->
-    <div style="padding:12px 16px;background:linear-gradient(135deg,#ede7f6,#e8eaf6);border-radius:10px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
+    <div style="padding:12px 16px;background:linear-gradient(135deg,rgba(79,70,229,0.04),rgba(79,70,229,0.08));border-radius:10px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
       <span style="font-size:1.3em">🎯</span>
       <div style="flex:1">
-        <div style="font-weight:600;font-size:0.88em;color:#4a148c;margin-bottom:2px">Araştırma Konunuz:</div>
+        <div style="font-weight:600;font-size:0.88em;color:#3730A3;margin-bottom:2px">Araştırma Konunuz:</div>
         <div style="font-size:0.82em;color:var(--text2);line-height:1.4">${(state.researchTopic||'').substring(0, 200)}${(state.researchTopic||'').length > 200 ? '...' : ''}</div>
       </div>
       <button class="btn btn-outline btn-sm" onclick="goToStep(1)" style="white-space:nowrap">✏️ Düzenle</button>
@@ -1877,11 +1908,11 @@ function renderStep1(el) {
     <div class="card">
       <h2>📄 Adım 2: Sorgu Oluştur veya BibTeX Yükle</h2>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <div class="checkbox-row" style="flex:1;min-width:240px;${state.hasBibtex?'border:2px solid var(--primary);background:#e8eaf6':''}" onclick="state.hasBibtex=true;renderStep()">
+        <div class="checkbox-row" style="flex:1;min-width:240px;${state.hasBibtex?'border:2px solid var(--primary);background:rgba(79,70,229,0.06)':''}" onclick="state.hasBibtex=true;renderStep()">
           <span style="font-size:1.3em">✅</span>
           <div><strong>Evet, BibTeX var</strong><br><span style="font-size:0.82em;color:var(--text2)">Doğrudan yükle ve analize geç</span></div>
         </div>
-        <div class="checkbox-row" style="flex:1;min-width:240px;${!state.hasBibtex?'border:2px solid var(--primary);background:#e8eaf6':''}" onclick="state.hasBibtex=false;renderStep()">
+        <div class="checkbox-row" style="flex:1;min-width:240px;${!state.hasBibtex?'border:2px solid var(--primary);background:rgba(79,70,229,0.06)':''}" onclick="state.hasBibtex=false;renderStep()">
           <span style="font-size:1.3em">🔍</span>
           <div><strong>Hayır, sorgu oluşturmam lazım</strong><br><span style="font-size:0.82em;color:var(--text2)">WoS veya Scopus için sorgu hazırla</span></div>
         </div>
@@ -1939,7 +1970,7 @@ function renderQueryBuilder() {
         <p style="font-size:0.82em;color:var(--text2);margin-bottom:8px">Anahtar kelimelerinizi İngilizce yazın, WebLLM seçili veritabanı formatına uygun sorguyu sizin için oluştursun veya mevcut sorguyu güncellesin.</p>
         <div style="display:flex;gap:8px;align-items:stretch">
           <input id="keywordHelperInput" type="text" placeholder='Ör: artificial intelligence, cognitive load, higher education' style="flex:1;font-size:0.88em;padding:8px 12px;border-radius:8px;border:2px solid #ce93d8;min-width:0">
-          <button onclick="webllmKeywordHelper()" style="background:linear-gradient(135deg,#7c4dff,#e040fb);color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:0.85em;cursor:pointer;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px" ${!webllmEngine ? 'title="WebLLM modeli yüklü değil — önce üst bardan yükleyin"' : ''}>
+          <button onclick="webllmKeywordHelper()" style="background:linear-gradient(135deg,#6366F1,#e040fb);color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:0.85em;cursor:pointer;font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:6px" ${!webllmEngine ? 'title="WebLLM modeli yüklü değil — önce üst bardan yükleyin"' : ''}>
             🤖 Sorgu Oluştursun
           </button>
         </div>
@@ -2085,7 +2116,7 @@ function renderQueryBuilder() {
           </div>
 
           <!-- BibTeX Yükleme Alanı -->
-          <div style="border:3px dashed #a855f7;border-radius:14px;padding:28px 20px;text-align:center;background:linear-gradient(135deg,#fdf4ff,#faf5ff);cursor:pointer;transition:all 0.2s"
+          <div style="border:3px dashed #a855f7;border-radius:16px;padding:28px 20px;text-align:center;background:linear-gradient(135deg,#fdf4ff,#faf5ff);cursor:pointer;transition:all 0.2s"
                onclick="document.getElementById('postQueryBibFile').click()"
                ondragover="event.preventDefault();event.stopPropagation();this.style.borderColor='#7c3aed';this.style.background='#f3e8ff'"
                ondragleave="this.style.borderColor='#a855f7';this.style.background='linear-gradient(135deg,#fdf4ff,#faf5ff)'"
@@ -2149,12 +2180,12 @@ function renderBibtexUpload() {
 
           <!-- Filtrelemeden Devam Butonu -->
           <div onclick="confirmSkipFilter()" id="skipFilterCard" style="flex:1;min-width:220px;padding:16px;background:#fff;border:2px solid var(--border);border-radius:12px;cursor:pointer;text-align:center;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:6px"
-               onmouseover="this.style.background='#e8eaf6';this.style.borderColor='var(--primary)'"
+               onmouseover="this.style.background='rgba(79,70,229,0.06)';this.style.borderColor='var(--primary)'"
                onmouseout="this.style.background='#fff';this.style.borderColor='var(--border)'">
             <span style="font-size:1.8em">⏭️</span>
             <strong style="font-size:0.95em;color:var(--primary)">Filtreleme Yapmadan Analize Geç</strong>
             <span style="font-size:0.78em;color:var(--text2);line-height:1.4">Tüm ${state.studies.length} çalışmayı filtrelemeden doğrudan analiz adımına taşıyın.</span>
-            <span style="font-size:0.82em;font-weight:600;color:var(--primary);background:#e8eaf6;padding:4px 14px;border-radius:6px;margin-top:4px">Devam Et →</span>
+            <span style="font-size:0.82em;font-weight:600;color:var(--primary);background:rgba(79,70,229,0.06);padding:4px 14px;border-radius:6px;margin-top:4px">Devam Et →</span>
           </div>
           <!-- Onay kutusu (gizli, tıklayınca görünür) -->
           <div id="skipFilterConfirm" style="display:none"></div>
@@ -2166,13 +2197,13 @@ function renderBibtexUpload() {
     <div style="margin-top:16px">
       <div onclick="var panel=document.getElementById('bibtexPastePanel');var arrow=document.getElementById('bibtexPasteArrow');if(panel.style.display==='none'){panel.style.display='block';arrow.textContent='▼'}else{panel.style.display='none';arrow.textContent='▶'}"
            style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;padding:10px 16px;border-radius:10px;background:#f5f5f5;border:1px dashed #bdbdbd;color:#757575;font-size:0.88em;transition:all 0.2s"
-           onmouseover="this.style.background='#ede7f6';this.style.borderColor='#9575cd';this.style.color='#4a148c'"
+           onmouseover="this.style.background='#ede7f6';this.style.borderColor='#9575cd';this.style.color='#3730A3'"
            onmouseout="this.style.background='#f5f5f5';this.style.borderColor='#bdbdbd';this.style.color='#757575'">
         <span id="bibtexPasteArrow" style="font-size:0.75em;transition:transform 0.2s">▶</span>
         <span>📋</span>
         <span>İsterseniz BibTeX metnini yapıştırın</span>
       </div>
-      <div id="bibtexPastePanel" style="display:none;margin-top:12px;padding:18px;background:linear-gradient(135deg,#fafafa,#f5f5f5);border:1px solid #e0e0e0;border-radius:12px">
+      <div id="bibtexPastePanel" style="display:none;margin-top:12px;padding:18px;background:linear-gradient(135deg,#fafafa,#f5f5f5);border:1px solid rgba(0,0,0,0.06);border-radius:12px">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
           <span style="font-size:1.2em">📋</span>
           <div>
@@ -2180,7 +2211,7 @@ function renderBibtexUpload() {
             <div style="font-size:0.78em;color:var(--text2)">Web of Science, Scopus veya başka bir kaynaktan kopyaladığınız BibTeX metnini aşağıya yapıştırın</div>
           </div>
         </div>
-        <textarea id="bibtexPasteArea" rows="8" placeholder="@article{key,&#10;  author = {Yazar Adı},&#10;  title = {Makale Başlığı},&#10;  journal = {Dergi Adı},&#10;  year = {2024},&#10;  doi = {10.xxxx/xxxxx}&#10;}" style="font-family:'Courier New',monospace;font-size:0.84em;background:#fff;border:2px solid #e0e0e0;border-radius:8px;resize:vertical"></textarea>
+        <textarea id="bibtexPasteArea" rows="8" placeholder="@article{key,&#10;  author = {Yazar Adı},&#10;  title = {Makale Başlığı},&#10;  journal = {Dergi Adı},&#10;  year = {2024},&#10;  doi = {10.xxxx/xxxxx}&#10;}" style="font-family:'Courier New',monospace;font-size:0.84em;background:#fff;border:2px solid rgba(0,0,0,0.06);border-radius:8px;resize:vertical"></textarea>
         <div style="display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap">
           <button class="btn btn-primary" onclick="var txt=document.getElementById('bibtexPasteArea').value.trim();if(!txt){showToast('Lütfen BibTeX metnini yapıştırın');return;}parseBibtexText(txt)">
             📥 BibTeX'i Yükle
@@ -2263,7 +2294,7 @@ function renderStep2(el) {
 
   // Success & save reminder banner (>= 5 studies)
   const successBanner = state.studies.length >= 5 ? `
-    <div style="background:linear-gradient(135deg,#e3f2fd,#bbdefb);border:2px solid #90caf9;border-radius:14px;padding:16px 20px;margin-bottom:16px;margin-top:48px;box-shadow:0 4px 16px rgba(21,101,192,0.08)">
+    <div style="background:linear-gradient(135deg,#e3f2fd,#bbdefb);border:2px solid #90caf9;border-radius:16px;padding:16px 20px;margin-bottom:16px;margin-top:48px;box-shadow:0 4px 16px rgba(21,101,192,0.08)">
       <div style="display:flex;align-items:flex-start;gap:12px">
         <span style="font-size:1.8em;flex-shrink:0">🎉</span>
         <div style="flex:1">
@@ -2353,8 +2384,8 @@ function renderStep2(el) {
             <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;padding:10px;background:#fff;border-radius:8px;border:1px solid var(--border)">
               <input type="color" value="${t.color}" onchange="state.customThemes[${i}].color=this.value" style="width:36px;height:36px;border:none;border-radius:6px;cursor:pointer;padding:0">
               <div style="flex:1;display:flex;flex-direction:column;gap:4px">
-                <input type="text" value="${t.name}" placeholder="Tema adı" style="font-weight:600;font-size:0.88em;padding:4px 8px;border:1px solid #e0e0e0;border-radius:4px" onchange="state.customThemes[${i}].name=this.value">
-                <input type="text" value="${t.keywords}" placeholder="Anahtar kelimeler (virgülle ayırın, İngilizce)" style="font-size:0.82em;padding:4px 8px;border:1px solid #e0e0e0;border-radius:4px;color:var(--text2)" onchange="state.customThemes[${i}].keywords=this.value">
+                <input type="text" value="${t.name}" placeholder="Tema adı" style="font-weight:600;font-size:0.88em;padding:4px 8px;border:1px solid rgba(0,0,0,0.06);border-radius:4px" onchange="state.customThemes[${i}].name=this.value">
+                <input type="text" value="${t.keywords}" placeholder="Anahtar kelimeler (virgülle ayırın, İngilizce)" style="font-size:0.82em;padding:4px 8px;border:1px solid rgba(0,0,0,0.06);border-radius:4px;color:var(--text2)" onchange="state.customThemes[${i}].keywords=this.value">
               </div>
               <button onclick="state.customThemes.splice(${i},1);renderStep()" style="background:#ffebee;border:1px solid #ef9a9a;color:#c62828;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.82em" title="Temayı sil">🗑️</button>
             </div>
@@ -2362,20 +2393,20 @@ function renderStep2(el) {
         </div>
 
         <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-          <button onclick="addNewTheme()" style="background:#e8eaf6;color:var(--primary);border:2px solid var(--primary);padding:8px 16px;border-radius:8px;font-size:0.85em;cursor:pointer;font-weight:600">+ Yeni Tema Ekle</button>
+          <button onclick="addNewTheme()" style="background:rgba(79,70,229,0.06);color:var(--primary);border:2px solid var(--primary);padding:8px 16px;border-radius:8px;font-size:0.85em;cursor:pointer;font-weight:600">+ Yeni Tema Ekle</button>
           <button onclick="reapplyThemes()" style="background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:0.85em;cursor:pointer;font-weight:600">🔄 Temaları Uygula</button>
-          <button onclick="suggestThemesWithAI()" style="background:linear-gradient(135deg,#7c4dff,#e040fb);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:0.85em;cursor:pointer;font-weight:600">🤖 AI ile Tema Öner</button>
+          <button onclick="suggestThemesWithAI()" style="background:linear-gradient(135deg,#6366F1,#e040fb);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:0.85em;cursor:pointer;font-weight:600">🤖 AI ile Tema Öner</button>
         </div>
       </div>
     </div>
 
     <!-- Etiket Özeti -->
-    <div class="card" id="tagOverviewCard" style="padding:16px;background:linear-gradient(135deg,#ede7f6,#e8eaf6);border:1px solid #b39ddb">
-      <h2 style="margin-bottom:12px;color:#4a148c;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div class="card" id="tagOverviewCard" style="padding:16px;background:linear-gradient(135deg,rgba(79,70,229,0.04),rgba(79,70,229,0.08));border:1px solid rgba(79,70,229,0.2)">
+      <h2 style="margin-bottom:12px;color:#3730A3;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
         <span>🏷️ Etiketlenmiş Çalışmalar</span>
-        <button onclick="openTagEditor()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid #7c4dff;background:#fff;color:#7c4dff;border-radius:10px;font-size:0.82em;font-weight:700;cursor:pointer;transition:all 0.2s"
-                onmouseover="this.style.background='#7c4dff';this.style.color='#fff'"
-                onmouseout="this.style.background='#fff';this.style.color='#7c4dff'">⚙️ Etiketleri Düzenle</button>
+        <button onclick="openTagEditor()" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border:2px solid #6366F1;background:#fff;color:#6366F1;border-radius:10px;font-size:0.82em;font-weight:700;cursor:pointer;transition:all 0.2s"
+                onmouseover="this.style.background='#6366F1';this.style.color='#fff'"
+                onmouseout="this.style.background='#fff';this.style.color='#6366F1'">⚙️ Etiketleri Düzenle</button>
       </h2>
       <div id="tagOverviewPanel"></div>
       <div id="tagEditorPanel" style="display:none"></div>
@@ -2497,12 +2528,12 @@ function renderStep2(el) {
     </div>
 
     <!-- Sonraki Adım Yönlendirme Bannerı -->
-    <div style="background:linear-gradient(135deg,#ede7f6,#e8eaf6);border:2px solid #b39ddb;border-radius:14px;padding:20px;margin-top:0">
+    <div style="background:linear-gradient(135deg,rgba(79,70,229,0.04),rgba(79,70,229,0.08));border:2px solid rgba(79,70,229,0.2);border-radius:16px;padding:20px;margin-top:0">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
         <span style="font-size:1.5em">🚀</span>
         <div>
-          <div style="font-weight:800;font-size:1.05em;color:#4a148c">Artık akademik rapor almaya hazırsınız!</div>
-          <div style="font-size:0.84em;color:#7c4dff;margin-top:2px">Analiz tamamlandı. Aşağıdaki seçeneklerden devam edin.</div>
+          <div style="font-weight:800;font-size:1.05em;color:#3730A3">Artık akademik rapor almaya hazırsınız!</div>
+          <div style="font-size:0.84em;color:#6366F1;margin-top:2px">Analiz tamamlandı. Aşağıdaki seçeneklerden devam edin.</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
@@ -2605,17 +2636,17 @@ function renderStudyCard(s, realIdx) {
   html += pdfLink;
   html += '<button class="link-copy" onclick="copyStudy('+realIdx+')">📋 Kopyala</button>';
   html += '<span style="flex:1"></span>';
-  html += '<button class="study-note-toggle" onclick="toggleNote('+realIdx+')" style="padding:4px 10px;border-radius:6px;border:1px solid #e0e0e0;background:'+(noteOpen?'#e8eaf6':'#f5f5f5')+';color:var(--primary);font-weight:600;margin-left:0">'+(s.note?'📝 Not ✓':'📝 Not')+'</button>';
-  html += '<button class="study-note-toggle" onclick="showTagPicker('+realIdx+')" style="padding:4px 10px;border-radius:6px;border:1px solid #e0e0e0;background:'+(s._tagPickerOpen?'#ede7f6':'#f5f5f5')+';color:#7c4dff;font-weight:600;margin-left:0">🏷️ Etiketle</button>';
+  html += '<button class="study-note-toggle" onclick="toggleNote('+realIdx+')" style="padding:4px 10px;border-radius:6px;border:1px solid rgba(0,0,0,0.06);background:'+(noteOpen?'rgba(79,70,229,0.06)':'#f5f5f5')+';color:var(--primary);font-weight:600;margin-left:0">'+(s.note?'📝 Not ✓':'📝 Not')+'</button>';
+  html += '<button class="study-note-toggle" onclick="showTagPicker('+realIdx+')" style="padding:4px 10px;border-radius:6px;border:1px solid rgba(0,0,0,0.06);background:'+(s._tagPickerOpen?'#ede7f6':'#f5f5f5')+';color:#6366F1;font-weight:600;margin-left:0">🏷️ Etiketle</button>';
   html += '</div>';
 
   if (s._tagPickerOpen) {
     html += '<div style="display:flex;flex-wrap:wrap;gap:4px;padding:8px;background:#faf5ff;border-radius:8px;margin:4px 0;border:1px solid #e1bee7">';
     getAvailableTags().forEach(t => {
       const isActive = (s._tags||[]).includes(t.name);
-      html += '<button onclick="toggleStudyTag('+realIdx+',&quot;'+t.name+'&quot;)" style="padding:4px 10px;border-radius:14px;font-size:0.78em;cursor:pointer;border:1.5px solid '+t.color+';background:'+(isActive?t.color:'#fff')+';color:'+(isActive?'#fff':t.color)+';font-weight:600;transition:all 0.15s">'+t.icon+' '+t.name+'</button>';
+      html += '<button onclick="toggleStudyTag('+realIdx+',&quot;'+t.name+'&quot;)" style="padding:4px 10px;border-radius:16px;font-size:0.78em;cursor:pointer;border:1.5px solid '+t.color+';background:'+(isActive?t.color:'#fff')+';color:'+(isActive?'#fff':t.color)+';font-weight:600;transition:all 0.15s">'+t.icon+' '+t.name+'</button>';
     });
-    html += '<button onclick="addCustomTag('+realIdx+')" style="padding:4px 10px;border-radius:14px;font-size:0.78em;cursor:pointer;border:1.5px dashed #999;background:#fff;color:#666">+ Yeni</button>';
+    html += '<button onclick="addCustomTag('+realIdx+')" style="padding:4px 10px;border-radius:16px;font-size:0.78em;cursor:pointer;border:1.5px dashed #999;background:#fff;color:#666">+ Yeni</button>';
     html += '</div>';
   }
 
@@ -2688,7 +2719,7 @@ function renderStudyList() {
 
   // "Çalışmamda Kullanılacaklar" section — grouped by theme
   if (selectedStudies.length > 0) {
-    html += '<div data-selected-section style="background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:2px solid #a5d6a7;border-radius:14px;padding:14px 16px;margin-bottom:16px">';
+    html += '<div data-selected-section style="background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:2px solid #a5d6a7;border-radius:16px;padding:14px 16px;margin-bottom:16px">';
     html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:1.2em">✅</span><strong style="color:#2e7d32;font-size:0.95em">Çalışmamda Kullanılacaklar ('+selectedStudies.length+')</strong>';
     html += '<span style="font-size:0.78em;color:#33691e;background:#c8e6c9;padding:2px 10px;border-radius:10px;margin-left:auto">Tik kaldırırsan aşağıya döner</span></div>';
 
@@ -2904,28 +2935,28 @@ function renderStep3(el) {
       <div id="reportPreview" style="margin-top:16px"></div>
 
       <!-- Claude ile Mükemmelleştir — rapor önizlemesinin altında -->
-      <div style="margin-top:24px;padding:20px;background:linear-gradient(135deg,#ede7f6,#e8eaf6);border:2px solid #b39ddb;border-radius:14px">
+      <div style="margin-top:24px;padding:20px;background:linear-gradient(135deg,rgba(79,70,229,0.04),rgba(79,70,229,0.08));border:2px solid rgba(79,70,229,0.2);border-radius:16px">
         <details>
           <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px">
             <span style="font-size:1.6em">🤖</span>
             <div style="flex:1">
-              <div style="font-weight:800;font-size:1.05em;color:#4a148c">Claude ile Mükemmelleştir</div>
-              <div style="font-size:0.82em;color:#7c4dff">Raporunuzun akademik dilini APA 7 standartlarına göre güçlendirin</div>
+              <div style="font-weight:800;font-size:1.05em;color:#3730A3">Claude ile Mükemmelleştir</div>
+              <div style="font-size:0.82em;color:#6366F1">Raporunuzun akademik dilini APA 7 standartlarına göre güçlendirin</div>
             </div>
-            <span style="font-size:1.2em;color:#7c4dff;transition:transform 0.2s" class="claude-enhance-arrow">▼</span>
+            <span style="font-size:1.2em;color:#6366F1;transition:transform 0.2s" class="claude-enhance-arrow">▼</span>
           </summary>
           <div style="margin-top:14px">
-            <p style="font-size:0.84em;color:#4a148c;line-height:1.6;margin-bottom:14px">
+            <p style="font-size:0.84em;color:#3730A3;line-height:1.6;margin-bottom:14px">
               Önce yukarıdan <strong>Önizleme</strong> yapın, ardından Claude'a göndereceğiniz prompt'u oluşturun.
               Claude, mevcut kaynakları ve atıfları koruyarak <strong>yalnızca akademik dili güçlendirir</strong> — yeni kaynak eklemez, bağlamdan koparmaz.
             </p>
             <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
-              <label style="font-size:0.88em;font-weight:600;color:#4a148c">Hedef Dil:</label>
-              <select id="claudeLang" style="padding:6px 14px;border:2px solid #b39ddb;border-radius:8px;font-size:0.88em;background:#fff;color:#4a148c;font-weight:600">
+              <label style="font-size:0.88em;font-weight:600;color:#3730A3">Hedef Dil:</label>
+              <select id="claudeLang" style="padding:6px 14px;border:2px solid rgba(79,70,229,0.2);border-radius:8px;font-size:0.88em;background:#fff;color:#3730A3;font-weight:600">
                 <option value="tr">🇹🇷 Türkçe</option>
                 <option value="en">🇬🇧 İngilizce</option>
               </select>
-              <button onclick="generateClaudePrompt()" style="background:linear-gradient(135deg,#7c4dff,#651fff);color:#fff;border:none;padding:10px 24px;border-radius:10px;font-size:0.92em;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(124,77,255,0.3)">
+              <button onclick="generateClaudePrompt()" style="background:linear-gradient(135deg,#6366F1,#651fff);color:#fff;border:none;padding:10px 24px;border-radius:10px;font-size:0.92em;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(124,77,255,0.3)">
                 ✨ Prompt Oluştur
               </button>
             </div>
@@ -3182,9 +3213,9 @@ function renderStepDesign(el) {
               '</div>' +
               '<p style="font-size:0.78em;color:var(--text2);margin-top:4px;line-height:1.4">' + d.desc + '</p>' +
               (isActive ? '<div style="margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:0.76em">' +
-                '<div style="background:#fff;border-radius:6px;padding:8px;border:1px solid #e0e0e0"><strong style="color:' + methodData.color + '">Veri Toplama</strong><br>' + d.collection + '</div>' +
-                '<div style="background:#fff;border-radius:6px;padding:8px;border:1px solid #e0e0e0"><strong style="color:' + methodData.color + '">Analiz</strong><br>' + d.analysis + '</div>' +
-                '<div style="background:#fff;border-radius:6px;padding:8px;border:1px solid #e0e0e0"><strong style="color:' + methodData.color + '">Araçlar</strong><br>' + d.tools + '</div>' +
+                '<div style="background:#fff;border-radius:6px;padding:8px;border:1px solid rgba(0,0,0,0.06)"><strong style="color:' + methodData.color + '">Veri Toplama</strong><br>' + d.collection + '</div>' +
+                '<div style="background:#fff;border-radius:6px;padding:8px;border:1px solid rgba(0,0,0,0.06)"><strong style="color:' + methodData.color + '">Analiz</strong><br>' + d.analysis + '</div>' +
+                '<div style="background:#fff;border-radius:6px;padding:8px;border:1px solid rgba(0,0,0,0.06)"><strong style="color:' + methodData.color + '">Araçlar</strong><br>' + d.tools + '</div>' +
               '</div>' : '') +
             '</div>';
           }).join('')}
@@ -3230,7 +3261,7 @@ function renderStepDesign(el) {
           📋 Claude Promptu Oluştur — Araştırma Tasarımı Danışmanı
         </button>
         <div id="designClaudePrompt" style="display:none;margin-top:12px">
-          <div style="background:#fff;border-radius:8px;padding:12px;font-family:monospace;font-size:0.78em;white-space:pre-wrap;max-height:200px;overflow-y:auto;border:1px solid #e0e0e0" id="designPromptText"></div>
+          <div style="background:#fff;border-radius:8px;padding:12px;font-family:monospace;font-size:0.78em;white-space:pre-wrap;max-height:200px;overflow-y:auto;border:1px solid rgba(0,0,0,0.06)" id="designPromptText"></div>
           <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
             <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('designPromptText').textContent);showToast('Prompt kopyalandı!')">📋 Kopyala</button>
             <a href="https://claude.ai/new" target="_blank" class="btn btn-outline btn-sm" style="text-decoration:none">🌐 claude.ai</a>
@@ -3261,7 +3292,7 @@ function renderStepDesign(el) {
 
       <!-- Çalışmamı Tamamladım -->
       <div style="text-align:center;margin-top:20px;padding-top:16px;border-top:2px dashed #e0e0e0">
-        <button class="btn" onclick="goToStep(7)" style="padding:14px 36px;background:linear-gradient(135deg,#2e7d32,#1b5e20);color:#fff;border-radius:14px;font-size:1em;font-weight:800;box-shadow:0 6px 24px rgba(46,125,50,0.3);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:10px">
+        <button class="btn" onclick="goToStep(7)" style="padding:14px 36px;background:linear-gradient(135deg,#2e7d32,#1b5e20);color:#fff;border-radius:16px;font-size:1em;font-weight:800;box-shadow:0 6px 24px rgba(46,125,50,0.3);border:none;cursor:pointer;display:inline-flex;align-items:center;gap:10px">
           <span style="font-size:1.2em">✅</span> Çalışmamı Tamamladım
         </button>
         <p style="font-size:0.78em;color:var(--text2);margin-top:8px">Tüm adımların özetini görüntüleyin ve çıktılarınızı indirin</p>
@@ -3416,12 +3447,12 @@ function renderStepSummary(el) {
       '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">' +
 
         // Report output
-        '<div style="background:#f5f3ff;border:1px solid #b39ddb;border-radius:10px;padding:14px;text-align:center">' +
+        '<div style="background:#f5f3ff;border:1px solid rgba(79,70,229,0.2);border-radius:10px;padding:14px;text-align:center">' +
           '<span style="font-size:1.5em">📝</span>' +
-          '<div style="font-weight:700;font-size:0.88em;color:#4a148c;margin:6px 0">Akademik Rapor</div>' +
+          '<div style="font-weight:700;font-size:0.88em;color:#3730A3;margin:6px 0">Akademik Rapor</div>' +
           (hasReport ?
             '<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap">' +
-              '<button class="btn btn-sm" onclick="copyReportDirect()" style="background:#4a148c;color:#fff;border:none;font-size:0.78em">📋 Kopyala</button>' +
+              '<button class="btn btn-sm" onclick="copyReportDirect()" style="background:#3730A3;color:#fff;border:none;font-size:0.78em">📋 Kopyala</button>' +
               '<button class="btn btn-sm" onclick="downloadReportDirect()" style="background:#7c3aed;color:#fff;border:none;font-size:0.78em">📄 Word İndir</button>' +
             '</div>' :
             (studyCount > 0 && state._ethicsAccepted ?
@@ -3475,10 +3506,10 @@ function renderStepSummary(el) {
       '<div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:2px solid #c4b5fd;border-radius:12px;padding:16px;margin-bottom:14px">' +
         '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">' +
           '<span style="font-size:1.2em">🔬</span>' +
-          '<strong style="color:#4a148c;font-size:0.9em">Algoritmik Dergi Önerileri</strong>' +
+          '<strong style="color:#3730A3;font-size:0.9em">Algoritmik Dergi Önerileri</strong>' +
           '<span style="font-size:0.7em;background:#7c3aed;color:#fff;padding:2px 8px;border-radius:8px;font-weight:600">Kural Tabanlı</span>' +
         '</div>' +
-        '<p style="font-size:0.76em;color:#5e35b1;margin-bottom:12px;line-height:1.5">Araştırma konusu anahtar kelimeleri, temalar ve kaynak dergileriniz analiz edilerek uyumluluk puanı hesaplandı. Dergi linkleri, indeks bilgileri, Q kategorileri ve APC bilgileri dahildir.</p>' +
+        '<p style="font-size:0.76em;color:#4F46E5;margin-bottom:12px;line-height:1.5">Araştırma konusu anahtar kelimeleri, temalar ve kaynak dergileriniz analiz edilerek uyumluluk puanı hesaplandı. Dergi linkleri, indeks bilgileri, Q kategorileri ve APC bilgileri dahildir.</p>' +
         buildJournalRecommendationHTML() +
       '</div>' +
 
@@ -3502,7 +3533,7 @@ function renderStepSummary(el) {
           return null;
         }
 
-        return '<div style="background:#f8f9fa;border:1px solid #e0e0e0;border-radius:10px;padding:12px;margin-bottom:14px">' +
+        return '<div style="background:#f8f9fa;border:1px solid rgba(0,0,0,0.06);border-radius:10px;padding:12px;margin-bottom:14px">' +
           '<div style="font-weight:700;font-size:0.82em;color:var(--text1);margin-bottom:8px">📊 Kaynaklarınızdaki En Sık Dergiler:</div>' +
           '<div style="display:flex;flex-direction:column;gap:4px">' +
           topJ.map(function(j, i) {
@@ -3512,7 +3543,7 @@ function renderStepSummary(el) {
             var link = dbMatch ? dbMatch.url : '';
             return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:0.78em;padding:6px 8px;background:' + (i % 2 === 0 ? '#fff' : '#f5f5f5') + ';border-radius:4px;gap:8px">' +
               '<span style="color:var(--text1);flex:1;min-width:0">' + (i + 1) + '. ' +
-                (link ? '<a href="' + link + '" target="_blank" style="color:#1a237e;text-decoration:none;border-bottom:1px dashed #1a237e">' + j[0] + '</a>' : j[0]) +
+                (link ? '<a href="' + link + '" target="_blank" style="color:#4F46E5;text-decoration:none;border-bottom:1px dashed #4F46E5">' + j[0] + '</a>' : j[0]) +
               '</span>' +
               (indexInfo ? '<span style="font-size:0.85em;color:#616161;white-space:nowrap">' + indexInfo + (qInfo ? ' <strong style="color:#2e7d32">' + qInfo + '</strong>' : '') + '</span>' : '') +
               '<span style="font-weight:700;color:var(--primary);white-space:nowrap">' + j[1] + ' çalışma</span></div>';
@@ -3845,10 +3876,10 @@ function buildJournalRecommendationHTML() {
 
   // Scoring formula explanation (collapsible)
   html += '<details style="margin-bottom:14px;background:#f5f0ff;border:1.5px solid #d1c4e9;border-radius:10px;padding:0">' +
-    '<summary style="cursor:pointer;padding:10px 14px;font-size:0.82em;font-weight:600;color:#4a148c;list-style:none;display:flex;align-items:center;gap:6px">' +
+    '<summary style="cursor:pointer;padding:10px 14px;font-size:0.82em;font-weight:600;color:#3730A3;list-style:none;display:flex;align-items:center;gap:6px">' +
       '<span>📐</span> Puanlama nasıl hesaplanıyor? <span style="margin-left:auto;font-size:0.9em;opacity:0.6">▼</span>' +
     '</summary>' +
-    '<div style="padding:0 14px 14px;font-size:0.78em;color:#4a148c;line-height:1.7">' +
+    '<div style="padding:0 14px 14px;font-size:0.78em;color:#3730A3;line-height:1.7">' +
       '<table style="width:100%;border-collapse:collapse;margin-top:4px">' +
         '<tr style="border-bottom:1px solid #e0e0e0"><td style="padding:4px 8px;font-weight:700">Kriter</td><td style="padding:4px 8px;font-weight:700;text-align:center">Puan</td><td style="padding:4px 8px;font-weight:700">Açıklama</td></tr>' +
         '<tr style="border-bottom:1px solid #f0f0f0"><td style="padding:4px 8px">🎯 Konu Uyumu</td><td style="padding:4px 8px;text-align:center;font-weight:700;color:#1565c0">35</td><td style="padding:4px 8px;font-size:0.92em">Araştırma konusu anahtar kelimeleri ile dergi alanı eşleşmesi</td></tr>' +
@@ -3882,7 +3913,7 @@ function buildJournalRecommendationHTML() {
     var parts = idx.split('+');
     return parts.map(function(p) {
       var color = '#616161', bg = '#f5f5f5';
-      if (p.indexOf('WoS') !== -1) { color = '#1a237e'; bg = '#e8eaf6'; }
+      if (p.indexOf('WoS') !== -1) { color = '#4F46E5'; bg = 'rgba(79,70,229,0.06)'; }
       else if (p.indexOf('Scopus') !== -1) { color = '#e65100'; bg = '#fff3e0'; }
       else if (p.indexOf('TR Dizin') !== -1) { color = '#c62828'; bg = '#ffebee'; }
       else if (p.indexOf('ERIC') !== -1) { color = '#2e7d32'; bg = '#e8f5e9'; }
@@ -3892,11 +3923,11 @@ function buildJournalRecommendationHTML() {
 
   recs.forEach(function(r, i) {
     var j = r.journal;
-    html += '<div style="display:flex;gap:12px;align-items:flex-start;padding:12px;margin-bottom:8px;background:' + (i % 2 === 0 ? '#fafafa' : '#fff') + ';border:1px solid #e0e0e0;border-radius:10px;border-left:4px solid ' + qColor(j.q) + '">' +
+    html += '<div style="display:flex;gap:12px;align-items:flex-start;padding:12px;margin-bottom:8px;background:' + (i % 2 === 0 ? '#fafafa' : '#fff') + ';border:1px solid rgba(0,0,0,0.06);border-radius:10px;border-left:4px solid ' + qColor(j.q) + '">' +
       '<div style="width:28px;height:28px;border-radius:50%;background:' + qBg(j.q) + ';color:' + qColor(j.q) + ';display:flex;align-items:center;justify-content:center;font-size:0.75em;font-weight:800;flex-shrink:0">' + (i + 1) + '</div>' +
       '<div style="flex:1;min-width:0">' +
         '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">' +
-          '<a href="' + j.url + '" target="_blank" style="font-weight:700;font-size:0.85em;color:#1a237e;text-decoration:none;border-bottom:1px dashed #1a237e">' + j.name + '</a>' +
+          '<a href="' + j.url + '" target="_blank" style="font-weight:700;font-size:0.85em;color:#4F46E5;text-decoration:none;border-bottom:1px dashed #4F46E5">' + j.name + '</a>' +
           (j.q !== '-' ? '<span style="display:inline-block;padding:1px 8px;border-radius:10px;font-size:0.7em;font-weight:800;background:' + qBg(j.q) + ';color:' + qColor(j.q) + '">' + j.q + '</span>' : '') +
         '</div>' +
         '<div style="margin-bottom:4px">' + indexBadge(j.index) + '</div>' +
@@ -3904,7 +3935,7 @@ function buildJournalRecommendationHTML() {
           '<span style="margin-right:10px">ISSN: ' + j.issn + '</span>' +
           '<span style="margin-right:10px">APC: ' + j.apc + '</span>' +
         '</div>' +
-        '<div style="font-size:0.75em;color:#4a148c;margin-top:3px;font-style:italic">' + r.reasons.join(' · ') + '</div>' +
+        '<div style="font-size:0.75em;color:#3730A3;margin-top:3px;font-style:italic">' + r.reasons.join(' · ') + '</div>' +
       '</div>' +
       '<div style="text-align:center;flex-shrink:0;min-width:48px">' +
         '<div style="font-size:0.6em;color:var(--text2);margin-bottom:2px">Uyum</div>' +
@@ -3993,10 +4024,10 @@ function copyJournalRecommendationPrompt() {
   var preview = document.getElementById('journalPromptPreview');
   if (preview) {
     preview.style.display = 'block';
-    preview.innerHTML = '<div style="background:#f5f0ff;border:2px solid #b39ddb;border-radius:10px;padding:14px;margin-top:8px">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:1.1em">✅</span><strong style="color:#4a148c;font-size:0.88em">Gelişmiş prompt kopyalandı!</strong></div>' +
-      '<p style="font-size:0.78em;color:#4a148c;line-height:1.5;margin-bottom:8px">Claude Agent bu promptu aldığında:</p>' +
-      '<ul style="font-size:0.76em;color:#5e35b1;margin:0 0 0 16px;line-height:1.6">' +
+    preview.innerHTML = '<div style="background:#f5f0ff;border:2px solid rgba(79,70,229,0.2);border-radius:10px;padding:14px;margin-top:8px">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:1.1em">✅</span><strong style="color:#3730A3;font-size:0.88em">Gelişmiş prompt kopyalandı!</strong></div>' +
+      '<p style="font-size:0.78em;color:#3730A3;line-height:1.5;margin-bottom:8px">Claude Agent bu promptu aldığında:</p>' +
+      '<ul style="font-size:0.76em;color:#4F46E5;margin:0 0 0 16px;line-height:1.6">' +
         '<li>Araştırma konusu, yöntemi ve temalarınızı detaylı analiz edecek</li>' +
         '<li>Algoritmik ön-önerileri referans alarak değerlendirecek</li>' +
         '<li>İnternet üzerinden dergi indeksleme durumlarını ve IF değerlerini doğrulayacak</li>' +
@@ -4091,7 +4122,7 @@ function renderStep5(el) {
           <div class="num">${totalStudies}</div>
           <div class="lbl">Toplam Çalışma</div>
         </div>
-        <div class="stat-box" style="background:#e8eaf6">
+        <div class="stat-box" style="background:rgba(79,70,229,0.06)">
           <div class="num" style="color:#1565c0">${studiesWithDOI.length}</div>
           <div class="lbl">DOI Mevcut</div>
         </div>
@@ -4102,7 +4133,7 @@ function renderStep5(el) {
       </div>
 
       <!-- How it works -->
-      <div class="card" style="border:2px solid #e0e0e0;box-shadow:none;padding:16px">
+      <div class="card" style="border:2px solid rgba(0,0,0,0.06);box-shadow:none;padding:16px">
         <h3 style="font-size:0.95em;color:var(--primary);margin-bottom:12px">📋 Nasıl Kullanılır?</h3>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
           <div style="text-align:center;padding:14px;background:#f8f9fa;border-radius:10px">
@@ -4786,11 +4817,11 @@ async function aiSuggestQuery() {
       // Generate Claude prompt
       const prompt = systemPrompt + '\n\nResearch topic: ' + topic;
       resultDiv.style.display = 'block';
-      resultDiv.innerHTML = '<div style="background:linear-gradient(135deg,#ede7f6,#fce4ec);border-radius:12px;padding:16px;border:2px solid #7c4dff">' +
-        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:1.3em">🤖</span><strong style="color:#4a148c">WebLLM Yüklü Değil — Claude ile Devam Edin</strong></div>' +
-        '<p style="font-size:0.84em;color:var(--text2);margin-bottom:10px">Sorgu önerisi için WebLLM modelini yükleyin veya aşağıdaki promptu <a href="https://claude.ai" target="_blank" style="color:#7c4dff;font-weight:600">claude.ai</a>\'a yapıştırın:</p>' +
-        '<div style="background:#fff;border-radius:8px;padding:12px;font-family:monospace;font-size:0.78em;white-space:pre-wrap;max-height:200px;overflow-y:auto;border:1px solid #e0e0e0">' + escapeHtml(prompt) + '</div>' +
-        '<button onclick="navigator.clipboard.writeText(document.querySelector(\'#aiSuggestResult pre,#aiSuggestResult div[style*=monospace]\')?.textContent||\'\')" style="margin-top:8px;background:#7c4dff;color:#fff;border:none;padding:6px 16px;border-radius:6px;font-size:0.82em;cursor:pointer">📋 Promptu Kopyala</button>' +
+      resultDiv.innerHTML = '<div style="background:linear-gradient(135deg,#ede7f6,#fce4ec);border-radius:12px;padding:16px;border:2px solid #6366F1">' +
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:1.3em">🤖</span><strong style="color:#3730A3">WebLLM Yüklü Değil — Claude ile Devam Edin</strong></div>' +
+        '<p style="font-size:0.84em;color:var(--text2);margin-bottom:10px">Sorgu önerisi için WebLLM modelini yükleyin veya aşağıdaki promptu <a href="https://claude.ai" target="_blank" style="color:#6366F1;font-weight:600">claude.ai</a>\'a yapıştırın:</p>' +
+        '<div style="background:#fff;border-radius:8px;padding:12px;font-family:monospace;font-size:0.78em;white-space:pre-wrap;max-height:200px;overflow-y:auto;border:1px solid rgba(0,0,0,0.06)">' + escapeHtml(prompt) + '</div>' +
+        '<button onclick="navigator.clipboard.writeText(document.querySelector(\'#aiSuggestResult pre,#aiSuggestResult div[style*=monospace]\')?.textContent||\'\')" style="margin-top:8px;background:#6366F1;color:#fff;border:none;padding:6px 16px;border-radius:6px;font-size:0.82em;cursor:pointer">📋 Promptu Kopyala</button>' +
         '</div>';
     }
   } catch(e) {
@@ -4805,12 +4836,12 @@ async function aiSuggestQuery() {
 function showAISuggestion(query, modelName, dbLabel) {
   const resultDiv = document.getElementById('aiSuggestResult');
   resultDiv.style.display = 'block';
-  resultDiv.innerHTML = '<div style="background:linear-gradient(135deg,#e8f5e9,#f3e5f5);border-radius:12px;padding:16px;border:2px solid #7c4dff">' +
+  resultDiv.innerHTML = '<div style="background:linear-gradient(135deg,#e8f5e9,#f3e5f5);border-radius:12px;padding:16px;border:2px solid #6366F1">' +
     '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><span style="font-size:1.3em">✨</span><strong style="color:#2e7d32">AI Sorgu Önerisi Hazır!</strong>' +
-    '<span style="margin-left:auto;font-size:0.75em;background:#ede7f6;color:#4a148c;padding:3px 8px;border-radius:4px">' + escapeHtml(modelName) + ' • ' + escapeHtml(dbLabel) + '</span></div>' +
+    '<span style="margin-left:auto;font-size:0.75em;background:#ede7f6;color:#3730A3;padding:3px 8px;border-radius:4px">' + escapeHtml(modelName) + ' • ' + escapeHtml(dbLabel) + '</span></div>' +
     '<div style="background:#fff;border-radius:8px;padding:12px;font-family:monospace;font-size:0.82em;white-space:pre-wrap;border:1px solid #c8e6c9;margin-bottom:10px" id="aiSuggestedQuery">' + escapeHtml(query) + '</div>' +
     '<div style="display:flex;gap:8px;flex-wrap:wrap">' +
-    '<button onclick="navigator.clipboard.writeText(document.getElementById(\'aiSuggestedQuery\').textContent);this.textContent=\'✅ Kopyalandı!\';setTimeout(()=>this.textContent=\'📋 Kopyala\',1500)" style="background:#7c4dff;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:0.85em;cursor:pointer;font-weight:500">📋 Kopyala</button>' +
+    '<button onclick="navigator.clipboard.writeText(document.getElementById(\'aiSuggestedQuery\').textContent);this.textContent=\'✅ Kopyalandı!\';setTimeout(()=>this.textContent=\'📋 Kopyala\',1500)" style="background:#6366F1;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:0.85em;cursor:pointer;font-weight:500">📋 Kopyala</button>' +
     '<button onclick="applyAISuggestion()" style="background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:0.85em;cursor:pointer;font-weight:500">✅ Bu Sorguyu Kullan</button>' +
     '</div></div>';
 }
@@ -4921,16 +4952,16 @@ async function webllmKeywordHelper() {
     resultDiv.style.display = 'block';
     const prompt = systemPrompt + '\n\nKeywords: ' + keywords;
     resultDiv.innerHTML = '<div style="background:#fff;border-radius:8px;padding:12px;border:1px solid #ce93d8">' +
-      '<p style="font-size:0.82em;color:var(--text2);margin-bottom:8px">⚠️ WebLLM yüklü değil. Aşağıdaki promptu <a href="https://claude.ai" target="_blank" style="color:#7c4dff;font-weight:600">claude.ai</a>\'a yapıştırarak sorgu oluşturabilirsiniz:</p>' +
-      '<div style="background:#fafafa;border-radius:6px;padding:10px;font-family:monospace;font-size:0.76em;white-space:pre-wrap;max-height:150px;overflow-y:auto;border:1px solid #e0e0e0">' + escapeHtml(prompt) + '</div>' +
-      '<button onclick="navigator.clipboard.writeText(\'' + escapeHtml(prompt).replace(/'/g, "\\'") + '\');this.textContent=\'✅ Kopyalandı!\';setTimeout(()=>this.textContent=\'📋 Kopyala\',1500)" style="margin-top:6px;background:#7c4dff;color:#fff;border:none;padding:5px 14px;border-radius:6px;font-size:0.78em;cursor:pointer">📋 Kopyala</button>' +
+      '<p style="font-size:0.82em;color:var(--text2);margin-bottom:8px">⚠️ WebLLM yüklü değil. Aşağıdaki promptu <a href="https://claude.ai" target="_blank" style="color:#6366F1;font-weight:600">claude.ai</a>\'a yapıştırarak sorgu oluşturabilirsiniz:</p>' +
+      '<div style="background:#fafafa;border-radius:6px;padding:10px;font-family:monospace;font-size:0.76em;white-space:pre-wrap;max-height:150px;overflow-y:auto;border:1px solid rgba(0,0,0,0.06)">' + escapeHtml(prompt) + '</div>' +
+      '<button onclick="navigator.clipboard.writeText(\'' + escapeHtml(prompt).replace(/'/g, "\\'") + '\');this.textContent=\'✅ Kopyalandı!\';setTimeout(()=>this.textContent=\'📋 Kopyala\',1500)" style="margin-top:6px;background:#6366F1;color:#fff;border:none;padding:5px 14px;border-radius:6px;font-size:0.78em;cursor:pointer">📋 Kopyala</button>' +
       '</div>';
     return;
   }
 
   // Use WebLLM
   resultDiv.style.display = 'block';
-  resultDiv.innerHTML = '<div style="text-align:center;padding:10px"><span class="spinner" style="width:18px;height:18px;border:2px solid #ce93d8;border-top-color:#7c4dff;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block"></span> <span style="font-size:0.85em;color:#6a1b9a">Sorgu oluşturuluyor...</span></div>';
+  resultDiv.innerHTML = '<div style="text-align:center;padding:10px"><span class="spinner" style="width:18px;height:18px;border:2px solid #ce93d8;border-top-color:#6366F1;border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block"></span> <span style="font-size:0.85em;color:#6a1b9a">Sorgu oluşturuluyor...</span></div>';
 
   try {
     const resp = await webllmEngine.chat.completions.create({
@@ -4943,7 +4974,7 @@ async function webllmKeywordHelper() {
     const suggestion = resp.choices[0].message.content.trim();
     resultDiv.innerHTML = '<div style="background:#fff;border-radius:8px;padding:12px;border:1px solid #a5d6a7">' +
       '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><span style="font-size:1em">✨</span><strong style="font-size:0.85em;color:#2e7d32">Sorgu Önerisi:</strong></div>' +
-      '<div style="background:#f5f5f5;border-radius:6px;padding:10px;font-family:monospace;font-size:0.82em;white-space:pre-wrap;border:1px solid #e0e0e0;margin-bottom:8px" id="kwHelperSuggestion">' + escapeHtml(suggestion) + '</div>' +
+      '<div style="background:#f5f5f5;border-radius:6px;padding:10px;font-family:monospace;font-size:0.82em;white-space:pre-wrap;border:1px solid rgba(0,0,0,0.06);margin-bottom:8px" id="kwHelperSuggestion">' + escapeHtml(suggestion) + '</div>' +
       '<div style="display:flex;gap:8px">' +
       '<button onclick="applyKeywordSuggestion()" style="background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;border:none;padding:6px 16px;border-radius:6px;font-size:0.82em;cursor:pointer;font-weight:500">✅ Sorguya Uygula</button>' +
       '<button onclick="document.getElementById(\'keywordHelperResult\').style.display=\'none\'" style="background:#e0e0e0;color:var(--text);border:none;padding:6px 16px;border-radius:6px;font-size:0.82em;cursor:pointer">Kapat</button>' +
@@ -5039,8 +5070,8 @@ function openTagEditor() {
   const allTags = getAvailableTags();
   const colors = ['#c62828','#ad1457','#6a1b9a','#283593','#0277bd','#00695c','#558b2f','#ef6c00','#4e342e','#37474f'];
 
-  let html = '<div style="margin-top:14px;padding:16px;background:#fff;border-radius:10px;border:1px solid #b39ddb">';
-  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><strong style="color:#4a148c;font-size:0.95em">Etiket Yönetimi</strong><button onclick="document.getElementById(\'tagEditorPanel\').style.display=\'none\'" style="background:none;border:none;font-size:1.1em;cursor:pointer;color:#999">✕</button></div>';
+  let html = '<div style="margin-top:14px;padding:16px;background:#fff;border-radius:10px;border:1px solid rgba(79,70,229,0.2)">';
+  html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px"><strong style="color:#3730A3;font-size:0.95em">Etiket Yönetimi</strong><button onclick="document.getElementById(\'tagEditorPanel\').style.display=\'none\'" style="background:none;border:none;font-size:1.1em;cursor:pointer;color:#999">✕</button></div>';
 
   // Default tags
   html += '<div style="font-size:0.82em;color:var(--text2);margin-bottom:8px;font-weight:600">Varsayılan Etiketler:</div>';
@@ -5068,8 +5099,8 @@ function openTagEditor() {
 
   // Add new tag
   html += '<div style="display:flex;gap:8px;align-items:center">';
-  html += '<input type="text" id="newTagNameInput" placeholder="Yeni etiket adı..." style="flex:1;padding:8px 12px;border:2px solid #b39ddb;border-radius:8px;font-size:0.88em">';
-  html += '<button onclick="addCustomTagFromEditor()" style="padding:8px 16px;background:#7c4dff;color:#fff;border:none;border-radius:8px;font-size:0.88em;font-weight:600;cursor:pointer;white-space:nowrap">+ Ekle</button>';
+  html += '<input type="text" id="newTagNameInput" placeholder="Yeni etiket adı..." style="flex:1;padding:8px 12px;border:2px solid rgba(79,70,229,0.2);border-radius:8px;font-size:0.88em">';
+  html += '<button onclick="addCustomTagFromEditor()" style="padding:8px 16px;background:#6366F1;color:#fff;border:none;border-radius:8px;font-size:0.88em;font-weight:600;cursor:pointer;white-space:nowrap">+ Ekle</button>';
   html += '</div>';
   html += '</div>';
 
@@ -5168,7 +5199,7 @@ function updateTagOverview() {
       <div style="font-weight:600;font-size:0.88em;color:var(--text);margin-bottom:4px">${toSentenceCase(s.title)}</div>
       <div style="font-size:0.78em;color:var(--text2);margin-bottom:6px">${cite} | <em>${s.journal||''}</em></div>
       <div style="display:flex;flex-wrap:wrap;gap:4px">${themeTags} ${labelTags}</div>
-      ${s.note ? `<div style="font-size:0.78em;color:#555;margin-top:4px;padding:4px 8px;background:#f5f5f5;border-radius:4px;border-left:3px solid #7c4dff">📝 ${s.note}</div>` : ''}
+      ${s.note ? `<div style="font-size:0.78em;color:#555;margin-top:4px;padding:4px 8px;background:#f5f5f5;border-radius:4px;border-left:3px solid #6366F1">📝 ${s.note}</div>` : ''}
     </div>`;
   });
   html += `</div>`;
@@ -5344,7 +5375,7 @@ function updateSelectedStickyBanner() {
 
   // Tag button for banner
   const tagBtn = taggedCount > 0
-    ? '<span data-tag-btn="1" onclick="event.stopPropagation();var el=document.getElementById(\'tagOverviewCard\');if(el)el.scrollIntoView({behavior:\'smooth\',block:\'start\'})" style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:0.75em;font-weight:700;background:linear-gradient(135deg,#7c4dff,#651fff);color:#fff;border:1px solid rgba(255,255,255,0.3);cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(124,77,255,0.3);transition:all 0.2s" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">🏷️ Etiketler (' + taggedCount + ')</span>'
+    ? '<span data-tag-btn="1" onclick="event.stopPropagation();var el=document.getElementById(\'tagOverviewCard\');if(el)el.scrollIntoView({behavior:\'smooth\',block:\'start\'})" style="display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:0.75em;font-weight:700;background:linear-gradient(135deg,#6366F1,#651fff);color:#fff;border:1px solid rgba(255,255,255,0.3);cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(124,77,255,0.3);transition:all 0.2s" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">🏷️ Etiketler (' + taggedCount + ')</span>'
     : '';
 
   // Right-side action buttons (only next step — Kaydet/Kılavuz now in header)
@@ -5508,7 +5539,7 @@ function showRelevanceFilter() {
 
     <!-- Method Selector -->
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
-      <div class="method-card" id="mc_keyword" onclick="selectFilterMethod('keyword')" style="border:2px solid var(--primary);padding:12px;border-radius:10px;cursor:pointer;text-align:center;background:#e8eaf6;transition:all 0.2s">
+      <div class="method-card" id="mc_keyword" onclick="selectFilterMethod('keyword')" style="border:2px solid var(--primary);padding:12px;border-radius:10px;cursor:pointer;text-align:center;background:rgba(79,70,229,0.06);transition:all 0.2s">
         <div style="font-size:1.5em">🔤</div>
         <div style="font-weight:700;font-size:0.88em;margin:4px 0">Anahtar Kelime</div>
         <div style="font-size:0.75em;color:var(--text2)">Hızlı, basit eşleştirme</div>
@@ -5667,7 +5698,7 @@ function selectFilterMethod(method) {
     const input = document.getElementById('input_'+m);
     if (card) {
       card.style.borderColor = m===method ? 'var(--primary)' : 'var(--border)';
-      card.style.background = m===method ? '#e8eaf6' : '#fff';
+      card.style.background = m===method ? 'rgba(79,70,229,0.06)' : '#fff';
     }
     if (input) input.style.display = m===method ? 'block' : 'none';
   });
@@ -5726,7 +5757,7 @@ SADECE aşağıdaki JSON formatında cevap ver, başka hiçbir şey yazma:
   box.innerHTML = `
     <details>
       <summary style="cursor:pointer;font-size:0.85em;font-weight:600;color:#5b21b6">📄 Oluşturulan prompt'u göster (${prompt.length} karakter)</summary>
-      <div style="max-height:200px;overflow-y:auto;background:#fff;padding:10px;border-radius:6px;margin-top:6px;font-size:0.78em;white-space:pre-wrap;font-family:monospace;border:1px solid #e0e0e0">${prompt.replace(/</g, '&lt;')}</div>
+      <div style="max-height:200px;overflow-y:auto;background:#fff;padding:10px;border-radius:6px;margin-top:6px;font-size:0.78em;white-space:pre-wrap;font-family:monospace;border:1px solid rgba(0,0,0,0.06)">${prompt.replace(/</g, '&lt;')}</div>
     </details>
     <div style="margin-top:8px;padding:10px;background:#e8f5e9;border-radius:6px;font-size:0.85em">
       ✅ Prompt kopyalandı! <a href="https://claude.ai" target="_blank" style="color:#5b21b6;font-weight:600">Claude.ai</a> veya Claude masaüstü uygulamasına yapıştırın, sonra döndüğü JSON'u aşağıya yapıştırın.
@@ -6062,7 +6093,7 @@ function confirmRelevanceFilter() {
   if (box) {
     box.style.display = 'block';
     box.innerHTML = `
-      <div style="margin-top:16px;padding:20px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-radius:14px;border:2px solid #66bb6a;text-align:center;box-shadow:0 4px 20px rgba(46,125,50,0.15)">
+      <div style="margin-top:16px;padding:20px;background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-radius:16px;border:2px solid #66bb6a;text-align:center;box-shadow:0 4px 20px rgba(46,125,50,0.15)">
         <div style="font-size:2em;margin-bottom:6px">✅</div>
         <h3 style="font-size:1.1em;font-weight:800;color:#2e7d32;margin-bottom:6px">Filtreleme Tamamlandı!</h3>
         <p style="font-size:0.9em;color:#1b5e20;margin-bottom:14px"><strong>${state.studies.length}</strong> ilgili çalışma kaldı, <strong>${removed.length}</strong> alakasız çalışma elendi.</p>
@@ -6347,7 +6378,7 @@ function generateReport(mode) {
   // Title
   reportHTML += `<h1 style="text-align:center;font-size:1.4em;color:var(--primary);margin-bottom:6px">${title}</h1>`;
   reportHTML += `<p style="text-align:center;font-size:0.85em;color:var(--text2);margin-bottom:4px">${L ? 'Rapor Tarihi' : 'Report Date'}: ${new Date().toLocaleDateString(L ? 'tr-TR' : 'en-US', {year:'numeric',month:'long',day:'numeric'})}</p>`;
-  reportHTML += `<p style="text-align:center;font-size:0.82em;color:#5e35b1;margin-bottom:24px;font-weight:600">${L ? 'Hedef Sayfa Sayısı' : 'Target Page Count'}: ${targetPages} ${L ? 'sayfa' : 'pages'} (${studies.length} ${L ? 'kaynak' : 'sources'} × ${isAgent ? '%20' : '%10'})</p>`;
+  reportHTML += `<p style="text-align:center;font-size:0.82em;color:#4F46E5;margin-bottom:24px;font-weight:600">${L ? 'Hedef Sayfa Sayısı' : 'Target Page Count'}: ${targetPages} ${L ? 'sayfa' : 'pages'} (${studies.length} ${L ? 'kaynak' : 'sources'} × ${isAgent ? '%20' : '%10'})</p>`;
   reportPlain += `${title}\n${'='.repeat(40)}\n${L ? 'Rapor Tarihi' : 'Report Date'}: ${new Date().toLocaleDateString(L ? 'tr-TR' : 'en-US', {year:'numeric',month:'long',day:'numeric'})}\n${L ? 'Hedef Sayfa Sayısı' : 'Target Page Count'}: ${targetPages} ${L ? 'sayfa' : 'pages'}\n\n`;
 
   let secNum = 1;
@@ -6380,7 +6411,7 @@ function generateReport(mode) {
     reportPlain += `${prismaTitle}\n${'-'.repeat(40)}\n`;
 
     // Araştırma Deseni alt başlığı
-    reportHTML += `<h3 style="color:#283593;font-size:1.05em;margin:14px 0 8px">${L ? secNum + '.1. Araştırma Deseni' : secNum + '.1. Research Design'}</h3>`;
+    reportHTML += `<h3 style="color:#4F46E5;font-size:1.05em;margin:14px 0 8px">${L ? secNum + '.1. Araştırma Deseni' : secNum + '.1. Research Design'}</h3>`;
     reportPlain += `${L ? secNum + '.1. Araştırma Deseni' : secNum + '.1. Research Design'}\n\n`;
     const designText = L
       ? `Bu çalışmada, sistematik literatür taraması yöntemi kullanılmıştır. Sistematik literatür taraması, belirli bir araştırma sorusuna ilişkin mevcut bilimsel kanıtların kapsamlı, sistematik ve tekrarlanabilir biçimde derlenmesini ve sentezlenmesini sağlayan bir araştırma yöntemidir. Tarama süreci, PRISMA (Preferred Reporting Items for Systematic Reviews and Meta-Analyses) protokolüne uygun olarak yürütülmüştür (Page et al., 2021).`
@@ -6389,7 +6420,7 @@ function generateReport(mode) {
     reportPlain += designText + '\n\n';
 
     // Veri Toplama Süreci alt başlığı
-    reportHTML += `<h3 style="color:#283593;font-size:1.05em;margin:14px 0 8px">${L ? secNum + '.2. Veri Toplama Süreci' : secNum + '.2. Data Collection Process'}</h3>`;
+    reportHTML += `<h3 style="color:#4F46E5;font-size:1.05em;margin:14px 0 8px">${L ? secNum + '.2. Veri Toplama Süreci' : secNum + '.2. Data Collection Process'}</h3>`;
     reportPlain += `${L ? secNum + '.2. Veri Toplama Süreci' : secNum + '.2. Data Collection Process'}\n\n`;
 
     const prismaText = L
@@ -6425,7 +6456,7 @@ function generateReport(mode) {
   let bulgularSubNum = 1;
   if (document.getElementById('secTable').checked) {
     const tableTitle = L ? `${bulgularSecNum || secNum}.${bulgularSubNum}. Tematik Dağılım` : `${bulgularSecNum || secNum}.${bulgularSubNum}. Thematic Distribution`;
-    reportHTML += `<h3 style="color:#283593;font-size:1.05em;margin:14px 0 8px">${tableTitle}</h3>`;
+    reportHTML += `<h3 style="color:#4F46E5;font-size:1.05em;margin:14px 0 8px">${tableTitle}</h3>`;
     reportPlain += `${tableTitle}\n\n`;
 
     const tableIntro = L
@@ -6462,7 +6493,7 @@ function generateReport(mode) {
   // Literatür Sentezi — Bulgular alt bölümü
   if (document.getElementById('secReview').checked) {
     const reviewTitle = L ? `${bulgularSecNum || secNum}.${bulgularSubNum}. Literatür Sentezi` : `${bulgularSecNum || secNum}.${bulgularSubNum}. Literature Synthesis`;
-    reportHTML += `<h3 style="color:#283593;font-size:1.05em;margin:18px 0 10px">${reviewTitle}</h3>`;
+    reportHTML += `<h3 style="color:#4F46E5;font-size:1.05em;margin:18px 0 10px">${reviewTitle}</h3>`;
     reportPlain += `${reviewTitle}\n\n`;
 
     const reviewIntro = L
@@ -6642,13 +6673,13 @@ Please rewrite the above report following these rules. Return ONLY the improved 
   area.style.display = 'block';
   area.innerHTML = `
     <div style="margin-top:4px">
-      <label style="font-size:0.85em;font-weight:700;color:#4a148c;margin-bottom:6px;display:block">📋 Claude'a gönderilecek prompt (${lang === 'tr' ? 'Türkçe' : 'İngilizce'}):</label>
-      <textarea id="claudePromptText" readonly style="width:100%;height:200px;padding:12px;border:2px solid #b39ddb;border-radius:10px;font-size:0.82em;font-family:monospace;background:#f5f0ff;color:#311b92;resize:vertical;line-height:1.5">${prompt.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+      <label style="font-size:0.85em;font-weight:700;color:#3730A3;margin-bottom:6px;display:block">📋 Claude'a gönderilecek prompt (${lang === 'tr' ? 'Türkçe' : 'İngilizce'}):</label>
+      <textarea id="claudePromptText" readonly style="width:100%;height:200px;padding:12px;border:2px solid rgba(79,70,229,0.2);border-radius:10px;font-size:0.82em;font-family:monospace;background:#f5f0ff;color:#311b92;resize:vertical;line-height:1.5">${prompt.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center">
-        <button onclick="copyClaudePrompt()" style="background:linear-gradient(135deg,#7c4dff,#651fff);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:0.88em;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px">
+        <button onclick="copyClaudePrompt()" style="background:linear-gradient(135deg,#6366F1,#651fff);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:0.88em;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px">
           📋 Prompt'u Kopyala
         </button>
-        <a href="https://claude.ai/new" target="_blank" style="background:linear-gradient(135deg,#4a148c,#7b1fa2);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:0.88em;font-weight:700;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:6px">
+        <a href="https://claude.ai/new" target="_blank" style="background:linear-gradient(135deg,#3730A3,#7b1fa2);color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:0.88em;font-weight:700;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:6px">
           🔗 Claude.ai'ye Git
         </a>
         <a href="https://chromewebstore.google.com/detail/claude-in-chrome/mhcmjhbbkpkjgecafhbopllcbmgbefao" target="_blank" style="background:rgba(124,58,237,0.1);color:#7c3aed;border:2px solid #7c3aed;padding:10px 20px;border-radius:10px;font-size:0.88em;font-weight:700;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:6px">
@@ -6657,17 +6688,17 @@ Please rewrite the above report following these rules. Return ONLY the improved 
       </div>
     </div>
 
-    <div style="margin-top:18px;padding:16px;background:#fff;border:2px dashed #b39ddb;border-radius:12px">
+    <div style="margin-top:18px;padding:16px;background:#fff;border:2px dashed rgba(79,70,229,0.2);border-radius:12px">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <span style="font-size:1.2em">📥</span>
-        <strong style="color:#4a148c;font-size:0.92em">Claude'un yanıtını buraya yapıştırın:</strong>
+        <strong style="color:#3730A3;font-size:0.92em">Claude'un yanıtını buraya yapıştırın:</strong>
       </div>
       <textarea id="claudeResultText" placeholder="Claude'dan aldığınız geliştirilmiş rapor metnini buraya yapıştırın..." style="width:100%;height:180px;padding:12px;border:2px solid #ce93d8;border-radius:10px;font-size:0.85em;background:#faf5ff;resize:vertical;line-height:1.6"></textarea>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
         <button onclick="applyClaudeResult()" style="background:linear-gradient(135deg,#2e7d32,#43a047);color:#fff;border:none;padding:10px 24px;border-radius:10px;font-size:0.92em;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(46,125,50,0.3)">
           ✅ Geliştirilmiş Raporu Uygula
         </button>
-        <button onclick="document.getElementById('claudePromptArea').style.display='none'" style="background:#fff;color:#7c4dff;border:2px solid #b39ddb;padding:10px 20px;border-radius:10px;font-size:0.88em;cursor:pointer;font-weight:600">
+        <button onclick="document.getElementById('claudePromptArea').style.display='none'" style="background:#fff;color:#6366F1;border:2px solid rgba(79,70,229,0.2);padding:10px 20px;border-radius:10px;font-size:0.88em;cursor:pointer;font-weight:600">
           ← Kapat
         </button>
       </div>
@@ -6977,7 +7008,7 @@ Lütfen Türkçe cevapla.`;
     </div>
     <details style="margin-bottom:10px">
       <summary style="cursor:pointer;font-size:0.82em;font-weight:600;color:#5b21b6">📄 Oluşturulan promptu göster (${prompt.length} karakter)</summary>
-      <div style="max-height:180px;overflow-y:auto;background:#f5f5f5;padding:10px;border-radius:6px;margin-top:6px;font-size:0.78em;white-space:pre-wrap;font-family:monospace;border:1px solid #e0e0e0">${prompt.replace(/</g,'&lt;')}</div>
+      <div style="max-height:180px;overflow-y:auto;background:#f5f5f5;padding:10px;border-radius:6px;margin-top:6px;font-size:0.78em;white-space:pre-wrap;font-family:monospace;border:1px solid rgba(0,0,0,0.06)">${prompt.replace(/</g,'&lt;')}</div>
     </details>
     <button class="btn btn-primary" onclick="copyClaudePromptAndNext()" style="width:100%;background:#7c3aed;margin-bottom:8px">📋 Promptu Kopyala ve 2. Adıma Geç</button>
   `;
@@ -7869,7 +7900,7 @@ function buildSettingsHTML() {
   var storageColor = storagePercent > 80 ? '#c62828' : storagePercent > 50 ? '#e65100' : '#2e7d32';
 
   return '<div class="settings-modal">' +
-    '<div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:linear-gradient(135deg,#1a237e,#283593);color:#fff;border-radius:16px 16px 0 0;flex-shrink:0">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:var(--primary);color:#fff;border-radius:16px 16px 0 0;flex-shrink:0">' +
       '<h2 style="font-size:1.1em;display:flex;align-items:center;gap:8px;margin:0">⚙️ Ayarlar</h2>' +
       '<button onclick="closeSettings()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:1.1em;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>' +
     '</div>' +
@@ -7945,7 +7976,7 @@ function buildSettingsHTML() {
     '</div>' +
     '<div style="padding:14px 24px;border-top:2px solid #e0e0e0;display:flex;gap:10px;justify-content:flex-end;flex-shrink:0;background:#fafafa;border-radius:0 0 16px 16px">' +
       '<button onclick="resetSettings()" style="padding:8px 18px;border:1.5px solid #e0e0e0;border-radius:8px;background:#fff;color:#666;font-size:0.85em;cursor:pointer;font-family:inherit">🔄 Varsayılana Dön</button>' +
-      '<button onclick="applySettings()" style="padding:8px 24px;border:none;border-radius:8px;background:linear-gradient(135deg,#1a237e,#283593);color:#fff;font-size:0.85em;font-weight:700;cursor:pointer;font-family:inherit">💾 Kaydet</button>' +
+      '<button onclick="applySettings()" style="padding:8px 24px;border:none;border-radius:8px;background:var(--primary);color:#fff;font-size:0.85em;font-weight:700;cursor:pointer;font-family:inherit">💾 Kaydet</button>' +
     '</div>' +
   '</div>';
 }
@@ -8401,7 +8432,7 @@ initWebLLMBar();
     <div style="padding:24px;max-width:800px;margin:0 auto">
       <div style="display:grid;grid-template-columns:1fr 40px 1fr;gap:8px;align-items:stretch;margin-bottom:24px">
         <!-- Şu An -->
-        <div style="padding:18px;background:#f5f5f5;border-radius:12px;border:1px solid #e0e0e0">
+        <div style="padding:18px;background:#f5f5f5;border-radius:12px;border:1px solid rgba(0,0,0,0.06)">
           <div style="text-align:center;margin-bottom:12px">
             <span style="font-size:1.5em">🧑‍💻</span>
             <div style="font-weight:700;font-size:0.9em;color:var(--text2);margin-top:4px">Şu An (Manuel)</div>
@@ -8468,10 +8499,10 @@ initWebLLMBar();
   </div>
 </div>
 
-<footer style="text-align:center;padding:24px 20px 80px;font-size:0.82em;color:#666;border-top:2px solid #e0e0e0;margin-top:40px;background:#fafafa">
+<footer style="text-align:center;padding:24px 20px 80px;font-size:0.82em;color:var(--text2);border-top:1px solid var(--border);margin-top:40px;background:var(--bg)">
   <div style="margin-bottom:8px">&copy; SEÖ, 2026</div>
-  <div style="font-size:1em;color:#444">Açık Araştırma <strong style="color:#7c3aed;font-size:1.15em">v1.2</strong> — Ajan Destekli Akademik Yayın İnceleme Platformu</div>
-  <div style="font-size:0.88em;color:#888;margin-top:4px">Anadolu Üniversitesi Uzaktan Eğitim Araştırma Topluluğu</div>
+  <div style="font-size:1em;color:var(--text)">Açık Araştırma <strong style="color:var(--primary);font-size:1.15em">v2.0</strong> — Ajan Destekli Akademik Yayın İnceleme Platformu</div>
+  <div style="font-size:0.88em;color:var(--text2);margin-top:4px">Anadolu Üniversitesi Uzaktan Eğitim Araştırma Topluluğu</div>
 </footer>
 </body>
 </html>
