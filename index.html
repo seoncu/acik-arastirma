@@ -393,6 +393,54 @@ html{scroll-behavior:smooth}
   .wllm-expand-panel{background:rgba(30,41,59,0.95);border-color:rgba(255,255,255,0.06);color:var(--text)}
   .wllm-expand-panel::before{background:rgba(30,41,59,0.95);border-color:rgba(255,255,255,0.06)}
 }
+
+/* Confirm Modal */
+.confirm-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,0.3);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.confirm-overlay.open{opacity:1;pointer-events:auto}
+.confirm-dialog{background:#fff;border-radius:var(--radius-lg);padding:32px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.12);border:1px solid var(--border);transform:scale(0.95);transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);text-align:center}
+.confirm-overlay.open .confirm-dialog{transform:scale(1)}
+.confirm-icon{font-size:2.8em;margin-bottom:12px}
+.confirm-title{font-size:1.05em;font-weight:700;color:var(--text);margin-bottom:8px}
+.confirm-msg{font-size:0.88em;color:var(--text2);line-height:1.6;margin-bottom:20px}
+.confirm-actions{display:flex;gap:10px;justify-content:center}
+.confirm-actions .btn{min-width:100px;justify-content:center}
+@media(prefers-color-scheme:dark){
+  .confirm-dialog{background:#1E293B;border-color:rgba(255,255,255,0.06)}
+}
+
+/* Empty State */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center}
+.empty-state-icon{font-size:3.5em;margin-bottom:16px;opacity:0.4}
+.empty-state-title{font-size:1.05em;font-weight:700;color:var(--text);margin-bottom:6px}
+.empty-state-desc{font-size:0.88em;color:var(--text2);line-height:1.6;max-width:360px}
+
+/* Study status badges */
+.study-badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:6px;font-size:0.68em;font-weight:700;letter-spacing:0.02em}
+.study-badge-oa{background:rgba(5,150,105,0.08);color:#059669}
+.study-badge-pw{background:rgba(220,38,38,0.08);color:#DC2626}
+.study-badge-selected{background:rgba(79,70,229,0.08);color:var(--primary)}
+.study-badge-verified{background:rgba(5,150,105,0.08);color:#059669}
+.study-year{display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;font-size:0.7em;font-weight:600;background:rgba(0,0,0,0.04);color:var(--text2)}
+
+/* Mobile Bottom Nav */
+.mobile-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:195;background:rgba(255,255,255,0.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--border);padding:6px 8px;box-shadow:0 -4px 20px rgba(0,0,0,0.04)}
+.mobile-bottom-nav-inner{display:flex;justify-content:space-around;align-items:center;max-width:500px;margin:0 auto}
+.mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 8px;border-radius:10px;cursor:pointer;border:none;background:transparent;font-family:inherit;color:var(--text2);transition:var(--transition);font-size:0.65em;min-width:52px}
+.mobile-nav-item.active{color:var(--primary);background:rgba(79,70,229,0.06)}
+.mobile-nav-item .nav-icon{font-size:1.5em}
+.mobile-nav-item .nav-label{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:56px}
+@media(max-width:768px){
+  .mobile-bottom-nav{display:block}
+  .stepper{display:none}
+  body{padding-bottom:68px}
+  .claude-help-banner{bottom:60px}
+  .claude-fab{bottom:72px}
+  .chatbot-fab{bottom:72px}
+  .chatbot-panel{bottom:120px}
+}
+@media(prefers-color-scheme:dark){
+  .mobile-bottom-nav{background:rgba(15,23,42,0.9)}
+}
 </style>
 </head>
 <body>
@@ -457,6 +505,22 @@ html{scroll-behavior:smooth}
 </div>
 
 <div class="stepper" id="stepper"></div>
+
+<!-- Mobile Bottom Nav -->
+<div class="mobile-bottom-nav" id="mobileBottomNav"></div>
+
+<!-- Confirm Modal -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-dialog">
+    <div class="confirm-icon" id="confirmIcon">⚠️</div>
+    <div class="confirm-title" id="confirmTitle">Emin misiniz?</div>
+    <div class="confirm-msg" id="confirmMsg"></div>
+    <div class="confirm-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeConfirm()">İptal</button>
+      <button class="btn btn-danger btn-sm" id="confirmOkBtn" onclick="confirmOk()">Sil</button>
+    </div>
+  </div>
+</div>
 
 <!-- Session bar, WebLLM info banner, and full WebLLM bar removed — all controls now in always-compact header -->
 
@@ -883,6 +947,19 @@ function renderStepper() {
       <span>${s.label}</span>
     </div>${i < STEPS.length-1 ? '<span class="step-arrow">›</span>' : ''}`;
   }).join('');
+  // Mobile bottom nav
+  var mobileNav = document.getElementById('mobileBottomNav');
+  if (mobileNav) {
+    var mobileIcons = ['🏠','🔬','📄','📊','✅','📝','🔧','📋'];
+    var shortLabels = ['Mod','Konu','Sorgu','Analiz','Doğrula','Rapor','Tasarım','Özet'];
+    mobileNav.innerHTML = '<div class="mobile-bottom-nav-inner">' + STEPS.map(function(s, i) {
+      var cls = i === state.currentStep ? 'active' : '';
+      return '<button class="mobile-nav-item ' + cls + '" onclick="goToStep(' + i + ')">' +
+        '<span class="nav-icon">' + mobileIcons[i] + '</span>' +
+        '<span class="nav-label">' + shortLabels[i] + '</span>' +
+      '</button>';
+    }).join('') + '</div>';
+  }
 }
 
 function goToStep(n) {
@@ -2225,7 +2302,7 @@ function renderBibtexUpload() {
 // STEP 2: Analysis & Visualization
 function renderStep2(el) {
   if (state.studies.length === 0) {
-    el.innerHTML = '<div class="card"><h2>⚠️ Önce BibTeX yükleyin</h2><p>Adım 2\'ye dönüp BibTeX dosyanızı yükleyin.</p><button class="btn btn-primary" onclick="goToStep(2)">← Adım 2: Sorgu / BibTeX</button></div>';
+    el.innerHTML = '<div class="card"><div class="empty-state"><div class="empty-state-icon">📚</div><div class="empty-state-title">Henüz Çalışma Yüklenmedi</div><div class="empty-state-desc">Analiz yapabilmek için önce BibTeX dosyanızı yükleyin. Web of Science veya Scopus\'tan dışa aktardığınız dosyayı kullanabilirsiniz.</div><button class="btn btn-primary" onclick="goToStep(2)" style="margin-top:16px">← Sorgu / BibTeX Adımına Dön</button></div></div>';
     return;
   }
 
@@ -2601,9 +2678,14 @@ function renderStudyCard(s, realIdx) {
   const isSelected = s.selected ? 'selected' : '';
   const noteOpen = s._noteOpen;
 
+  // Status badges
+  var yearBadge = s.year ? '<span class="study-year">📅 ' + s.year + '</span>' : '';
+  var selBadge = s.selected ? '<span class="study-badge study-badge-selected">✓ Seçili</span>' : '';
+  var verBadge = s._verified ? '<span class="study-badge study-badge-verified">✅ Doğrulandı</span>' : '';
+
   let html = '<div class="study-card '+isSelected+'">';
   html += '<div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="flex:1">';
-  html += '<div class="study-tags">'+oaTag+' '+themeTags+'</div>';
+  html += '<div class="study-tags" style="gap:5px">'+oaTag+' '+yearBadge+' '+selBadge+' '+verBadge+' '+themeTags+'</div>';
   html += '<div class="study-title">'+toSentenceCase(s.title)+'</div>';
   html += '<div class="study-meta">'+cite+' | <em>'+s.journal+(s.volume?', <em>'+s.volume+'</em>':'')+'</em>'+(s.number?'('+s.number+')':'')+(s.pages?', '+s.pages:'')+'</div>';
   html += '</div></div>';
@@ -2790,7 +2872,7 @@ function renderStudyList() {
 // STEP 3: Report
 function renderStep3(el) {
   if (state.studies.length === 0) {
-    el.innerHTML = '<div class="card"><h2>⚠️ Önce BibTeX yükleyin</h2><button class="btn btn-primary" onclick="goToStep(2)">← Adım 2: Sorgu / BibTeX</button></div>';
+    el.innerHTML = '<div class="card"><div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-title">Rapor Oluşturulamıyor</div><div class="empty-state-desc">Akademik rapor oluşturmak için önce BibTeX dosyanızı yükleyin ve çalışmalarınızı analiz edin.</div><button class="btn btn-primary" onclick="goToStep(2)" style="margin-top:16px">← Sorgu / BibTeX Adımına Dön</button></div></div>';
     return;
   }
   const hasVerification = state.studies.some(s => s._verified);
@@ -2974,7 +3056,7 @@ function renderStep4(el) {
   el.innerHTML = `
     <div class="card">
       <h2>💬 Soru-Cevap (Chatbot)</h2>
-      ${state.studies.length === 0 ? '<p style="color:var(--danger)">Önce BibTeX yükleyin.</p>' : `
+      ${state.studies.length === 0 ? '<div class="empty-state" style="padding:24px"><div class="empty-state-icon">💬</div><div class="empty-state-title">Sohbet Hazır Değil</div><div class="empty-state-desc">Chatbot\'u kullanabilmek için önce BibTeX dosyanızı yükleyin.</div></div>' : `
       <p style="font-size:0.88em;color:var(--text2);margin-bottom:16px">${state.studies.length} çalışma yüklü. Chatbot her sayfada sol alttaki 💬 butonuyla kullanılabilir.</p>
       <div class="chat-container">
         <div class="chat-messages" id="chatMessages">
@@ -7492,17 +7574,40 @@ function loadSessionFromSelect(id) {
   showToast('Oturum yüklendi: ' + session.name);
 }
 
+// Custom confirm modal system
+var _confirmCallback = null;
+function showConfirm(icon, title, msg, okLabel, okClass, callback) {
+  document.getElementById('confirmIcon').textContent = icon || '⚠️';
+  document.getElementById('confirmTitle').textContent = title || 'Emin misiniz?';
+  document.getElementById('confirmMsg').textContent = msg || '';
+  var okBtn = document.getElementById('confirmOkBtn');
+  okBtn.textContent = okLabel || 'Tamam';
+  okBtn.className = 'btn btn-sm ' + (okClass || 'btn-danger');
+  _confirmCallback = callback;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  _confirmCallback = null;
+}
+function confirmOk() {
+  var cb = _confirmCallback;
+  closeConfirm();
+  if (cb) cb();
+}
+
 function deleteCurrentSession() {
   if (!currentSessionId) { showToast('Kayıtlı bir oturum seçili değil'); return; }
   const sessions = getAllSessions();
   const name = sessions[currentSessionId]?.name || 'Bu oturum';
-  if (!confirm(name + ' oturumu silinecek. Emin misiniz?')) return;
-  delete sessions[currentSessionId];
-  localStorage.setItem(getSessionKey(), JSON.stringify(sessions));
-  currentSessionId = null;
-  updateSessionBar('Yeni Oturum');
-  refreshSessionList();
-  showToast('Oturum silindi');
+  showConfirm('🗑️', 'Oturumu Sil', '"' + name + '" oturumu kalıcı olarak silinecek. Bu işlem geri alınamaz.', '🗑️ Evet, Sil', 'btn-danger', function() {
+    delete sessions[currentSessionId];
+    localStorage.setItem(getSessionKey(), JSON.stringify(sessions));
+    currentSessionId = null;
+    updateSessionBar('Yeni Oturum');
+    refreshSessionList();
+    showToast('Oturum silindi');
+  });
 }
 
 function updateSessionBar(name) {
