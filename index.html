@@ -47,17 +47,41 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:
 .wllm-expand-panel button:disabled{opacity:0.4;cursor:not-allowed}
 .wllm-expand-panel .wep-hint{font-size:0.85em;color:var(--text2);line-height:1.5;margin-top:4px}
 
-/* Stepper */
-.stepper{display:flex;justify-content:center;gap:2px;padding:10px 20px;background:rgba(255,255,255,0.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:48px;z-index:190;overflow-x:auto;transition:top 0.3s}
-.step-item{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:0.82em;color:var(--text2);cursor:pointer;border-radius:12px;transition:var(--transition);white-space:nowrap}
+/* App Layout — sidebar + main content */
+.app-layout{display:flex;min-height:calc(100vh - 48px)}
+
+/* Sidebar */
+.sidebar{width:220px;background:rgba(255,255,255,0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-right:1px solid var(--border);position:sticky;top:48px;height:calc(100vh - 48px);overflow-y:auto;overflow-x:hidden;flex-shrink:0;transition:width 0.3s cubic-bezier(0.4,0,0.2,1);z-index:190;display:flex;flex-direction:column;padding:12px 8px}
+.sidebar.collapsed{width:64px}
+.sidebar.collapsed .step-label{display:none}
+.sidebar.collapsed .step-item{justify-content:center;padding:10px 8px}
+.sidebar.collapsed .sidebar-toggle-text{display:none}
+.sidebar-toggle{display:flex;align-items:center;gap:8px;padding:8px 12px;margin-bottom:8px;border:none;background:rgba(79,70,229,0.04);border-radius:var(--radius);cursor:pointer;font-family:inherit;font-size:0.78em;font-weight:600;color:var(--text2);transition:var(--transition);width:100%}
+.sidebar-toggle:hover{background:rgba(79,70,229,0.08);color:var(--primary)}
+.sidebar-toggle-icon{font-size:1.1em;flex-shrink:0;transition:transform 0.3s}
+.sidebar.collapsed .sidebar-toggle-icon{transform:rotate(180deg)}
+.sidebar-divider{height:1px;background:var(--border);margin:8px 4px}
+
+/* Stepper — vertical inside sidebar */
+.stepper{display:flex;flex-direction:column;gap:2px;padding:0;background:transparent;border:none;position:static;overflow:visible;flex:1}
+.step-item{display:flex;align-items:center;gap:10px;padding:10px 14px;font-size:0.82em;color:var(--text2);cursor:pointer;border-radius:var(--radius);transition:var(--transition);white-space:nowrap}
 .step-item:hover{background:rgba(79,70,229,0.04)}
 .step-item.active{background:var(--primary);color:#fff;font-weight:600;box-shadow:0 4px 12px rgba(79,70,229,0.25)}
 .step-item.completed{color:var(--success);font-weight:600}
-.step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:700;border:2px solid currentColor;flex-shrink:0;transition:var(--transition)}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8em;font-weight:700;border:2px solid currentColor;flex-shrink:0;transition:var(--transition)}
 .step-item.active .step-num{background:#fff;color:var(--primary);border-color:#fff}
 .step-item.completed .step-num{background:var(--success);color:#fff;border-color:var(--success)}
-.step-arrow{color:#cbd5e1;margin:0 4px}
+.step-label{font-size:0.88em;overflow:hidden;text-overflow:ellipsis}
+.step-arrow{display:none}
 
+/* Sidebar progress indicator */
+.sidebar-progress{padding:8px 12px;margin-top:auto}
+.sidebar-progress-bar{height:4px;background:rgba(0,0,0,0.04);border-radius:4px;overflow:hidden}
+.sidebar-progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-light));border-radius:4px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1)}
+.sidebar-progress-text{font-size:0.7em;color:var(--text2);text-align:center;margin-top:4px;font-weight:500}
+.sidebar.collapsed .sidebar-progress-text{display:none}
+
+.app-main{flex:1;min-width:0;overflow-x:hidden}
 .container{max-width:1100px;margin:0 auto;padding:24px}
 .card{background:var(--card);border-radius:var(--radius-lg);padding:28px;margin-bottom:20px;box-shadow:var(--shadow);border:1px solid var(--border);transition:var(--transition)}
 .card:hover{box-shadow:var(--shadow-lg)}
@@ -286,13 +310,12 @@ label{display:block;font-weight:600;font-size:0.85em;margin-bottom:6px;color:var
 .guide-content tr:last-child td{border-bottom:none}
 .guide-content tr:nth-child(even) td{background:rgba(0,0,0,0.01)}
 @media(max-width:768px){
+  .sidebar{display:none}
+  .app-layout{display:block}
   .form-row{grid-template-columns:1fr}
   .stat-row{grid-template-columns:repeat(2,1fr)}
   .claude-panel{width:100%}
   .chatbot-panel{width:calc(100% - 48px);right:24px}
-  .stepper{gap:0;padding:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .stepper::-webkit-scrollbar{display:none}
-  .step-item{padding:6px 8px;font-size:0.72em}
   .guide-nav{display:none}
   .guide-modal{width:98%;max-height:92vh;border-radius:16px}
   .settings-modal{width:96%;border-radius:16px}
@@ -369,7 +392,9 @@ html{scroll-behavior:smooth}
   .app-header .header-session button{background:rgba(99,102,241,0.08);border-color:rgba(255,255,255,0.08);color:var(--text)}
   .app-header .header-session select{background:#1E293B;color:var(--text);border-color:rgba(255,255,255,0.08)}
   .app-header .header-wllm{background:rgba(99,102,241,0.1);border-color:rgba(99,102,241,0.2)}
-  .stepper{background:rgba(15,23,42,0.7)}
+  .sidebar{background:rgba(15,23,42,0.85);border-right-color:rgba(255,255,255,0.06)}
+  .sidebar-toggle{background:rgba(99,102,241,0.08);color:var(--text2)}
+  .sidebar-progress-bar{background:rgba(255,255,255,0.06)}
   .study-card{background:#1E293B;border-color:rgba(255,255,255,0.06)}
   .study-card:hover{border-color:rgba(99,102,241,0.2);box-shadow:0 4px 16px rgba(0,0,0,0.3)}
   .stat-box{background:#1E293B;border-color:rgba(255,255,255,0.06)}
@@ -504,7 +529,28 @@ html{scroll-behavior:smooth}
   </div>
 </div>
 
-<div class="stepper" id="stepper"></div>
+<!-- App Layout: Sidebar + Main -->
+<div class="app-layout">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="sidebarNav">
+    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Menüyü Daralt/Genişlet">
+      <span class="sidebar-toggle-icon">◀</span>
+      <span class="sidebar-toggle-text">Menüyü Daralt</span>
+    </button>
+    <div class="sidebar-divider"></div>
+    <div class="stepper" id="stepper"></div>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-progress" id="sidebarProgress">
+      <div class="sidebar-progress-bar"><div class="sidebar-progress-fill" id="sidebarProgressFill" style="width:0%"></div></div>
+      <div class="sidebar-progress-text" id="sidebarProgressText">Adım 1 / 8</div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="app-main">
+    <div class="container" id="mainContent"></div>
+  </div>
+</div>
 
 <!-- Mobile Bottom Nav -->
 <div class="mobile-bottom-nav" id="mobileBottomNav"></div>
@@ -521,10 +567,6 @@ html{scroll-behavior:smooth}
     </div>
   </div>
 </div>
-
-<!-- Session bar, WebLLM info banner, and full WebLLM bar removed — all controls now in always-compact header -->
-
-<div class="container" id="mainContent"></div>
 
 <!-- Claude FAB (right side) - Prompt Asistanı -->
 <button class="claude-fab" id="claudeFab" title="Claude Prompt Asistanı — Sorgu ve analiz için kopyalanabilir promptlar">🤖 Claude Asistan</button>
@@ -937,25 +979,48 @@ const STEPS = [
   {id:'summary', label:'Özet', icon:'7'}
 ];
 
-// ========== STEPPER ==========
+// ========== SIDEBAR & STEPPER ==========
+var sidebarIcons = ['🏠','🔬','📄','📊','✅','📝','🔧','📋'];
+
+function toggleSidebar() {
+  var sb = document.getElementById('sidebarNav');
+  if (!sb) return;
+  sb.classList.toggle('collapsed');
+  var btn = sb.querySelector('.sidebar-toggle');
+  var textEl = sb.querySelector('.sidebar-toggle-text');
+  if (textEl) textEl.textContent = sb.classList.contains('collapsed') ? '' : 'Menüyü Daralt';
+  localStorage.setItem('sidebar_collapsed', sb.classList.contains('collapsed') ? '1' : '0');
+}
+
 function renderStepper() {
-  const el = document.getElementById('stepper');
-  el.innerHTML = STEPS.map((s, i) => {
-    const cls = i === state.currentStep ? 'active' : (i < state.currentStep ? 'completed' : '');
-    return `<div class="step-item ${cls}" onclick="goToStep(${i})">
-      <div class="step-num">${i < state.currentStep ? '✓' : s.icon}</div>
-      <span>${s.label}</span>
-    </div>${i < STEPS.length-1 ? '<span class="step-arrow">›</span>' : ''}`;
+  var el = document.getElementById('stepper');
+  el.innerHTML = STEPS.map(function(s, i) {
+    var cls = i === state.currentStep ? 'active' : (i < state.currentStep ? 'completed' : '');
+    return '<div class="step-item ' + cls + '" onclick="goToStep(' + i + ')">' +
+      '<div class="step-num">' + (i < state.currentStep ? '✓' : sidebarIcons[i]) + '</div>' +
+      '<span class="step-label">' + s.label + '</span>' +
+    '</div>';
   }).join('');
+
+  // Update sidebar progress
+  var pct = Math.round(((state.currentStep + 1) / STEPS.length) * 100);
+  var fill = document.getElementById('sidebarProgressFill');
+  var text = document.getElementById('sidebarProgressText');
+  if (fill) fill.style.width = pct + '%';
+  if (text) text.textContent = 'Adım ' + (state.currentStep + 1) + ' / ' + STEPS.length;
+
+  // Restore collapsed state
+  var sb = document.getElementById('sidebarNav');
+  if (sb && localStorage.getItem('sidebar_collapsed') === '1') sb.classList.add('collapsed');
+
   // Mobile bottom nav
   var mobileNav = document.getElementById('mobileBottomNav');
   if (mobileNav) {
-    var mobileIcons = ['🏠','🔬','📄','📊','✅','📝','🔧','📋'];
     var shortLabels = ['Mod','Konu','Sorgu','Analiz','Doğrula','Rapor','Tasarım','Özet'];
     mobileNav.innerHTML = '<div class="mobile-bottom-nav-inner">' + STEPS.map(function(s, i) {
       var cls = i === state.currentStep ? 'active' : '';
       return '<button class="mobile-nav-item ' + cls + '" onclick="goToStep(' + i + ')">' +
-        '<span class="nav-icon">' + mobileIcons[i] + '</span>' +
+        '<span class="nav-icon">' + sidebarIcons[i] + '</span>' +
         '<span class="nav-label">' + shortLabels[i] + '</span>' +
       '</button>';
     }).join('') + '</div>';
@@ -2393,17 +2458,30 @@ function renderStep2(el) {
     ${successBanner}
 
     <div class="stat-row">
-      <div class="stat-box stat-total"><div class="num">${state.studies.length}</div><div class="lbl">Toplam Çalışma</div></div>
-      <div class="stat-box stat-oa">
+      <div class="stat-box stat-total" style="position:relative;cursor:pointer" onclick="document.getElementById('studyListSection')?.scrollIntoView({behavior:'smooth'})">
+        <div style="position:absolute;top:8px;right:8px;font-size:0.65em;color:var(--text2);opacity:0.5">⋮</div>
+        <div class="num">${state.studies.length}</div>
+        <div class="lbl">Toplam Çalışma</div>
+        <div style="font-size:0.65em;color:var(--text2);margin-top:4px">${state.studies.filter(s=>s.selected).length} seçili</div>
+      </div>
+      <div class="stat-box stat-oa" style="position:relative">
+        <div style="position:absolute;top:8px;right:8px;font-size:0.65em;color:var(--text2);opacity:0.5">⋮</div>
         <div class="num">${oaCount}</div>
         <div class="lbl">Açık Erişim</div>
-        ${oaCount === 0 ? '<div style="font-size:0.68em;color:var(--accent);margin-top:2px">⚠️ Henüz taranmadı</div>' : ''}
+        ${oaCount > 0 ? '<div style="font-size:0.65em;color:var(--success);margin-top:4px">%' + Math.round(oaCount/state.studies.length*100) + '</div>' : '<div style="font-size:0.65em;color:var(--accent);margin-top:4px">⚠️ Taranmadı</div>'}
       </div>
-      <div class="stat-box stat-pw">
+      <div class="stat-box stat-pw" style="position:relative">
+        <div style="position:absolute;top:8px;right:8px;font-size:0.65em;color:var(--text2);opacity:0.5">⋮</div>
         <div class="num">${oaCount === 0 ? '?' : pwCount}</div>
         <div class="lbl">${oaCount === 0 ? 'Taranmadı' : 'Ücretli'}</div>
+        ${oaCount > 0 && pwCount > 0 ? '<div style="font-size:0.65em;color:var(--danger);margin-top:4px">%' + Math.round(pwCount/state.studies.length*100) + '</div>' : ''}
       </div>
-      <div class="stat-box stat-theme"><div class="num">${Object.keys(themes).length}</div><div class="lbl">Tema Sayısı</div></div>
+      <div class="stat-box stat-theme" style="position:relative">
+        <div style="position:absolute;top:8px;right:8px;font-size:0.65em;color:var(--text2);opacity:0.5">⋮</div>
+        <div class="num">${Object.keys(themes).length}</div>
+        <div class="lbl">Tema Sayısı</div>
+        <div style="font-size:0.65em;color:var(--accent);margin-top:4px">${Object.values(themes).reduce((a,b)=>a+b,0)} etiket</div>
+      </div>
     </div>
 
     <div id="oaProgressBanner" style="display:${oaCount === 0 ? 'flex' : 'none'};padding:12px 16px;background:#fff3e0;border-radius:10px;font-size:0.84em;color:#e65100;margin-bottom:12px;border-left:4px solid var(--accent);align-items:center;gap:10px">
@@ -2683,8 +2761,15 @@ function renderStudyCard(s, realIdx) {
   var selBadge = s.selected ? '<span class="study-badge study-badge-selected">✓ Seçili</span>' : '';
   var verBadge = s._verified ? '<span class="study-badge study-badge-verified">✅ Doğrulandı</span>' : '';
 
+  // Author avatar — first letter of first author
+  var authorInitial = (s.author || 'A').charAt(0).toUpperCase();
+  var avatarColors = ['#4F46E5','#059669','#D97706','#DC2626','#7C3AED','#0891B2','#BE185D','#65A30D'];
+  var avatarColor = avatarColors[authorInitial.charCodeAt(0) % avatarColors.length];
+
   let html = '<div class="study-card '+isSelected+'">';
-  html += '<div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="flex:1">';
+  html += '<div style="display:flex;gap:12px;align-items:flex-start">';
+  html += '<div style="width:36px;height:36px;border-radius:10px;background:'+avatarColor+'12;color:'+avatarColor+';display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85em;flex-shrink:0;border:1.5px solid '+avatarColor+'25;margin-top:2px">'+authorInitial+'</div>';
+  html += '<div style="flex:1;min-width:0">';
   html += '<div class="study-tags" style="gap:5px">'+oaTag+' '+yearBadge+' '+selBadge+' '+verBadge+' '+themeTags+'</div>';
   html += '<div class="study-title">'+toSentenceCase(s.title)+'</div>';
   html += '<div class="study-meta">'+cite+' | <em>'+s.journal+(s.volume?', <em>'+s.volume+'</em>':'')+'</em>'+(s.number?'('+s.number+')':'')+(s.pages?', '+s.pages:'')+'</div>';
@@ -8606,7 +8691,7 @@ initWebLLMBar();
 
 <footer style="text-align:center;padding:24px 20px 80px;font-size:0.82em;color:var(--text2);border-top:1px solid var(--border);margin-top:40px;background:var(--bg)">
   <div style="margin-bottom:8px">&copy; SEÖ, 2026</div>
-  <div style="font-size:1em;color:var(--text)">Açık Araştırma <strong style="color:var(--primary);font-size:1.15em">v2.0</strong> — Ajan Destekli Akademik Yayın İnceleme Platformu</div>
+  <div style="font-size:1em;color:var(--text)">Açık Araştırma <strong style="color:var(--primary);font-size:1.15em">v2.1</strong> — Ajan Destekli Akademik Yayın İnceleme Platformu</div>
   <div style="font-size:0.88em;color:var(--text2);margin-top:4px">Anadolu Üniversitesi Uzaktan Eğitim Araştırma Topluluğu</div>
 </footer>
 </body>
