@@ -252,10 +252,10 @@ label{display:block;font-weight:600;font-size:0.85em;margin-bottom:6px;color:var
 @keyframes bounceIn{0%{transform:scale(0.3);opacity:0}50%{transform:scale(1.1)}70%{transform:scale(0.9)}100%{transform:scale(1);opacity:1}}
 @keyframes progressFill{0%{width:0%}100%{width:100%}}
 
-/* Claude help sticky banner */
-.claude-help-banner{position:fixed;bottom:0;left:0;right:0;z-index:240;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1)}
+/* Claude help sticky banner — offset for sidebar */
+.claude-help-banner{position:fixed;bottom:0;left:220px;right:0;z-index:240;transition:all 0.3s cubic-bezier(0.4,0,0.2,1)}
 .claude-help-banner.hidden{transform:translateY(100%)}
-.claude-help-mini{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 20px;background:linear-gradient(135deg,#7c3aed,var(--primary));color:#fff;cursor:pointer;font-size:0.85em;font-weight:600;text-align:center;box-shadow:0 -4px 20px rgba(79,70,229,0.15);backdrop-filter:blur(8px)}
+.claude-help-mini{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 20px;background:linear-gradient(135deg,#7c3aed,var(--primary));color:#fff;cursor:pointer;font-size:0.85em;font-weight:600;text-align:center;box-shadow:0 -4px 20px rgba(79,70,229,0.15);backdrop-filter:blur(8px)}
 .claude-help-mini:hover{background:linear-gradient(135deg,#6d28d9,var(--primary-dark))}
 .claude-help-expanded{display:none;background:#fff;max-height:70vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,0.08)}
 .claude-help-expanded.open{display:block;animation:fadeSlideUp 0.25s ease}
@@ -458,7 +458,7 @@ html{scroll-behavior:smooth}
   .mobile-bottom-nav{display:block}
   .stepper{display:none}
   body{padding-bottom:68px}
-  .claude-help-banner{bottom:60px}
+  .claude-help-banner{bottom:60px;left:0}
   .claude-fab{bottom:72px}
   .chatbot-fab{bottom:72px}
   .chatbot-panel{bottom:120px}
@@ -986,10 +986,12 @@ function toggleSidebar() {
   var sb = document.getElementById('sidebarNav');
   if (!sb) return;
   sb.classList.toggle('collapsed');
-  var btn = sb.querySelector('.sidebar-toggle');
   var textEl = sb.querySelector('.sidebar-toggle-text');
   if (textEl) textEl.textContent = sb.classList.contains('collapsed') ? '' : 'Menüyü Daralt';
   localStorage.setItem('sidebar_collapsed', sb.classList.contains('collapsed') ? '1' : '0');
+  // Adjust help banner left position
+  var banner = document.querySelector('.claude-help-banner');
+  if (banner) banner.style.left = sb.classList.contains('collapsed') ? '64px' : '220px';
 }
 
 function renderStepper() {
@@ -1011,7 +1013,11 @@ function renderStepper() {
 
   // Restore collapsed state
   var sb = document.getElementById('sidebarNav');
-  if (sb && localStorage.getItem('sidebar_collapsed') === '1') sb.classList.add('collapsed');
+  if (sb && localStorage.getItem('sidebar_collapsed') === '1') {
+    sb.classList.add('collapsed');
+    var banner = document.querySelector('.claude-help-banner');
+    if (banner) banner.style.left = '64px';
+  }
 
   // Mobile bottom nav
   var mobileNav = document.getElementById('mobileBottomNav');
