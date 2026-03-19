@@ -188,7 +188,7 @@ label{display:block;font-weight:600;font-size:0.85em;margin-bottom:6px;color:var
 .claude-header{background:var(--primary);color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-radius:0}
 .claude-body{flex:1;overflow-y:auto;padding:20px;background:var(--bg)}
 .claude-footer{padding:12px;border-top:1px solid var(--border);background:#fff}
-.claude-fab{position:fixed;bottom:24px;left:24px;height:44px;border-radius:var(--radius);background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;font-size:0.85em;cursor:pointer;box-shadow:0 4px 20px rgba(124,58,237,0.25);z-index:250;display:flex;align-items:center;gap:6px;padding:0 16px 0 12px;transition:var(--transition);font-family:inherit;font-weight:600}
+.claude-fab{position:fixed;bottom:56px;left:232px;height:44px;border-radius:var(--radius);background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;font-size:0.85em;cursor:pointer;box-shadow:0 4px 20px rgba(124,58,237,0.25);z-index:250;display:flex;align-items:center;gap:6px;padding:0 16px 0 12px;transition:var(--transition);font-family:inherit;font-weight:600}
 .claude-fab:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,0.35)}
 
 /* Upload area */
@@ -459,8 +459,8 @@ html{scroll-behavior:smooth}
   .stepper{display:none}
   body{padding-bottom:68px}
   .claude-help-banner{bottom:60px;left:0}
-  .claude-fab{bottom:72px}
-  .chatbot-fab{bottom:72px}
+  .claude-fab{bottom:120px;left:12px}
+  .chatbot-fab{bottom:120px}
   .chatbot-panel{bottom:120px}
 }
 @media(prefers-color-scheme:dark){
@@ -986,12 +986,18 @@ function toggleSidebar() {
   var sb = document.getElementById('sidebarNav');
   if (!sb) return;
   sb.classList.toggle('collapsed');
+  var isCollapsed = sb.classList.contains('collapsed');
+  var sideW = isCollapsed ? '64px' : '220px';
   var textEl = sb.querySelector('.sidebar-toggle-text');
-  if (textEl) textEl.textContent = sb.classList.contains('collapsed') ? '' : 'Menüyü Daralt';
-  localStorage.setItem('sidebar_collapsed', sb.classList.contains('collapsed') ? '1' : '0');
-  // Adjust help banner left position
-  var banner = document.querySelector('.claude-help-banner');
-  if (banner) banner.style.left = sb.classList.contains('collapsed') ? '64px' : '220px';
+  if (textEl) textEl.textContent = isCollapsed ? '' : 'Menüyü Daralt';
+  localStorage.setItem('sidebar_collapsed', isCollapsed ? '1' : '0');
+  // Adjust fixed elements for sidebar width
+  var helpBanner = document.querySelector('.claude-help-banner');
+  if (helpBanner) helpBanner.style.left = sideW;
+  var selBanner = document.getElementById('selectedStickyBanner');
+  if (selBanner) selBanner.style.left = sideW;
+  var claudeFab = document.querySelector('.claude-fab');
+  if (claudeFab) claudeFab.style.left = (isCollapsed ? 76 : 232) + 'px';
 }
 
 function renderStepper() {
@@ -1015,8 +1021,10 @@ function renderStepper() {
   var sb = document.getElementById('sidebarNav');
   if (sb && localStorage.getItem('sidebar_collapsed') === '1') {
     sb.classList.add('collapsed');
-    var banner = document.querySelector('.claude-help-banner');
-    if (banner) banner.style.left = '64px';
+    var helpBanner = document.querySelector('.claude-help-banner');
+    if (helpBanner) helpBanner.style.left = '64px';
+    var claudeFab = document.querySelector('.claude-fab');
+    if (claudeFab) claudeFab.style.left = '76px';
   }
 
   // Mobile bottom nav
@@ -5646,7 +5654,7 @@ function updateSelectedStickyBanner() {
   if (!banner) {
     banner = document.createElement('div');
     banner.id = 'selectedStickyBanner';
-    banner.style.cssText = 'position:fixed;left:0;right:0;width:100%;z-index:189;display:flex;align-items:center;gap:10px;padding:8px 20px;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.15);cursor:pointer;font-family:inherit';
+    banner.style.cssText = 'position:fixed;left:220px;right:0;z-index:189;display:flex;align-items:center;gap:10px;padding:8px 20px;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.15);cursor:pointer;font-family:inherit';
     banner.onclick = function(e) {
       if (e.target.closest('[data-tag-btn]')) return;
       const section = document.querySelector('[data-selected-section]');
