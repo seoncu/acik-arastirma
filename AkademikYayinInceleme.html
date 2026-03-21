@@ -968,6 +968,28 @@ window.autoGenerateReport = autoGenerateReport;
 window.waitForElement = waitForElement;
 window.recommendJournals = typeof recommendJournals !== 'undefined' ? recommendJournals : function() { return []; };
 
+// Agent helper: Set Claude report note
+window.setClaudeReportNote = function(note) {
+  state._claudeReportNote = note;
+  var el = document.getElementById('claudeReportNote');
+  var textEl = document.getElementById('claudeReportNoteText');
+  if (el) el.style.display = 'block';
+  if (textEl) textEl.innerHTML = note;
+  autoSaveState();
+  return { success: true, note: note };
+};
+
+// Agent helper: Set agent evaluation for Özet page
+window.setAgentEvaluation = function(evaluation) {
+  state._agentEvaluation = evaluation;
+  var el = document.getElementById('agentEvaluationArea');
+  var textEl = document.getElementById('agentEvaluationText');
+  if (el) el.style.display = 'block';
+  if (textEl) textEl.innerHTML = evaluation;
+  autoSaveState();
+  return { success: true };
+};
+
 const STEPS = [
   {id:'mode', label:'Kullanım Modu', icon:'0'},
   {id:'topic', label:'Araştırma Konusu', icon:'1'},
@@ -1424,12 +1446,20 @@ GÖREV 2 — Mod Seçimi:
 • Doğrulama başarılı olduğunda mod otomatik olarak "agent" olarak ayarlanır
 • Sayfa otomatik olarak Adım 1'e (Araştırma Konusu) geçer
 
+ÖN ADIM — UYGULAMA BAĞLANTISI:
+• Chrome'da https://seoncu.github.io/acik-arastirma/ açık mı kontrol et
+• Açık değilse otomatik olarak bu adrese git (navigate)
+• Chrome bağlı değilse kullanıcıya de: "Lütfen Claude'u Chrome'a bağlayın ve https://seoncu.github.io/acik-arastirma/ adresine gidin"
+• Sayfa başa dönmüşse (step 0'daysa ve daha önce işlem yapılmışsa) → Oturumlar dropdown'ından en son kayıtlı oturumu otomatik yükle
+
 ═══════════════════════════════════════
 ADIM 1 — ARAŞTIRMA KONUSU (safeGoToStep(1))
 ═══════════════════════════════════════
 GÖREV: Kullanıcının araştırma konusunu belirle ve textarea'ya yaz.
 
 • Kullanıcıya araştırma konusunu sor
+• 🆕 EK OLARAK: "Taslak bir çalışmanız (makale, tez önerisi, proje vb.) varsa yükleyebilirsiniz — konunuzu, temalarınızı ve anahtar kelimelerinizi oradan analiz edebilirim" de
+• Kullanıcı taslak yüklediyse: Dosyayı oku, konu/tema/anahtar kelime analizi yap, sonuçları kullanıcıya sun ve onay al
 • Kullanıcının verdiği konuyu EN AZ 50 kelime olacak şekilde zenginleştirerek textarea'ya yaz (#researchTopic veya window.setResearchTopic("metin"))
 • Konu Türkçe veya İngilizce olabilir
 • Konu yeterince detaylı değilse kullanıcıya alt sorular sor (hedef kitle, bağlam, kapsam)
@@ -1441,18 +1471,22 @@ ADIM 2 — SORGU OLUŞTUR + BibTeX YÜKLE (safeGoToStep(2))
 GÖREV: Boolean araştırma sorgusu oluştur ve BibTeX dosyası yükle.
 
 AŞAMA A — Boolean Sorgusu:
-• Araştırma konusuna uygun İngilizce Boolean sorgusu oluştur
-• WoS formatı: TS=("term1" OR "synonym1") AND TS=("term2" OR "synonym2")
-• Scopus formatı: TITLE-ABS-KEY("term1" OR "synonym1") AND TITLE-ABS-KEY(...)
+• 🆕 KRİTİK: Kullanıcıya MUTLAKA sor: "Hangi veritabanlarını kullanmak istiyorsunuz? (a) WoS, (b) Scopus, (c) Her ikisi"
+• Seçime göre uygun formatta Boolean sorguları oluştur:
+  ◦ WoS formatı: TS=("term1" OR "synonym1") AND TS=("term2" OR "synonym2")
+  ◦ Scopus formatı: TITLE-ABS-KEY("term1" OR "synonym1") AND TITLE-ABS-KEY(...)
+• HER İKİSİ seçildiyse HER İKİ FORMAT için ayrı Boolean sorgusu ver
 • Eş anlamlılar, kısaltmalar ve İngilizce varyasyonlarla zenginleştir
 • Sorguyu uygulama içindeki "Oluşturulan Sorgu" alanına yapıştır
 • Kullanıcıya WoS/Scopus'ta nasıl çalıştıracağını adım adım anlat
+• 🆕 Her iki veritabanı seçildiyse: İkinci dosyayı birleştirmek için "İkinci Veritabanından Birleştir" bölümünü kullanmasını söyle — tekrar eden çalışmalar otomatik tespit edilecek
 
 AŞAMA B — BibTeX Yükleme:
 • Kullanıcıdan WoS/Scopus'tan dışa aktardığı .bib dosyasını istemini bekle
 • Kullanıcı dosyayı sağladığında, sayfadaki "BibTeX Dosyası Yükle" upload alanına tıkla
 • Dosyayı seç ve yükle — yükleme başarılı mesajını bekle
-• Yüklenen çalışma sayısını kullanıcıya bildir
+• 🆕 İkinci veritabanı dosyası varsa: "📊 WoS Ekle" veya "🔍 Scopus Ekle" butonuna tıklayarak birleştir
+• Birleştirme sonucu: Toplam çalışma, yeni eklenen, tekrar atlanmış sayısını kullanıcıya bildir
 • "Devam Et" butonuyla Adım 3'e geç
 
 ═══════════════════════════════════════
@@ -1485,6 +1519,9 @@ AŞAMA B — Tema Kontrolü ve Düzenleme:
 • Kullanıcıya tema dağılımını göster ve onay al
 
 AŞAMA C — Akıllı Çalışma Seçimi:
+• 🆕 VARSAYILAN: Sadece açık erişimli (OA) çalışmaları seç (kullanıcı aksini belirtmedikçe)
+  ◦ Eğer kullanıcı "ücretlileri de dahil et" derse tüm çalışmaları dahil et
+  ◦ Sayfadaki "Sadece Açık Erişim" toggle'ını kontrol et
 • HEDEF: Toplam çalışmanın %10-20'si seçilmeli (ör: 427 kaynaktan 40-85 arası)
 • İlgililik ≥ 0.7 olanlardan bu aralığa düşecek kadar seç
 • Seçim kriterleri (tümü dikkate alınmalı):
@@ -1540,7 +1577,13 @@ SEÇENEK A — Sistem Raporu:
 • Etik onay checkbox'ını işaretle → "Önizleme" veya window.autoGenerateReport("preview")
 • Hızlı ama şablon bazlı, derinlikten yoksun
 
-SEÇENEK B — Claude Raporu (ÖNERİLEN):
+SEÇENEK B — Claude Raporu (ÖNERİLEN — HER ZAMAN İLERİ MODEL KULLAN):
+• 🆕 ZORUNLU: Rapor yazımında Claude'un en ileri dil modelini kullan
+• 🆕 SUBAGENT MİMARİSİ (3 katmanlı):
+  ◦ 1. YAZAR SUBAGENT (Uzman Akademik Yazar): Seçili çalışmaların metadata'sını alır, her bölümü akademik dilde yazar
+  ◦ 2. EDİTÖR SUBAGENT: Yazarın çıktısını gözden geçirir — dil, tutarlılık, APA uyumu, eleştirel derinlik kontrol eder
+  ◦ 3. ANA AGENT: Editörün önerilerine göre son düzenlemeyi yapar ve raporu birleştirir
+• Her tema için ayrı yazar subagent ata (paralel çalıştır)
 • Agent, seçili çalışmaların metadata'sını (başlık, yazar, yıl, DOI, tema, abstract özeti) JSON olarak çıkarır
 • Veriyi parçalara bölerek subagent'lara gönderir — her subagent bir bölüm yazar:
   ◦ Giriş: Araştırmanın amacı, kapsamı, güncelliği
@@ -1551,6 +1594,8 @@ SEÇENEK B — Claude Raporu (ÖNERİLEN):
 • Ana agent bölümleri birleştirir, tutarlılık kontrol eder
 • SAYFA SAYISI: Kaynak sayısının %20'si (min 10, max 100 sayfa)
 • Metin içi atıflar APA 7: (Yılmaz, 2023), (Smith ve Jones, 2024), (Smith vd., 2023)
+• 🆕 Rapor tamamlandığında uygulamadaki "Claude Rapor Notu" alanına şu notu yaz:
+  "✅ Bu rapor Claude AI tarafından [tarih] tarihinde hazırlanmıştır. Claude'dan raporunuzu görüntüleyebilirsiniz."
 
 RAPOR FORMATI: APA 7 Sistematik Literatür Taraması
 Bölüm yapısı: Giriş → Yöntem → Bulgular (Tematik Dağılım + Sentez) → Tartışma ve Sonuç → Kaynakça
@@ -1588,6 +1633,8 @@ GÖREV: Tüm süreci özetle, çıktıları doğrula ve hedef dergi önerileri s
 • Tüm adımların özeti kullanıcıya otomatik sunulur
 • Çıktıları kontrol et: Akademik Rapor, Araştırma Tasarımı, BibTeX, Oturum Yedeği butonlarının çalıştığını doğrula
 • Oturum otomatik olarak kaydedilir
+• 🆕 Rapor Claude tarafından yazıldıysa, özet sayfasında bu bilgiyi göster
+• 🆕 Oturumu MUTLAKA kaydet (saveSession butonuna tıkla)
 
 DERGİ ÖNERİSİ:
 • window.recommendJournals() ile algoritmik dergi önerilerini al (kural tabanlı)
@@ -1598,6 +1645,18 @@ DERGİ ÖNERİSİ:
   ◦ "Sistematik Derleme" kabul eden dergilere öncelik ver
   ◦ Kabul şansını gerçekçi değerlendir ve yayın stratejisi öner
   ◦ Çeşitlilik sağla: Q1, Q2, Q3-Q4 ve ulusal dergilerden karışık öner
+• 🆕 AGENT DEĞERLENDİRMESİ (KRİTİK — MUTLAKA YAZ!):
+  ◦ window.setAgentEvaluation(html) ile özet sayfasına detaylı bir değerlendirme yaz
+  ◦ Değerlendirmede şunları MUTLAKA belirt:
+    — Önerilen araştırma yöntemi ve deseni (gerekçesiyle)
+    — Çalışmanın gönderilebileceği ilk 3 dergi (isim, Q kategorisi, neden uygun)
+    — Çalışmanın potansiyeli: Özgün, güçlü ve zayıf yanları
+    — Literatürdeki boşluk ve katkı potansiyeli
+    — Genel değerlendirme notu (10 üzerinden)
+  ◦ HTML formatında yaz (başlıklar, listeler, vurgular kullan)
+  ◦ Bu değerlendirmeyi aynı zamanda Claude konuşmasında da kullanıcıya göster
+• Rapor Claude tarafından yazıldıysa, özet sayfasında bu bilgiyi göster
+• Oturumu MUTLAKA kaydet (saveSession butonuna tıkla)
 • Sonunda kullanıcıya de: "Çalışmanız hazır! Tüm özeti ve çıktıları bu sayfadan görebilirsiniz."
 
 ═══════════════════════════════════════
@@ -1621,6 +1680,9 @@ GENEL İLKELER
 ⚡ HATA YÖNETİMİ: 2 başarısız deneme → alternatif yönteme geç. Asla sessizce geçme, kullanıcıyı bilgilendir.
 💾 KAYDETME: HER ADIM TAMAMLANDIĞINDA "Kaydet" butonuna bas! Tarayıcı çökmesinde veri kaybını önle.
 🎯 TEMA KONTROLÜ: Rapor oluşturmadan ÖNCE temaları gözden geçir. Genel/anlamsız temaları kaldır, spesifik temalar oluştur.
+💾 OTOMATİK KAYDETME: Her 2-3 işlemden sonra "Kaydet" butonuna tıkla. Büyük işlemlerden (analiz, rapor, birleştirme) sonra mutlaka kaydet. Tüm işlemler bittiğinde son kez kaydet.
+🔄 OTURUM KURTARMA: Sayfa yenilenmiş veya başa dönmüşse, otomatik olarak son kayıtlı oturumu yükle (Oturumlar dropdown'ından). Kullanıcıya sormadan kendi insiyatifini kullan.
+🌐 UYGULAMA BAĞLANTISI: İşe başlamadan önce Chrome'da https://seoncu.github.io/acik-arastirma/ açık olduğundan emin ol. Değilse navigate et.
 
 ═══════════════════════════════════════
 AGENT DOM HELPER API — ÖNEMLİ!
@@ -1644,6 +1706,8 @@ Bu uygulama agent'lar için özel JavaScript API'leri sunar. Chrome extension ja
 • window.selectStudies([0,1,3,5]) → İndexe göre çalışma seç/kaldır (Adım 3)
 • window.autoGenerateReport("preview") → Raporu otomatik oluştur, etik onayı dahil (Adım 5)
 • window.recommendJournals() → Algoritmik dergi önerilerini al (Adım 7)
+• window.setClaudeReportNote("mesaj") → Rapor adımına Claude notu yaz (Adım 5)
+• window.setAgentEvaluation("html") → Özet sayfasına agent değerlendirmesi yaz (Adım 7)
 
 ⏳ DOM BEKLEMESİ:
 • await window.waitForElement("#selector", 5000) → Element görünene kadar bekle
@@ -2734,8 +2798,13 @@ function renderStep2(el) {
         </div>
       </div>
       <div id="studyList"></div>
-      <div style="margin-top:16px;display:flex;gap:10px">
+      <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <button class="btn btn-primary" onclick="checkOAStatus()">🔍 Açık Erişim Durumunu Tara</button>
+        <label style="display:inline-flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(5,150,105,0.06);border:1px solid rgba(5,150,105,0.15);border-radius:var(--radius);cursor:pointer;font-size:0.82em;margin:0" title="Aktifken sadece açık erişimli çalışmalar analize ve rapora dahil edilir">
+          <input type="checkbox" id="oaOnlyToggle" ${state._oaOnlyMode ? 'checked' : ''} onchange="state._oaOnlyMode=this.checked;autoSaveState();renderStudyList();showToast(this.checked?'✅ Sadece açık erişimli çalışmalar gösteriliyor':'📋 Tüm çalışmalar gösteriliyor')" style="width:auto;accent-color:#059669;cursor:pointer">
+          <span style="font-weight:600;color:#059669">Sadece Açık Erişim</span>
+          <span style="font-size:0.85em;color:var(--text2)">(varsayılan: ücretsiz çalışmalar)</span>
+        </label>
       </div>
     </div>
 
@@ -3156,6 +3225,15 @@ function renderStep3(el) {
         <button class="btn btn-accent" onclick="generateReport('docx')">📄 Word İndir</button>
         <button class="btn btn-success" onclick="generateReport('copy')">📋 Metni Kopyala</button>
         <button class="btn" onclick="goToStep(6)" style="margin-left:auto;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;padding:10px 22px;border-radius:10px;font-weight:700;box-shadow:0 4px 16px rgba(124,58,237,0.25);border:none">🔬 Araştırma Tasarımı →</button>
+      </div>
+
+      <!-- Claude Agent Rapor Notu -->
+      <div id="claudeReportNote" style="display:${state._claudeReportNote ? 'block' : 'none'};margin-top:16px;padding:14px 18px;background:linear-gradient(135deg,rgba(124,58,237,0.04),rgba(79,70,229,0.06));border:1.5px solid rgba(124,58,237,0.15);border-radius:16px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:1.2em">🤖</span>
+          <strong style="font-size:0.9em;color:#7c3aed">Claude Agent Rapor Notu</strong>
+        </div>
+        <div id="claudeReportNoteText" style="font-size:0.85em;color:var(--text);line-height:1.6">${state._claudeReportNote || ''}</div>
       </div>
 
       <div id="reportPreview" style="margin-top:16px"></div>
@@ -3789,6 +3867,25 @@ function renderStepSummary(el) {
       '<p style="font-size:0.72em;color:var(--text2);margin-top:8px;line-height:1.5;font-style:italic">Not: Algoritmik öneriler yerel veritabanına dayanır. Claude Agent, internet üzerinden güncel indeksleme durumunu doğrulayabilir ve daha geniş kapsamlı öneriler sunabilir.</p>' +
       '<div id="journalPromptPreview" style="display:none;margin-top:12px"></div>' +
     '</div>' +
+
+    // Agent Evaluation Area (populated by Claude Agent)
+    '<div id="agentEvaluationArea" style="display:' + (state._agentEvaluation ? 'block' : 'none') + ';margin-top:24px;padding:20px;background:linear-gradient(135deg,rgba(124,58,237,0.04),rgba(168,85,247,0.06));border:2px solid rgba(124,58,237,0.15);border-radius:16px">' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">' +
+        '<span style="font-size:1.5em">🤖</span>' +
+        '<div>' +
+          '<div style="font-weight:800;font-size:1em;color:#7c3aed">Agent Değerlendirmesi</div>' +
+          '<div style="font-size:0.78em;color:var(--text2)">Claude Agent tarafından yapılan çalışma analizi ve değerlendirme</div>' +
+        '</div>' +
+      '</div>' +
+      '<div id="agentEvaluationText" style="font-size:0.88em;color:var(--text);line-height:1.7">' + (state._agentEvaluation || '') + '</div>' +
+    '</div>' +
+
+    // Claude Report Note (if report was generated by Claude)
+    (state._claudeReportNote ?
+      '<div style="margin-top:16px;padding:12px 16px;background:rgba(124,58,237,0.04);border:1px solid rgba(124,58,237,0.12);border-radius:12px;font-size:0.85em;color:#7c3aed;display:flex;align-items:center;gap:8px">' +
+        '<span style="font-size:1.1em">📝</span>' +
+        '<span>' + state._claudeReportNote + '</span>' +
+      '</div>' : '') +
 
     // Back to any step
     '<div style="margin-top:20px;text-align:center;padding-top:14px;border-top:1px solid #e0e0e0">' +
@@ -5062,6 +5159,9 @@ async function checkOAStatus(auto) {
   }
 
   showToast(`✅ Tarama tamamlandı: ${oaCount} açık erişimli çalışma bulundu!`);
+  state._oaScanDone = true;
+  // CRITICAL: Persist OA data to localStorage so it survives page refresh
+  autoSaveState();
   renderStudyList();
   // Re-render stats if on analysis step
   if (state.currentStep === 3) renderStep();
@@ -5543,6 +5643,8 @@ function getFilteredStudies() {
   const selFilter = document.getElementById('filterSelected')?.value || 'all';
 
   return state.studies.filter(s => {
+    // Global OA-only toggle
+    if (state._oaOnlyMode && !s.oa) return false;
     if (oa === 'oa' && !s.oa) return false;
     if (oa === 'pw' && s.oa) return false;
     if (theme !== 'all' && !(s.themes||[]).some(t => t.includes(theme))) return false;
@@ -8848,7 +8950,7 @@ initWebLLMBar();
 
 <footer style="text-align:center;padding:24px 20px 80px;font-size:0.82em;color:var(--text2);border-top:1px solid var(--border);margin-top:40px;background:var(--bg)">
   <div style="margin-bottom:8px">&copy; SEÖ, 2026</div>
-  <div style="font-size:1em;color:var(--text)">Açık Araştırma <strong style="color:var(--primary);font-size:1.15em">v2.2</strong> — Ajan Destekli Akademik Yayın İnceleme Platformu</div>
+  <div style="font-size:1em;color:var(--text)">Açık Araştırma <strong style="color:var(--primary);font-size:1.15em">v2.3</strong> — Ajan Destekli Akademik Yayın İnceleme Platformu</div>
   <div style="font-size:0.88em;color:var(--text2);margin-top:4px">Anadolu Üniversitesi Uzaktan Eğitim Araştırma Topluluğu</div>
 </footer>
 </body>
