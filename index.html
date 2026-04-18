@@ -1064,10 +1064,21 @@ function renderStepper() {
 }
 
 function goToStep(n) {
-  // CRITICAL: In agent mode, block ALL step advancement without code verification
+  // In agent mode, block step advancement without code verification
+  // But allow going to step 0 (mode selection) so user can reset
   if (useMode === 'agent' && n > 0 && !window._agentVerified) {
-    showToast('⛔ Agent modu aktif ancak doğrulama tamamlanmadı! Önce Agent bağlantı kodunu doğrulayın.');
-    return;
+    // If this is a recovered session (page reload), offer to switch to manual mode
+    if (!window._agentSessionActive) {
+      useMode = 'manual';
+      window._agentVerified = false;
+      window._agentPendingCode = null;
+      if (typeof updateModeBanner === 'function') updateModeBanner();
+      showToast('ℹ️ Sayfa yenilendi — Agent bağlantısı koptu, Manuel moda geçildi. İsterseniz tekrar Agent modunu seçebilirsiniz.');
+      // Continue with navigation instead of blocking
+    } else {
+      showToast('⛔ Agent modu aktif ancak doğrulama tamamlanmadı! Önce Agent bağlantı kodunu doğrulayın.');
+      return;
+    }
   }
   if (n >= 3 && n <= 6 && state.studies.length === 0) {
     showToast('Önce BibTeX yükleyin!'); return;
@@ -1111,9 +1122,11 @@ function autoSaveState() {
   }
   try {
     var stripped = stripLargeFields(state);
+    // Don't persist agent mode unless verified — prevents stuck state on page reload
+    var savedMode = (useMode === 'agent' && !window._agentVerified) ? 'manual' : useMode;
     var payload = JSON.stringify({
       state: stripped,
-      useMode: useMode,
+      useMode: savedMode,
       savedAt: new Date().toISOString()
     });
     // Check size before saving
@@ -1129,7 +1142,7 @@ function autoSaveState() {
           return c;
         });
       }
-      payload = JSON.stringify({ state: stripped, useMode: useMode, savedAt: new Date().toISOString() });
+      payload = JSON.stringify({ state: stripped, useMode: savedMode, savedAt: new Date().toISOString() });
     }
     localStorage.setItem('acik_arastirma_autosave', payload);
     if (currentSessionId) {
@@ -1802,6 +1815,7 @@ function updateInlineChecklist() {
     // Reset verification state
     window._agentPendingCode = null;
     window._agentVerified = false;
+    window._agentSessionActive = false;
     window._humanConfirmed = false;
     if (window._handshakeTimer) { clearInterval(window._handshakeTimer); window._handshakeTimer = null; }
     // Reset "Ben İNSAN değilim" checkbox
@@ -1824,6 +1838,7 @@ function startAgentMode() {
   window._agentPendingCode = code;
   window._agentVerified = false;
   window._humanConfirmed = false;
+  window._agentSessionActive = true; // Mark that agent flow was actively started this session
 
   // 1) Auto-copy the Cowork prompt
   var promptText = document.getElementById('coworkPromptBox');
@@ -1945,6 +1960,7 @@ function verifyAgent(code) {
 
   // SUCCESS — Code matches!
   window._agentVerified = true;
+  window._agentSessionActive = true;
   window._agentPendingCode = null;
   if (window._handshakeTimer) { clearInterval(window._handshakeTimer); window._handshakeTimer = null; }
 
@@ -1999,11 +2015,32 @@ function skipAgentHandshake() {
   useMode = 'manual';
   window._agentPendingCode = null;
   window._agentVerified = false;
+  window._agentSessionActive = false;
+  window._humanConfirmed = false;
   if (window._handshakeTimer) { clearInterval(window._handshakeTimer); window._handshakeTimer = null; }
   if (typeof updateModeBanner === 'function') updateModeBanner();
   showToast('ℹ️ Agent doğrulaması atlandı — Manuel moda geçildi.');
   goToStep(1);
 }
+
+/**
+ * Emergency exit from agent mode — available from sidebar or header
+ * Resets all agent state and switches to manual mode
+ */
+function exitAgentMode() {
+  useMode = 'manual';
+  window._agentPendingCode = null;
+  window._agentVerified = false;
+  window._agentSessionActive = false;
+  window._humanConfirmed = false;
+  if (window._handshakeTimer) { clearInterval(window._handshakeTimer); window._handshakeTimer = null; }
+  if (typeof updateModeBanner === 'function') updateModeBanner();
+  autoSaveState();
+  showToast('ℹ️ Agent modundan çıkıldı — Manuel moda geçildi.');
+  renderStepper();
+  renderStep();
+}
+window.exitAgentMode = exitAgentMode;
 
 /**
  * Update the bottom sticky banner based on current mode
@@ -2019,7 +2056,7 @@ function updateModeBanner() {
     mini.style.transition = 'background 0.6s ease, box-shadow 0.6s ease';
     mini.style.background = 'linear-gradient(135deg, #e65100, #ff6d00)';
     mini.style.boxShadow = '0 -4px 20px rgba(230,81,0,0.35)';
-    mini.innerHTML = '<span style="font-size:1.1em;animation:pulse 2s infinite">🤖</span><span>Şu an <strong>Agent modundasınız!</strong> Agent ile etkileşim kurarak çalışmanızı kolaylıkla yönetebilirsiniz.</span><span style="font-size:0.8em;background:rgba(255,255,255,0.25);padding:3px 10px;border-radius:10px;font-weight:700">CLAUDE</span>';
+    mini.innerHTML = '<span style="font-size:1.1em;animation:pulse 2s infinite">🤖</span><span>Şu an <strong>Agent modundasınız!</strong> Agent ile etkileşim kurarak çalışmanızı kolaylıkla yönetebilirsiniz.</span><button onclick="event.stopPropagation();exitAgentMode()" style="font-size:0.75em;background:rgba(255,255,255,0.3);border:1px solid rgba(255,255,255,0.5);color:#fff;padding:3px 10px;border-radius:10px;cursor:pointer;font-weight:700;margin-left:6px" title="Manuel moda geç">✕ Çık</button><span style="font-size:0.8em;background:rgba(255,255,255,0.25);padding:3px 10px;border-radius:10px;font-weight:700">CLAUDE</span>';
   } else {
     mini.style.transition = 'background 0.6s ease, box-shadow 0.6s ease';
     mini.style.background = 'linear-gradient(135deg, #ec4899, #a855f7)';
@@ -7908,6 +7945,15 @@ function loadSessionFromSelect(id) {
   if (!session) { showToast('Oturum bulunamadı'); return; }
   Object.assign(state, session.state);
   currentSessionId = id;
+  // Reset agent state on session load — agent verification is session-specific
+  // and cannot survive page reloads or session switches
+  if (useMode === 'agent') {
+    useMode = 'manual';
+    window._agentVerified = false;
+    window._agentSessionActive = false;
+    window._agentPendingCode = null;
+    window._humanConfirmed = false;
+  }
   updateSessionBar(session.name);
   // Ensure stepper top matches always-compact header
   var appH = document.getElementById('appHeader');
@@ -7915,6 +7961,7 @@ function loadSessionFromSelect(id) {
   if (appH && stpr) stpr.style.top = appH.offsetHeight + 'px';
   renderStepper();
   renderStep();
+  if (typeof updateModeBanner === 'function') updateModeBanner();
   showToast('Oturum yüklendi: ' + session.name);
 }
 
